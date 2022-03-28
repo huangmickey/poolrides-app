@@ -3,6 +3,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { colors } from './src/utils/colors';
+import RiderLogin from './src/feature-or-screens/RiderLogin';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -35,12 +36,13 @@ export default function App() {
   if (!appIsReady) {
     return null;
   }
-
-  return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text style={styles.text}>Hello WillCode4Food!</Text>
-      <StatusBar style="auto" />
-    </View>
+   
+   return (
+    <RiderLogin />
+    // <View style={styles.container} onLayout={onLayoutRootView}>
+    //   <Text style={styles.text}>Hello WillCode4Food!</Text>
+    //   <StatusBar style="auto" />
+    // </View>
   );
 }
 
