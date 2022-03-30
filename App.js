@@ -23,6 +23,7 @@ const Stack =  createNativeStackNavigator();
 export default function App() {
   // const [appIsReady, setAppIsReady] = useState(false);
 
+
   // useEffect(() => {
   //   async function prepare() {
   //     try {
@@ -77,5 +78,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.black,
-    }
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  text: {
+    color: colors.platinum,
+  },
 });
