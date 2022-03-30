@@ -4,31 +4,31 @@ import CustomButton from "../components/CustomButton";
 import { colors } from "../utils/colors";
 
 
-export default function Startup({ navigation }) {
-    function driverLoginPressHandler() {
-        navigation.navigate("Driver Login");
+export default function Signup({ navigation }) {
+    function driverSignUpHandler() {
+        navigation.navigate("Driver Sign up");
     }
 
-    function riderLoginPressHandler() {
-        navigation.navigate("Rider Login");
+    function riderSignUpHandler() {
+        navigation.navigate("Rider Sign up");
     }
 
-    function signUpPressHandler() {
-        navigation.navigate("Sign Up");
+    function signInHandler() {
+        
     }
 
     return (
         <View style={styles.screenContainer}>
             <View style={styles.logoContainer}>
-                <Text style={styles.text}>Pool Rides Logo</Text>
+                <Text style={styles.text}>Sign Up for Pool Rides</Text>
             </View>
             <View style={styles.sectionContainer}>
                 <View style={styles.buttonBox}>
-                    <CustomButton title={"Driver Login"} color={colors.mint} textColor={colors.black} onPress={driverLoginPressHandler}/>
+                    <CustomButton title={"Driver Signup"} color={colors.mint} textColor={colors.black} onPress={driverSignUpHandler}/>
                 </View>
                 <View style={styles.buttonBox2}>
-                    <CustomButton title={"Rider Login"} color={colors.mint} textColor={colors.black} onPress={riderLoginPressHandler}/>
-                    <Text style={styles.textSignUp}>Sign up text button</Text>
+                    <CustomButton title={"Rider Signup"} color={colors.mint} textColor={colors.black} onPress={riderSignUpHandler}/>
+                    <Text style={styles.textSignUp}>Have an Account? Sign in</Text>
                 </View>
                 <View style={styles.buttonBox}>
                     
