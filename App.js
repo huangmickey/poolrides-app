@@ -58,11 +58,11 @@ return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Startup" component={Startup} />
-        <Stack.Screen options={{ headerShown: false }} name="Sign up" component={Signup} />
+        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Sign up" component={Signup} />
         {/* <Stack.Screen name="Driver Sign up" component={DriverSignUp} /> */}
-        <Stack.Screen name="Rider Sign up" component={RiderSignUp} />
-        <Stack.Screen options={{ headerShown: false }} name="Driver Login" component={DriverLogin} />
-        <Stack.Screen options={{ headerShown: false }} name="Rider Login" component={RiderLogin} />
+        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}}  name="Rider Sign up" component={RiderSignUp} />
+        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Login" component={DriverLogin} />
+        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Login" component={RiderLogin} />
       </Stack.Navigator>
     </NavigationContainer>
   </>

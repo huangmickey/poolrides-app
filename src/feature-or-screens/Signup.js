@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import CustomButton from "../components/CustomButton";
+import { CustomText } from "../components/CustomText";
 import { colors } from "../utils/colors";
 
 
@@ -20,7 +21,7 @@ export default function Signup({ navigation }) {
     return (
         <View style={styles.screenContainer}>
             <View style={styles.logoContainer}>
-                <Text style={styles.text}>Sign Up for Pool Rides</Text>
+                <Text style={styles.text}>Hello, welcome to PoolRides!</Text>
             </View>
             <View style={styles.sectionContainer}>
                 <View style={styles.buttonBox}>
@@ -52,7 +53,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '15%'
     },
     sectionContainer: {
         flex: 1,
@@ -63,14 +63,13 @@ const styles = StyleSheet.create({
     },
     buttonBox: {
         flex: 1,
-        width: '50%',
+        width: '60%',
         justifyContent: 'center',
         flexGrow: 1,
-        marginTop: '5%' 
     },
     buttonBox2: {
         flex: 1,
-        width: '50%',
+        width: '60%',
         justifyContent: 'center',
         flexGrow: 1,
     },

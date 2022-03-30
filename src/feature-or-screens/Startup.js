@@ -3,9 +3,6 @@ import { View, StyleSheet, Text, Image, Button } from "react-native";
 import CustomButton from "../components/CustomButton";
 import { colors } from "../utils/colors";
 
-
-
-
 export default function Startup({ navigation }) {
     function driverLoginPressHandler() {
         navigation.navigate("Driver Login");
@@ -16,7 +13,7 @@ export default function Startup({ navigation }) {
     }
 
     function signUpPressHandler() {
-        navigation.navigate("Sign Up");
+        navigation.navigate("Sign up");
     }
 
     return (
@@ -35,8 +32,7 @@ export default function Startup({ navigation }) {
                     
                 </View>
                 <View>
-          
-                  <Button title="New to PoolRides? Sign Up." color={'white'} onPress={signUpPressHandler}/>
+                  <Button title="New to PoolRides? Sign Up" color={'white'} onPress={signUpPressHandler}/>
                 </View>
                 <View style={styles.buttonBox}>
                     
@@ -71,14 +67,14 @@ const styles = StyleSheet.create({
     },
     buttonBox: {
         flex: 1,
-        width: '50%',
+        width: '60%',
         justifyContent: 'center',
         flexGrow: 1,
         marginTop: '5%' 
     },
     buttonBox2: {
         flex: 1,
-        width: '50%',
+        width: '60%',
         justifyContent: 'center',
         flexGrow: 1,
     },
@@ -86,8 +82,8 @@ const styles = StyleSheet.create({
         color: "white",
     },
     logo: {
-      width: 153,
-      height: 58,
+      width: '60%',
+      height: '60%',
       resizeMode: "contain",
       position: "absolute",
     },
