@@ -4,4 +4,4 @@ export const colors = {
     mint: '#4ffcba',
     white: '#ffffff',
     salmonred: '#f85f6a',
-  }
+}
