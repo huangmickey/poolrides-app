@@ -1,7 +1,9 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Image, Button } from "react-native";
 import CustomButton from "../components/CustomButton";
 import { colors } from "../utils/colors";
+
+
 
 
 export default function Startup({ navigation }) {
@@ -20,7 +22,9 @@ export default function Startup({ navigation }) {
     return (
         <View style={styles.screenContainer}>
             <View style={styles.logoContainer}>
-                <Text style={styles.text}>Pool Rides Logo</Text>
+            <Image
+              style={styles.logo} source={require("../../assets/splash.png")}
+            />
             </View>
             <View style={styles.sectionContainer}>
                 <View style={styles.buttonBox}>
@@ -28,7 +32,11 @@ export default function Startup({ navigation }) {
                 </View>
                 <View style={styles.buttonBox2}>
                     <CustomButton title={"Rider Login"} color={colors.mint} textColor={colors.black} onPress={riderLoginPressHandler}/>
-                    <Text style={styles.textSignUp}>Sign up text button</Text>
+                    
+                </View>
+                <View>
+          
+                  <Button title="New to PoolRides? Sign Up." color={'white'} onPress={signUpPressHandler}/>
                 </View>
                 <View style={styles.buttonBox}>
                     
@@ -77,8 +85,16 @@ const styles = StyleSheet.create({
     text: {
         color: "white",
     },
+    logo: {
+      width: 153,
+      height: 58,
+      resizeMode: "contain",
+      position: "absolute",
+    },
     textSignUp: {
         color: "white",
+        textDecorationLine: "underline", 
         marginTop: "5%"
     }
 });
+
