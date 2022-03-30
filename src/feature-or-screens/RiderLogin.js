@@ -2,30 +2,27 @@ import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import EmailField from "../components/EmailField";
 import PasswordField from "../components/PasswordField";
+import Logo from "../components/Logo";
 import { colors } from "../utils/colors";
 
 export default function RiderLogin(props) {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Image
-          style={styles.logo}
-          source={require("../../assets/splash.png")}
-        />
-        <Text style={styles.text}>PoolRides</Text>
+        <Logo/>
       </View>
-
-      <View style={styles.label} marginTop={200}>
+      <View style ={styles.welcome}>
+        <Text style={styles.signInText}>Sign In As Rider</Text>
+        <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
+      </View>
+  
+      <View style={styles.inputView} marginTop={350}>
         <Text style={styles.textName}>Email</Text>
-      </View>
-      <View style={styles.inputView} marginTop={380}>
         <EmailField text="example@email.com" />
       </View>
 
-      <View style={styles.label} marginTop={70}>
+      <View style={styles.inputView} marginTop={450}>
         <Text style={styles.textName}>Password</Text>
-      </View>
-      <View style={styles.inputView} marginTop={470}>
         <PasswordField />
       </View>
 
@@ -65,7 +62,7 @@ const styles = StyleSheet.create({
     width: 300,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 110,
+    marginTop: 290,
     backgroundColor: colors.salmonred,
   },
   logo: {
@@ -80,17 +77,26 @@ const styles = StyleSheet.create({
     top: 60,
     fontSize: 16,
     fontWeight: "600",
-    // fontFamily: 'Asap',
   },
   textName: {
     fontWeight: "bold",
     fontSize: 16,
     color: colors.salmonred,
   },
-  logoContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    marginTop: 140,
+  welcome: {
+    marginLeft: -45,
+},
+  welcomeText: {
+      marginTop: 10,
+      color: colors.lightGray,
+      lineHeight: 16,
+      fontWeight: '400',
+      fontSize: 16,
   },
+  signInText: {
+    marginTop: 110,
+    color: colors.lightGray,
+    fontWeight: 'bold',
+    fontSize: 25,
+  }
 });
