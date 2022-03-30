@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { TouchableOpacity } from "react-native-web";
 import EmailField from "../components/EmailField";
+import PasswordField from "../components/PasswordField";
 import { colors } from "../utils/colors";
 
 export default function RiderLogin(props) {
@@ -14,11 +15,19 @@ export default function RiderLogin(props) {
         />
         <Text style={styles.text}>PoolRides</Text>
       </View>
-      <View style={styles.label}>
+
+      <View style={styles.label} marginTop={200}>
         <Text style={styles.textName}>Email</Text>
       </View>
-      <View style={styles.inputView}>
+      <View style={styles.inputView} marginTop={380}>
         <EmailField text="example@email.com" />
+      </View>
+
+      <View style={styles.label} marginTop={70}>
+        <Text style={styles.textName}>Password</Text>
+      </View>
+      <View style={styles.inputView} marginTop={470}>
+        <PasswordField />
       </View>
     </View>
   );
@@ -36,13 +45,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: 50,
     margin: 20,
-    marginTop: 380,
-    paddingBottom: 10,
   },
   label: {
     alignSelf: "flex-start",
-    marginLeft: -95,
-    marginTop: 200,
+    marginLeft: -100,
   },
   logo: {
     width: 153,

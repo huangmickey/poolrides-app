@@ -2,16 +2,18 @@ import { StyleSheet, TextInput, View } from "react-native";
 import React, { useState } from "react";
 import { colors } from "../utils/colors";
 
-function EmailField({ text }) {
-  const [email, setEmail] = useState("");
+function PasswordField() {
+  const [password, setPassword] = useState("");
 
   return (
     <View style={styles.inputView}>
       <TextInput
         style={styles.textInput}
-        placeholder={text}
+        placeholder="Password"
         placeholderTextColor={colors.gray}
-        onChangeText={(email) => setEmail(email)}
+        secureTextEntry={false}
+        onChangeText={(password) => setPassword(password)}
+        textAlign={"center"}
       />
     </View>
   );
@@ -25,13 +27,15 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 45,
     alignItems: "flex-start",
+    textAlign: "justify",
   },
 
   textInput: {
     color: colors.white,
+    marginLeft: 2,
+    height: 50,
     flex: 1,
     padding: 10,
-    marginLeft: 2,
   },
 });
-export default EmailField;
+export default PasswordField;
