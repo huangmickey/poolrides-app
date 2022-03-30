@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { colors } from './src/utils/colors';
+import { StyleSheet, View } from 'react-native';
+import { AppStyles } from './src/utils/styles';
+
+import RiderSignup from './src/feature-or-screens/RiderSignUp';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -36,22 +38,17 @@ export default function App() {
     return null;
   }
 
-  return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text style={styles.text}>Hello WillCode4Food!</Text>
-      <StatusBar style="auto" />
-    </View>
+return (
+  <View style={styles.container} onLayout={onLayoutRootView}>
+    <RiderSignup />
+    <StatusBar style="auto" />
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: colors.platinum,
-  }
+    backgroundColor: AppStyles.color.black,
+    }
 });
