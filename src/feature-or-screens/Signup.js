@@ -1,38 +1,35 @@
 import React from "react";
-import { View, StyleSheet, Text, Image, Button } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import CustomButton from "../components/CustomButton";
+import { CustomText } from "../components/CustomText";
 import { colors } from "../utils/colors";
 
-export default function Startup({ navigation }) {
-    function driverLoginPressHandler() {
-        navigation.navigate("Driver Login");
+
+export default function Signup({ navigation }) {
+    function driverSignUpHandler() {
+        navigation.navigate("Driver Sign up");
     }
 
-    function riderLoginPressHandler() {
-        navigation.navigate("Rider Login");
+    function riderSignUpHandler() {
+        navigation.navigate("Rider Sign up");
     }
 
-    function signUpPressHandler() {
-        navigation.navigate("Sign up");
+    function signInHandler() {
+        
     }
 
     return (
         <View style={styles.screenContainer}>
             <View style={styles.logoContainer}>
-            <Image
-              style={styles.logo} source={require("../../assets/splash.png")}
-            />
+                <Text style={styles.text}>Hello, welcome to PoolRides!</Text>
             </View>
             <View style={styles.sectionContainer}>
                 <View style={styles.buttonBox}>
-                    <CustomButton title={"Driver Login"} color={colors.mint} textColor={colors.black} onPress={driverLoginPressHandler}/>
+                    <CustomButton title={"Driver Signup"} color={colors.mint} textColor={colors.black} onPress={driverSignUpHandler}/>
                 </View>
                 <View style={styles.buttonBox2}>
-                    <CustomButton title={"Rider Login"} color={colors.mint} textColor={colors.black} onPress={riderLoginPressHandler}/>
-                    
-                </View>
-                <View>
-                  <Button title="New to PoolRides? Sign Up" color={'white'} onPress={signUpPressHandler}/>
+                    <CustomButton title={"Rider Signup"} color={colors.mint} textColor={colors.black} onPress={riderSignUpHandler}/>
+                    <Text style={styles.textSignUp}>Have an Account? Sign in</Text>
                 </View>
                 <View style={styles.buttonBox}>
                     
@@ -56,7 +53,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '15%'
     },
     sectionContainer: {
         flex: 1,
@@ -70,7 +66,6 @@ const styles = StyleSheet.create({
         width: '60%',
         justifyContent: 'center',
         flexGrow: 1,
-        marginTop: '5%' 
     },
     buttonBox2: {
         flex: 1,
@@ -81,16 +76,8 @@ const styles = StyleSheet.create({
     text: {
         color: "white",
     },
-    logo: {
-      width: '60%',
-      height: '60%',
-      resizeMode: "contain",
-      position: "absolute",
-    },
     textSignUp: {
         color: "white",
-        textDecorationLine: "underline", 
         marginTop: "5%"
     }
 });
-
