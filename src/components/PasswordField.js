@@ -11,7 +11,7 @@ function PasswordField() {
         style={styles.textInput}
         placeholder="Password"
         placeholderTextColor={colors.gray}
-        secureTextEntry={false}
+        secureTextEntry={true}
         onChangeText={(password) => setPassword(password)}
         textAlign={"center"}
       />
@@ -26,14 +26,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     width: "100%",
     height: 45,
-    alignItems: "flex-start",
-    textAlign: "justify",
+    alignItems: "baseline",
   },
 
   textInput: {
     color: colors.white,
+    fontSize: 15,
     marginLeft: 2,
-    height: 50,
     flex: 1,
     padding: 10,
   },
