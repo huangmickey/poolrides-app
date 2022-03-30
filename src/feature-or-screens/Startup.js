@@ -1,18 +1,11 @@
 import React from "react";
-<<<<<<< HEAD
 import { View, StyleSheet, Text, Image, Button } from "react-native";
-=======
-import { View, StyleSheet, Text } from "react-native";
->>>>>>> origin/main
 import CustomButton from "../components/CustomButton";
 import { colors } from "../utils/colors";
 
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> origin/main
 export default function Startup({ navigation }) {
     function driverLoginPressHandler() {
         navigation.navigate("Driver Login");
@@ -29,13 +22,9 @@ export default function Startup({ navigation }) {
     return (
         <View style={styles.screenContainer}>
             <View style={styles.logoContainer}>
-<<<<<<< HEAD
             <Image
               style={styles.logo} source={require("../../assets/splash.png")}
             />
-=======
-                <Text style={styles.text}>Pool Rides Logo</Text>
->>>>>>> origin/main
             </View>
             <View style={styles.sectionContainer}>
                 <View style={styles.buttonBox}>
@@ -43,15 +32,11 @@ export default function Startup({ navigation }) {
                 </View>
                 <View style={styles.buttonBox2}>
                     <CustomButton title={"Rider Login"} color={colors.mint} textColor={colors.black} onPress={riderLoginPressHandler}/>
-<<<<<<< HEAD
                     
                 </View>
                 <View>
           
                   <Button title="New to PoolRides? Sign Up." color={'white'} onPress={signUpPressHandler}/>
-=======
-                    <Text style={styles.textSignUp}>Sign up text button</Text>
->>>>>>> origin/main
                 </View>
                 <View style={styles.buttonBox}>
                     
@@ -100,7 +85,6 @@ const styles = StyleSheet.create({
     text: {
         color: "white",
     },
-<<<<<<< HEAD
     logo: {
       width: 153,
       height: 58,
@@ -114,10 +98,3 @@ const styles = StyleSheet.create({
     }
 });
 
-=======
-    textSignUp: {
-        color: "white",
-        marginTop: "5%"
-    }
-});
->>>>>>> origin/main
