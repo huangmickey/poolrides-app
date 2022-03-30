@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
-import { TouchableOpacity } from "react-native-web";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import EmailField from "../components/EmailField";
 import PasswordField from "../components/PasswordField";
 import { colors } from "../utils/colors";
@@ -29,6 +28,10 @@ export default function RiderLogin(props) {
       <View style={styles.inputView} marginTop={470}>
         <PasswordField />
       </View>
+
+      <TouchableOpacity style={styles.loginBtn}>
+        <Text style={styles.loginText}>Sign In</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -48,7 +51,22 @@ const styles = StyleSheet.create({
   },
   label: {
     alignSelf: "flex-start",
-    marginLeft: -100,
+    marginLeft: 10,
+  },
+  loginText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: colors.white,
+  },
+  loginBtn: {
+    width: "80%",
+    borderRadius: 5,
+    height: 50,
+    width: 300,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 110,
+    backgroundColor: colors.salmonred,
   },
   logo: {
     width: 153,
