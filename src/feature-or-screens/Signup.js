@@ -1,57 +1,34 @@
 import React from "react";
-<<<<<<< HEAD
-import { View, StyleSheet, Text, Image, Button } from "react-native";
-=======
 import { View, StyleSheet, Text } from "react-native";
->>>>>>> origin/main
 import CustomButton from "../components/CustomButton";
 import { colors } from "../utils/colors";
 
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/main
-export default function Startup({ navigation }) {
-    function driverLoginPressHandler() {
-        navigation.navigate("Driver Login");
+export default function Signup({ navigation }) {
+    function driverSignUpHandler() {
+        navigation.navigate("Driver Sign up");
     }
 
-    function riderLoginPressHandler() {
-        navigation.navigate("Rider Login");
+    function riderSignUpHandler() {
+        navigation.navigate("Rider Sign up");
     }
 
-    function signUpPressHandler() {
-        navigation.navigate("Sign Up");
+    function signInHandler() {
+        
     }
 
     return (
         <View style={styles.screenContainer}>
             <View style={styles.logoContainer}>
-<<<<<<< HEAD
-            <Image
-              style={styles.logo} source={require("../../assets/splash.png")}
-            />
-=======
-                <Text style={styles.text}>Pool Rides Logo</Text>
->>>>>>> origin/main
+                <Text style={styles.text}>Sign Up for Pool Rides</Text>
             </View>
             <View style={styles.sectionContainer}>
                 <View style={styles.buttonBox}>
-                    <CustomButton title={"Driver Login"} color={colors.mint} textColor={colors.black} onPress={driverLoginPressHandler}/>
+                    <CustomButton title={"Driver Signup"} color={colors.mint} textColor={colors.black} onPress={driverSignUpHandler}/>
                 </View>
                 <View style={styles.buttonBox2}>
-                    <CustomButton title={"Rider Login"} color={colors.mint} textColor={colors.black} onPress={riderLoginPressHandler}/>
-<<<<<<< HEAD
-                    
-                </View>
-                <View>
-          
-                  <Button title="New to PoolRides? Sign Up." color={'white'} onPress={signUpPressHandler}/>
-=======
-                    <Text style={styles.textSignUp}>Sign up text button</Text>
->>>>>>> origin/main
+                    <CustomButton title={"Rider Signup"} color={colors.mint} textColor={colors.black} onPress={riderSignUpHandler}/>
+                    <Text style={styles.textSignUp}>Have an Account? Sign in</Text>
                 </View>
                 <View style={styles.buttonBox}>
                     
@@ -100,24 +77,8 @@ const styles = StyleSheet.create({
     text: {
         color: "white",
     },
-<<<<<<< HEAD
-    logo: {
-      width: 153,
-      height: 58,
-      resizeMode: "contain",
-      position: "absolute",
-    },
-    textSignUp: {
-        color: "white",
-        textDecorationLine: "underline", 
-        marginTop: "5%"
-    }
-});
-
-=======
     textSignUp: {
         color: "white",
         marginTop: "5%"
     }
 });
->>>>>>> origin/main
