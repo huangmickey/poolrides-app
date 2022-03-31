@@ -17,13 +17,14 @@ export default function Startup({ navigation }) {
     }
 
     return (
+
         <View style={styles.container}>
             <View style={styles.logoContainer}>
             <Image
               style={styles.logo} source={require("../../assets/splash.png")}
             />
             </View>
-
+                                          
             <View style={styles.buttonBox}>
                 <CustomButton title={"Driver Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverLoginPressHandler}/>
             </View>

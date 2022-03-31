@@ -13,6 +13,7 @@ export default function Signup({ navigation }) {
     }
 
     function signInHandler() {
+
         navigation.navigate("Startup");
     }
 
@@ -42,8 +43,7 @@ export default function Signup({ navigation }) {
                 </Pressable>
             </View>
                 
-            </View>
-        
+       </View>
     );
 }
 
