@@ -1,9 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import CustomButton from "../components/CustomButton";
-import { CustomText } from "../components/CustomText";
-import { colors } from "../utils/colors";
-
+import { AppStyles } from '../utils/styles';
 
 export default function Signup({ navigation }) {
     function driverSignUpHandler() {
@@ -15,69 +13,78 @@ export default function Signup({ navigation }) {
     }
 
     function signInHandler() {
-        
+
+        navigation.navigate("Startup");
     }
 
     return (
-        <View style={styles.screenContainer}>
+        <View style={styles.container}>
             <View style={styles.logoContainer}>
-                <Text style={styles.text}>Hello, welcome to PoolRides!</Text>
+            <Image
+              style={styles.logo} source={require("../../assets/splash.png")}
+            />
+            <Text style={styles.text}>Hello, welcome to PoolRides!</Text>
             </View>
-            <View style={styles.sectionContainer}>
-                <View style={styles.buttonBox}>
-                    <CustomButton title={"Driver Signup"} color={colors.mint} textColor={colors.black} onPress={driverSignUpHandler}/>
-                </View>
-                <View style={styles.buttonBox2}>
-                    <CustomButton title={"Rider Signup"} color={colors.mint} textColor={colors.black} onPress={riderSignUpHandler}/>
-                    <Text style={styles.textSignUp}>Have an Account? Sign in</Text>
-                </View>
-                <View style={styles.buttonBox}>
-                    
-                </View>
+            
+            <View style={styles.buttonBox}>
+                <CustomButton title={"Driver Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverSignUpHandler}/>
             </View>
-            <View style={styles.sectionContainer}>
+            
+            <View style={styles.buttonBox}>
+                <CustomButton title={"Rider Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderSignUpHandler}/>  
+            </View>
+
+
+            <View style={styles.signInContainer}>
+                < Text style={styles.text}>Have an Account?</Text>
+                <Pressable onPress={signInHandler}>
+                    <Text style={styles.signInButtonText}> Sign In
+                    </Text>
+                </Pressable>
+            </View>
                 
-            </View>
-        </View>
-        
+       </View>
     );
 }
 
 const styles = StyleSheet.create({
-    screenContainer: {
+    container: {
         flex: 1,
-        backgroundColor: colors.black
+        backgroundColor: AppStyles.color.black,
+        alignItems : 'center',
     },
     logoContainer: {
         flex: 1,
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    sectionContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         alignSelf: 'stretch',
-        flexGrow: 1,
+    },
+    logo: {
+        width: '60%',
+        height: '60%',
+        resizeMode: "contain",
+        
     },
     buttonBox: {
-        flex: 1,
-        width: '60%',
+        width: AppStyles.textInputWidth.button,
         justifyContent: 'center',
-        flexGrow: 1,
-    },
-    buttonBox2: {
-        flex: 1,
-        width: '60%',
-        justifyContent: 'center',
-        flexGrow: 1,
+        marginBottom: '5%',
     },
     text: {
+        fontSize: AppStyles.fontSize.normal,
         color: "white",
+        textAlignVertical: "top",
+        backgroundColor: AppStyles.color.black
     },
-    textSignUp: {
-        color: "white",
-        marginTop: "5%"
-    }
+    signInContainer: {
+        flexDirection: "row",
+        alignItems: "stretch",
+        paddingBottom: '50%',
+    },
+    signInButtonText: {
+        textAlignVertical: "top",
+        fontSize: AppStyles.fontSize.normal,
+        color: AppStyles.color.salmonred,
+    },
 });

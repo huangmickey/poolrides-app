@@ -3,8 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 export const AppStyles = {
   color: {
     black: '#000000',
-    grey: '#111111',
     platinum: '#E6E8E6',
+    gray: "#A9A9A9",
     mint: '#4ffcba',
     white: '#ffffff',
     salmonred: '#f85f6a',
@@ -19,6 +19,7 @@ export const AppStyles = {
     xxxl: 80,
 
     title: 30,
+    header: 25,
     content: 20,
     normal: 16,
   },
@@ -40,6 +41,7 @@ export const AppStyles = {
   },
   textInputWidth: {
     main: "80%",
+    button: "60%"
   },
   borderRadius: {
     main: 25,

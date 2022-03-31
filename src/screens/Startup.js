@@ -1,7 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Text, Image, Button } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import CustomButton from "../components/CustomButton";
-import { colors } from "../utils/colors";
+import { AppStyles } from '../utils/styles';
 
 export default function Startup({ navigation }) {
     function driverLoginPressHandler() {
@@ -17,29 +17,28 @@ export default function Startup({ navigation }) {
     }
 
     return (
-        <View style={styles.screenContainer}>
+
+        <View style={styles.container}>
             <View style={styles.logoContainer}>
             <Image
               style={styles.logo} source={require("../../assets/splash.png")}
             />
             </View>
-            <View style={styles.sectionContainer}>
-                <View style={styles.buttonBox}>
-                    <CustomButton title={"Driver Login"} color={colors.mint} textColor={colors.black} onPress={driverLoginPressHandler}/>
-                </View>
-                <View style={styles.buttonBox2}>
-                    <CustomButton title={"Rider Login"} color={colors.mint} textColor={colors.black} onPress={riderLoginPressHandler}/>
-                    
-                </View>
-                <View>
-                  <Button title="New to PoolRides? Sign Up" color={'white'} onPress={signUpPressHandler}/>
-                </View>
-                <View style={styles.buttonBox}>
-                    
-                </View>
+                                          
+            <View style={styles.buttonBox}>
+                <CustomButton title={"Driver Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverLoginPressHandler}/>
             </View>
-            <View style={styles.sectionContainer}>
-                
+            
+            <View style={styles.buttonBox}>
+                <CustomButton title={"Rider Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderLoginPressHandler}/>  
+            </View>
+
+            <View style={styles.signUpContainer}>
+            < Text style={styles.text}>New to PoolRides?</Text>
+                <Pressable onPress={signUpPressHandler}>
+                    <Text style={styles.signUpButtonText}> Sign Up
+                    </Text>
+                </Pressable>
             </View>
         </View>
         
@@ -47,50 +46,42 @@ export default function Startup({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    screenContainer: {
+    container: {
         flex: 1,
-        backgroundColor: colors.black
+        backgroundColor: AppStyles.color.black,
+        alignItems : 'center',
     },
     logoContainer: {
         flex: 1,
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '15%'
-    },
-    sectionContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginTop: '15%',
         alignSelf: 'stretch',
-        flexGrow: 1,
-    },
-    buttonBox: {
-        flex: 1,
-        width: '60%',
-        justifyContent: 'center',
-        flexGrow: 1,
-        marginTop: '5%' 
-    },
-    buttonBox2: {
-        flex: 1,
-        width: '60%',
-        justifyContent: 'center',
-        flexGrow: 1,
-    },
-    text: {
-        color: "white",
     },
     logo: {
-      width: '60%',
-      height: '60%',
-      resizeMode: "contain",
-      position: "absolute",
+        width: '60%',
+        height: '60%',
+        resizeMode: "contain",
     },
-    textSignUp: {
+    buttonBox: {
+        width: AppStyles.textInputWidth.button,
+        justifyContent: 'center',
+        marginBottom: '5%',
+    },
+    text: {
+        fontSize: AppStyles.fontSize.normal,
         color: "white",
-        textDecorationLine: "underline", 
-        marginTop: "5%"
-    }
+        textAlignVertical: "top",
+    },
+    signUpContainer: {
+        flexDirection: "row",
+        alignItems: "stretch",
+        paddingBottom: '50%',
+    },
+    signUpButtonText: {
+        textAlignVertical: "top",
+        fontSize: AppStyles.fontSize.normal,
+        color: AppStyles.color.salmonred,
+    },
 });
-

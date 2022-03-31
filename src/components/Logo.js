@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import { colors } from "../utils/colors";
+import { AppStyles } from '../utils/styles';
 
 
 export default function Logo() {
@@ -22,8 +22,8 @@ export default function Logo() {
         marginTop: 100,
     },
     logo: {
-        width: 153,
-        height: 58,
+        width: "100%",
+        height: "100%",
         resizeMode: "contain",
         position: "absolute",
     },

@@ -7,14 +7,13 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { AppStyles } from './src/utils/styles';
 import { NavigationContainer } from '@react-navigation/native';
-import RiderSignup from './src/feature-or-screens/RiderSignUp';
-import Startup from './src/feature-or-screens/Startup';
+import RiderSignup from './src/screens/RiderSignUp';
+import Startup from './src/screens/Startup';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Signup from './src/feature-or-screens/Signup';
-import RiderSignUp from './src/feature-or-screens/RiderSignUp';
-import RiderLogin from './src/feature-or-screens/RiderLogin';
-import DriverLogin from './src/feature-or-screens/DriverLogin';
-import {colors} from './src/utils/colors';
+import Signup from './src/screens/Signup';
+import RiderSignUp from './src/screens/RiderSignUp';
+import RiderLogin from './src/screens/RiderLogin';
+import DriverLogin from './src/screens/DriverLogin';
 //****************************************************************************//
 //****************************************************************************//
 
@@ -77,11 +76,11 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: AppStyles.color.black,
     alignItems: "center",
     justifyContent: "center",
   },
   text: {
-    color: colors.platinum,
+    color: AppStyles.color.platinum,
   },
 });
