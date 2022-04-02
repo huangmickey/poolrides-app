@@ -4,9 +4,7 @@ import Button from 'react-native-button';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'       //https://github.com/APSL/react-native-keyboard-aware-scroll-view   
 import { FloatingLabelInput } from 'react-native-floating-label-input';                 //https://github.com/Cnilton/react-native-floating-label-input#version-135-or-higher---react-native-reanimated-v2
 
-import { AppStyles } from '../utils/styles';
-// import { colors } from '../utils/colors';
-// import { sizes } from '../utils/sizes';
+import { AppStyles } from '../../utils/styles';
 
 export default function RiderSignUp() {
     const [firstname, setFirstname] = useState('');
@@ -19,7 +17,8 @@ export default function RiderSignUp() {
 
     const keyboardAppearance = 'dark';
     const maxLength = 16;           //Note that the Max length for Phone and Date are fix in the element not global
-    const returnKeyType= 'next';    
+    const returnKeyType= 'next';
+    const labelColor = AppStyles.color.gray;    
 
 return (
   <View style={styles.container}>
@@ -34,7 +33,7 @@ return (
         <View style={styles.InputContainer}>
         <FloatingLabelInput                                    
             containerStyles={styles.textContainer}
-            customLabelStyles={{colorBlurred:'white', colorFocused:'white'}}
+            customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
             inputStyles={styles.inputTextStyle}
 
             value={firstname}
@@ -54,7 +53,7 @@ return (
         <View style={styles.InputContainer}>
         <FloatingLabelInput 
             containerStyles={styles.textContainer}
-            customLabelStyles={{colorBlurred:'white', colorFocused:'white'}}
+            customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
             inputStyles={styles.inputTextStyle}
 
             value={lastname}
@@ -75,7 +74,7 @@ return (
         <View style={styles.InputContainer}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:'white', colorFocused:'white'}}
+                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
                 inputStyles={styles.inputTextStyle}
 
                 value={date}
@@ -101,7 +100,7 @@ return (
         <View style={styles.InputContainer}>
         <FloatingLabelInput 
             containerStyles={styles.textContainer}
-            customLabelStyles={{colorBlurred:'white', colorFocused:'white'}}
+            customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
             inputStyles={styles.inputTextStyle}
             
             value={email}
@@ -122,7 +121,7 @@ return (
         <View style={styles.InputContainer}>
         <FloatingLabelInput 
             containerStyles={styles.textContainer}
-            customLabelStyles={{colorBlurred:'white', colorFocused:'white'}}
+            customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
             inputStyles={styles.inputTextStyle}
 
             value={phone}
@@ -147,7 +146,7 @@ return (
         <View style={styles.InputContainer}>
         <FloatingLabelInput 
             containerStyles={styles.textContainer}
-            customLabelStyles={{colorBlurred:'white', colorFocused:'white'}}
+            customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
             inputStyles={styles.inputTextStyle}
 
             value={password}
@@ -171,7 +170,7 @@ return (
         <View style={styles.InputContainer}>
         <FloatingLabelInput 
             containerStyles={styles.textContainer}
-            customLabelStyles={{colorBlurred:'white', colorFocused:'white'}}
+            customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
             inputStyles={styles.inputTextStyle}
 
             value={confirmpassword}
@@ -192,7 +191,7 @@ return (
         </View>
 
         <Button
-            containerStyle={[styles.buttonContainer, {marginTop: 50}]}
+            containerStyle={styles.buttonContainer}
             style={styles.buttonText}
             title={'Sign Up'}
             onPress={() => onRegister()}
@@ -232,7 +231,7 @@ const styles = StyleSheet.create({
         backgroundColor: AppStyles.color.salmonred,
         borderRadius: AppStyles.borderRadius.main,
         padding: '3%',
-        marginTop: '5%',
+        marginTop: '7%',
     },
     inputTextStyle: {
         color: AppStyles.color.white,
@@ -242,8 +241,8 @@ const styles = StyleSheet.create({
         fontSize: AppStyles.fontSize.title,
         fontWeight: 'bold',
         color: AppStyles.color.white,
-        marginTop: '10%',
-        marginBottom: '5%',
+        // marginTop: '10%',
+        marginBottom: '3%',
     },
     leftTitle: {
         alignSelf: 'stretch',
