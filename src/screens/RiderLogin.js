@@ -39,6 +39,9 @@ export default function RiderLogin(props) {
         <TouchableOpacity>
           <Text style={styles.forgotBtn}>Forgot Password?</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.registerBtn}>
+          <Text style={styles.signUpText}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -85,6 +88,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: AppStyles.fontSize.normal,
     color: AppStyles.color.salmonred,
+    marginLeft: 5,
   },
   touchables: {
     flexDirection: "row",
@@ -98,9 +102,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     color: AppStyles.color.platinum,
     alignSelf: "flex-start",
+    fontSize: 15,
   },
   signUpText: {
     fontWeight: "bold",
+    fontSize: 16,
     color: AppStyles.color.salmonred,
   },
   welcomeContainer: {
