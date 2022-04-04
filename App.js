@@ -7,13 +7,12 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { AppStyles } from './src/utils/styles';
 import { NavigationContainer } from '@react-navigation/native';
-import RiderSignup from './src/screens/RiderSignUp';
 import Startup from './src/screens/Startup';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Signup from './src/screens/Signup';
-import RiderSignUp from './src/screens/RiderSignUp';
-import RiderLogin from './src/screens/RiderLogin';
-import DriverLogin from './src/screens/DriverLogin';
+import RiderSignUp from './src/screens/signup/RiderSignUp';
+import RiderLogin from './src/screens/login/RiderLogin';
+import DriverLogin from './src/screens/login/DriverLogin';
 //****************************************************************************//
 //****************************************************************************//
 
@@ -66,10 +65,6 @@ return (
       </Stack.Navigator>
     </NavigationContainer>
   </>
-  // <View style={styles.container} onLayout={onLayoutRootView}>
-  //   <RiderSignup />
-  //   <StatusBar style="auto" />
-  // </View>
   );
 }
 

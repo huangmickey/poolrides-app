@@ -1,34 +1,41 @@
 import React from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import EmailField from "../components/EmailField";
-import PasswordField from "../components/PasswordField";
-import Logo from "../components/Logo";
-import { colors } from "../utils/colors";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import EmailField from "../../components/EmailField";
+import PasswordField from "../../components/PasswordField";
+import { AppStyles } from '../../utils/styles';
 
 export default function RiderLogin(props) {
+
   return (
     <View style={styles.container}>
+
       <View style={styles.logoContainer}>
-        <Logo/>
+        <Image
+          style={styles.logo} source={require('../../../assets/splash.png')}
+        />
       </View>
-      <View style ={styles.welcome}>
+
+      <View style ={styles.welcomeContainer}>
         <Text style={styles.signInText}>Sign In As Rider</Text>
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
   
-      <View style={styles.inputView} marginTop={350}>
+      <View style={styles.inputView}>
         <Text style={styles.textName}>Email</Text>
         <EmailField text="example@email.com" />
       </View>
 
-      <View style={styles.inputView} marginTop={450}>
+      <View style={styles.inputView}>
         <Text style={styles.textName}>Password</Text>
         <PasswordField />
       </View>
 
-      <TouchableOpacity style={styles.loginBtn}>
-        <Text style={styles.loginText}>Sign In</Text>
-      </TouchableOpacity>
+      <View style={styles.signInContainer}>
+        <TouchableOpacity style={styles.loginBtn}>
+          <Text style={styles.loginText}>Sign In</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 }
@@ -36,24 +43,19 @@ export default function RiderLogin(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "black",
-    alignItems: "center",
+    backgroundColor: AppStyles.color.black,
+    alignItems : 'center',
   },
   inputView: {
-    backgroundColor: colors.black,
+    backgroundColor: AppStyles.color.black,
     width: "75%",
-    position: "absolute",
-    height: 50,
-    margin: 20,
-  },
-  label: {
-    alignSelf: "flex-start",
-    marginLeft: 10,
+    marginTop: 20,
+
   },
   loginText: {
     fontWeight: "bold",
     fontSize: 16,
-    color: colors.white,
+    color: AppStyles.color.white,
   },
   loginBtn: {
     width: "80%",
@@ -62,41 +64,42 @@ const styles = StyleSheet.create({
     width: 300,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 290,
-    backgroundColor: colors.salmonred,
+    backgroundColor: AppStyles.color.salmonred,
   },
-  logo: {
-    width: 153,
-    height: 58,
-    resizeMode: "contain",
-    position: "absolute",
-  },
-  text: {
-    color: "#abb5be",
-    position: "relative",
-    top: 60,
-    fontSize: 16,
-    fontWeight: "600",
-  },
+  logoContainer: {
+    flex: 1,
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+},
+logo: {
+  width: '60%',
+  height: '60%',
+  resizeMode: "contain",
+},
   textName: {
     fontWeight: "bold",
-    fontSize: 16,
-    color: colors.salmonred,
+    fontSize: AppStyles.fontSize.normal,
+    color: AppStyles.color.salmonred,
   },
-  welcome: {
+  welcomeContainer: {
     marginLeft: -45,
 },
   welcomeText: {
-      marginTop: 10,
-      color: colors.lightGray,
-      lineHeight: 16,
+      color: AppStyles.color.gray,
+      lineHeight: 25,
       fontWeight: '400',
-      fontSize: 16,
+      fontSize: AppStyles.fontSize.normal,
+  },
+  signInContainer: {
+    alignItems: "stretch",
+    paddingTop: "10%",
+    paddingBottom: '30%',
   },
   signInText: {
-    marginTop: 110,
-    color: colors.lightGray,
+    color: AppStyles.color.gray,
     fontWeight: 'bold',
-    fontSize: 25,
+    fontSize: AppStyles.textFontSizes.header,
   }
 });

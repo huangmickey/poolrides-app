@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native"
-import { colors } from "../utils/colors";
+import { AppStyles } from '../../utils/styles';
 
 export default function DriverLogin({ navigation }) {
 
@@ -16,7 +16,7 @@ export default function DriverLogin({ navigation }) {
 const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
-        backgroundColor: colors.black
+        backgroundColor: AppStyles.color.black
     },
     text: {
         color: "white",
