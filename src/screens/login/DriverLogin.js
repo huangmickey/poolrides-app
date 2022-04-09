@@ -11,6 +11,11 @@ export default function DriverLogin({ navigation }) {
           source={require("../../../assets/splash.png")}
         />
       </View>
+
+      <View style={styles.welcomeContainer}>
+        <Text style={styles.signInText}>Sign In As Driver</Text>
+        <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
+      </View>
     </View>
   );
 }
@@ -32,5 +37,19 @@ const styles = StyleSheet.create({
     width: "60%",
     height: "60%",
     resizeMode: "contain",
+  },
+  signInText: {
+    color: AppStyles.color.gray,
+    fontWeight: "bold",
+    fontSize: AppStyles.textFontSizes.header,
+  },
+  welcomeContainer: {
+    marginLeft: -45,
+  },
+  welcomeText: {
+    color: AppStyles.color.gray,
+    lineHeight: 25,
+    fontWeight: "400",
+    fontSize: AppStyles.fontSize.normal,
   },
 });
