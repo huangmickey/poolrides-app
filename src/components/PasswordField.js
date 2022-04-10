@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   hideIcon: {
     position: "absolute",
-    right: 15,
+    right: 5,
     top: 12,
   },
 });

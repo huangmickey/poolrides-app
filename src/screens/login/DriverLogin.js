@@ -1,6 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
+import LoginForm from "../../components/LoginForm";
 import { AppStyles } from "../../utils/styles";
+
 
 export default function DriverLogin({ navigation }) {
   return (
@@ -16,6 +18,10 @@ export default function DriverLogin({ navigation }) {
         <Text style={styles.signInText}>Sign In As Driver</Text>
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
+        <View style ={styles.formContainer}>
+          <LoginForm text="example@email.com"/>
+        </View>
+        
     </View>
   );
 }
