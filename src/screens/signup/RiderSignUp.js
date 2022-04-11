@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
 import Button from 'react-native-button';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'       //https://github.com/APSL/react-native-keyboard-aware-scroll-view   
 import { FloatingLabelInput } from 'react-native-floating-label-input';                 //https://github.com/Cnilton/react-native-floating-label-input#version-135-or-higher---react-native-reanimated-v2
 import { Agreement } from '../../utils/tos'; 
-import { Checkbox, Paragraph, Dialog, Portal, Provider } from 'react-native-paper';
+import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 import { AppStyles } from '../../utils/styles';
+import { createUser } from '../../services/auth';
+import { AuthContext } from '../../services/auth-context';
 
+import { storeUser } from '../../utils/http';
 
-export default function RiderSignUp() {
+export default function RiderSignUp( {navigation} ) {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [date, setDate] = useState('');    
@@ -28,244 +32,286 @@ export default function RiderSignUp() {
     const showDialog = () => setVisible(true);
     const hideDialog = () => setVisible(false);
 
-function signUp() {
-    if (checked == false) {
-        console.log("TOS NOT AGREED");
-    } else {
-        console.log("TOS AGREED");
-    }
-
-    if (firstname == "") {
-        console.log("FIRST NAME EMPTY");
-    } else {
-        console.log("FIRST NAME FILLED");
-    }
-
-}
-
-return (
-    <Provider>
-    <View style={styles.container}>
-
-    <Text style={[styles.title, styles.leftTitle]}>Create new account</Text>
+    const [isAuthenticating, setIsAuthenticating] = useState(false); // Check if firebase is auth
     
-    <KeyboardAwareScrollView 
-        contentContainerStyle={styles.scrollviewContainer}
-        enableOnAndroid={true}
-        extraScrollHeight={40}
-    >
-            <View style={styles.InputContainer}>
-            <FloatingLabelInput                                    
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
+    const [snackBarVisisble, setSnackBarVisible] = useState(false);
+    const [snackBarText, setSnackBarText] = useState(''); 
+    const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
+    const onDismissSnackBar = () => setSnackBarVisible(false);
+    
+    const authCtx = useContext(AuthContext);
 
-                value={firstname}
-                label={'First Name:'}
+    async function signUpHandler() {
+        setIsAuthenticating(true);
+        try {
+            const token = await createUser(email, password);
+            authCtx.authenticate(token);
+        } catch (error) {
+            const errorMessage = error.response.data.error.message;
+            console.log(errorMessage);
+            switch(errorMessage) {
+                case 'INVALID_EMAIL':
+                    setSnackBarText('Invalid Email Entered');
+                    onToggleSnackBar();
+                    break;
+                case 'EMAIL_EXISTS':
+                    setSnackBarText('Email already exists!');
+                    onToggleSnackBar();
+                    break;
+                case 'MISSING_PASSWORD':
+                    setSnackBarText('Missing password!');
+                    onToggleSnackBar();
+                    break;
+                default:
+            }
+            setIsAuthenticating(false);
+        }
 
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
+        const UserData = {
+            email: email,
+            firstName: firstname,
+            lastName: lastname,
+            phone: phone,
+            date: date,
+        };
+        const userType = 'riders';
+        console.log(UserData);
+        storeUser(userType, UserData);
+    }
 
-                onChangeText={setFirstname}
+    if (isAuthenticating) {
+        return <LoadingOverlay message="Creating account..."/>
+    }
 
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.lastnameInput.focus()}
-                />
-            </View>
+    return (
+        <Provider>
+        <View style={styles.container}>
 
-            <View style={styles.InputContainer}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
+        <Text style={[styles.title, styles.leftTitle]}>Create new account</Text>
+        
+        <KeyboardAwareScrollView 
+            contentContainerStyle={styles.scrollviewContainer}
+            enableOnAndroid={true}
+            extraScrollHeight={40}
+        >
+                <View style={styles.InputContainer}>
+                <FloatingLabelInput                                    
+                    containerStyles={styles.textContainer}
+                    customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
+                    inputStyles={styles.inputTextStyle}
 
-                value={lastname}
-                label={'Last Name:'}
+                    value={firstname}
+                    label={'First Name:'}
 
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxLength}
+                    returnKeyType={returnKeyType}
 
-                onChangeText={setLastname}
+                    onChangeText={setFirstname}
 
-                ref={ref => { this.lastnameInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.dobInput.focus()}
-                />
-            </View>
+                    blurOnSubmit={false}
+                    onSubmitEditing={() => this.lastnameInput.focus()}
+                    />
+                </View>
 
-            <View style={styles.InputContainer}>
+                <View style={styles.InputContainer}>
                 <FloatingLabelInput 
                     containerStyles={styles.textContainer}
                     customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
                     inputStyles={styles.inputTextStyle}
 
-                    value={date}
-                    label={'Date Of Birth:'}
+                    value={lastname}
+                    label={'Last Name:'}
 
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxLength}
+                    returnKeyType={returnKeyType}
+
+                    onChangeText={setLastname}
+
+                    ref={ref => { this.lastnameInput = ref; }}
+                    blurOnSubmit={false}
+                    onSubmitEditing={() => this.dobInput.focus()}
+                    />
+                </View>
+
+                <View style={styles.InputContainer}>
+                    <FloatingLabelInput 
+                        containerStyles={styles.textContainer}
+                        customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
+                        inputStyles={styles.inputTextStyle}
+
+                        value={date}
+                        label={'Date Of Birth:'}
+
+                        keyboardType='numeric'
+                        keyboardAppearance={keyboardAppearance}
+                        maxLength={10}
+
+                        maskType={'date'}
+                        mask={'99/99/9999'}
+                        hint={'01/01/2001'}
+                        hintTextColor={'grey'}               
+
+                        onChangeText={setDate}
+
+                        ref={ref => { this.dobInput = ref; }}
+                        blurOnSubmit={false}
+                        onSubmitEditing={() => this.emailInput.focus()}
+                    />
+                </View>
+
+                <View style={styles.InputContainer}>
+                <FloatingLabelInput 
+                    containerStyles={styles.textContainer}
+                    customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
+                    inputStyles={styles.inputTextStyle}
+                    
+                    value={email}
+                    label={'E-mail Address:'}
+
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={30}
+                    returnKeyType={returnKeyType}
+
+                    onChangeText={setEmail}
+
+                    ref={ref => { this.emailInput = ref; }}
+                    blurOnSubmit={false}
+                    onSubmitEditing={() => this.phoneInput.focus()}
+                    />
+                </View>
+
+                <View style={styles.InputContainer}>
+                <FloatingLabelInput 
+                    containerStyles={styles.textContainer}
+                    customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
+                    inputStyles={styles.inputTextStyle}
+
+                    value={phone}
+                    label={'Phone Number:'}
+                    
                     keyboardType='numeric'
                     keyboardAppearance={keyboardAppearance}
-                    maxLength={10}
+                    maxLength={14}
 
-                    maskType={'date'}
-                    mask={'99/99/9999'}
-                    hint={'01/01/2001'}
-                    hintTextColor={'grey'}               
+                    maskType={'phone'}
+                    mask={'(999) 999-9999'}
+                    hint={'(555) 555-5555'}
 
-                    onChangeText={setDate}
+                    onChangeText={setPhone}
 
-                    ref={ref => { this.dobInput = ref; }}
+                    ref={ref => { this.phoneInput = ref; }}
                     blurOnSubmit={false}
-                    onSubmitEditing={() => this.emailInput.focus()}
+                    onSubmitEditing={() => this.passwordInput.focus()}
                 />
-            </View>
+                </View>
 
-            <View style={styles.InputContainer}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
-                
-                value={email}
-                label={'E-mail Address:'}
+                <View style={styles.InputContainer}>
+                <FloatingLabelInput 
+                    containerStyles={styles.textContainer}
+                    customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
+                    inputStyles={styles.inputTextStyle}
 
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
+                    value={password}
+                    label={'Password:'}
 
-                onChangeText={setEmail}
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxLength}
+                    returnKeyType={returnKeyType}
 
-                ref={ref => { this.emailInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.phoneInput.focus()}
-                />
-            </View>
+                    isPassword={true}
+                    customShowPasswordComponent={<Text></Text>}
+                    customHidePasswordComponent={<Text></Text>}
+                    onChangeText={setPassword}
 
-            <View style={styles.InputContainer}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
-
-                value={phone}
-                label={'Phone Number:'}
-                
-                keyboardType='numeric'
-                keyboardAppearance={keyboardAppearance}
-                maxLength={14}
-
-                maskType={'phone'}
-                mask={'(999) 999-9999'}
-                hint={'(555) 555-5555'}
-
-                onChangeText={setPhone}
-
-                ref={ref => { this.phoneInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.passwordInput.focus()}
-            />
-            </View>
-
-            <View style={styles.InputContainer}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
-
-                value={password}
-                label={'Password:'}
-
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
-
-                isPassword={true}
-                customShowPasswordComponent={<Text></Text>}
-                customHidePasswordComponent={<Text></Text>}
-                onChangeText={setPassword}
-
-                ref={ref => { this.passwordInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.passwordConfInput.focus()}
-                />
-            </View>
-
-            <View style={styles.InputContainer}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
-
-                value={confirmpassword}
-                label={'Confirm Password:'}
-                
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
-
-                isPassword={true}
-                customShowPasswordComponent={<Text></Text>}
-                customHidePasswordComponent={<Text></Text>}
-                onChangeText={setConfirmPassword}
-
-                ref={ref => { this.passwordConfInput = ref; }}
-                blurOnSubmit={false}
-                />
-            </View>
-
-            <View style={styles.checkBoxContainer}>
-                <Checkbox.Item
-                    style={styles.checkBox}
-                    status={checked ? 'checked' : 'unchecked'}
-                    uncheckedColor={AppStyles.color.white}
-                    color={AppStyles.color.salmonred}
-
-                    mode={'android'}
-                    
-                    onPress={() => {
-                        setChecked(!checked);
-                    }}
+                    ref={ref => { this.passwordInput = ref; }}
+                    blurOnSubmit={false}
+                    onSubmitEditing={() => this.passwordConfInput.focus()}
                     />
-                    <Text style={styles.checkBoxText}>
-                        I agree to the Terms of Service and the Privacy Policy
-                        <Pressable onPress={showDialog}>
-                        <Text style={styles.tosText}> ?
+                </View>
+
+                <View style={styles.InputContainer}>
+                <FloatingLabelInput 
+                    containerStyles={styles.textContainer}
+                    customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
+                    inputStyles={styles.inputTextStyle}
+
+                    value={confirmpassword}
+                    label={'Confirm Password:'}
+                    
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxLength}
+                    returnKeyType={returnKeyType}
+
+                    isPassword={true}
+                    customShowPasswordComponent={<Text></Text>}
+                    customHidePasswordComponent={<Text></Text>}
+                    onChangeText={setConfirmPassword}
+
+                    ref={ref => { this.passwordConfInput = ref; }}
+                    blurOnSubmit={false}
+                    />
+                </View>
+
+                <View style={styles.checkBoxContainer}>
+                    <Checkbox.Item
+                        style={styles.checkBox}
+                        status={checked ? 'checked' : 'unchecked'}
+                        uncheckedColor={AppStyles.color.white}
+                        color={AppStyles.color.salmonred}
+
+                        mode={'android'}
+                        
+                        onPress={() => {
+                            setChecked(!checked);
+                        }}
+                        />
+                        <Text style={styles.checkBoxText}>
+                            I agree to the Terms of Service and the Privacy Policy
+                            <Pressable onPress={showDialog}>
+                            <Text style={styles.tosText}> ?
+                            </Text>
+                            </Pressable>
+
+                            <Portal>
+                                <Dialog visible={visible} onDismiss={hideDialog}>
+                                    <Dialog.ScrollArea backgroundColor={AppStyles.color.gray} extraScrollHeight={40}>
+                                        <ScrollView>
+                                            <Paragraph>{Agreement.tos}</Paragraph>
+                                        </ScrollView>
+                                    </Dialog.ScrollArea>
+                                </Dialog>
+                            </Portal>
                         </Text>
-                        </Pressable>
+                </View>
 
-                        <Portal>
-                            <Dialog visible={visible} onDismiss={hideDialog}>
-                                <Dialog.ScrollArea backgroundColor={AppStyles.color.gray} extraScrollHeight={40}>
-                                    <ScrollView>
-                                        <Paragraph>{Agreement.tos}</Paragraph>
-                                    </ScrollView>
-                                </Dialog.ScrollArea>
-                                {/* <Dialog.Title>PoolRides TOS</Dialog.Title>
-                                    <Dialog.Content>
-                                        <Paragraph>{Agreement.tos}</Paragraph>
-                                    </Dialog.Content>
-                                    <Dialog.Actions>
-                                    <Button onPress={hideDialog}>Ok</Button>
-                                </Dialog.Actions> */}
-                            </Dialog>
-                        </Portal>
-
-
-                    </Text>
-            </View>
-
-            <Button
-                containerStyle={styles.buttonContainer}
-                style={styles.buttonText}
-                title={'Sign Up'}
-                onPress={signUp}
-                > Sign Up
-            </Button>
-
-        </KeyboardAwareScrollView>
-    </View>
-    </Provider>
+                <Button
+                    containerStyle={styles.buttonContainer}
+                    style={styles.buttonText}
+                    title={'Sign Up'}
+                    onPress={signUpHandler}
+                    > Sign Up
+                </Button>
+            </KeyboardAwareScrollView>
+        </View>
+        <View style={styles.snackBarContainer}>
+            <Snackbar
+                theme={{ colors: {onSurface: AppStyles.color.gray, surface: AppStyles.color.white, accent: AppStyles.color.salmonred},}}
+                visible={snackBarVisisble}
+                onDismiss={onDismissSnackBar}
+                action={{
+                label: 'Dismiss',
+                onPress: () => {
+                    onDismissSnackBar();
+                },
+                }}>
+                {snackBarText}
+            </Snackbar>
+        </View>
+        </Provider>
+        
+        
   );
 }
 
@@ -343,10 +389,12 @@ const styles = StyleSheet.create({
         color: AppStyles.color.salmonred,
         textDecorationLine: 'underline',
     },
+    snackBarContainer: {
+        justifyContent: 'space-between',
+        alignContent: 'center',
+        alignItems: 'center',
+        backgroundColor: AppStyles.color.gray,
+    },
 });
-
-
-
-
 
 // https://www.npmjs.com/package/react-native-next-input
