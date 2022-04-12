@@ -78,6 +78,15 @@ export default function RiderLogin(props) {
         </TouchableOpacity>
       </View>
 
+      <View style={styles.touchables}>
+        <TouchableOpacity>
+          <Text style={styles.forgotBtn}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.registerBtn}>
+          <Text style={styles.signUpText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.snackBarContainer}>
         <Snackbar
           theme={{
@@ -130,10 +139,11 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     flex: 1,
-    flexGrow: 1,
+    flexGrow: 3,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "stretch",
+    marginBottom: "15%",
   },
   logo: {
     width: "60%",

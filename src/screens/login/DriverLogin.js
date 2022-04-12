@@ -1,10 +1,13 @@
 import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import LoginForm from "../../components/LoginForm";
 import { AppStyles } from "../../utils/styles";
 
-
 export default function DriverLogin({ navigation }) {
+  function signUpPressHandler() {
+    navigation.navigate("Sign up");
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -18,10 +21,20 @@ export default function DriverLogin({ navigation }) {
         <Text style={styles.signInText}>Sign In As Driver</Text>
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
-        <View style ={styles.formContainer}>
-          <LoginForm text="example@email.com"/>
-        </View>
-        
+      <View style={styles.formContainer}>
+        <LoginForm text="example@email.com" />
+      </View>
+
+      <View style={styles.touchables}>
+        <TouchableOpacity>
+          <Text style={styles.forgotBtn}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.registerBtn}>
+          <Text style={styles.signUpText} onPress={signUpPressHandler}>
+            Sign Up
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -32,17 +45,40 @@ const styles = StyleSheet.create({
     backgroundColor: AppStyles.color.black,
     alignItems: "center",
   },
+  formContainer: {
+    paddingBottom: "3%",
+  },
   logoContainer: {
     flex: 1,
-    flexGrow: 1,
+    flexGrow: 3,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "stretch",
+    marginBottom: "15%",
   },
   logo: {
     width: "60%",
     height: "60%",
     resizeMode: "contain",
+  },
+  touchables: {
+    flexDirection: "row",
+    paddingBottom: "30%",
+  },
+  registerBtn: {
+    height: "50%",
+    marginLeft: "30%",
+  },
+  forgotBtn: {
+    marginBottom: 30,
+    color: AppStyles.color.platinum,
+    alignSelf: "flex-start",
+    fontSize: 15,
+  },
+  signUpText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: AppStyles.color.salmonred,
   },
   signInText: {
     color: AppStyles.color.gray,
