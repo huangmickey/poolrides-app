@@ -13,7 +13,7 @@ import { AuthContext } from '../../services/auth-context';
 
 import { storeUser } from '../../utils/http';
 
-export default function RiderSignUp( {navigation} ) {
+export default function DriverSignUp( {navigation} ) {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [date, setDate] = useState('');    
@@ -22,16 +22,15 @@ export default function RiderSignUp( {navigation} ) {
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
     const [checked, setChecked] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const keyboardAppearance = 'dark';
     const maxLength = 16;           //Note that the Max length for Phone and Date are fix in the element not global
     const returnKeyType= 'next';
     const labelColor = AppStyles.color.gray;   
 
-    const [dialogVisible, setdialogVisible] = useState(false);
-    const showDialog = () => setdialogVisible(true);
-    const hideDialog = () => setdialogVisible(false);
+    const [visible, setVisible] = useState(false);
+    const showDialog = () => setVisible(true);
+    const hideDialog = () => setVisible(false);
 
     const [isAuthenticating, setIsAuthenticating] = useState(false); // Check if firebase is auth
     
@@ -42,9 +41,16 @@ export default function RiderSignUp( {navigation} ) {
     
     const authCtx = useContext(AuthContext);
 
+
+
+
+
+
+
+
+
     async function signUpHandler() {
 
-        setIsSubmitted(true);
         if (firstname == "" || lastname == "" || date == "" || phone == "" || email == "" || password == "" || confirmpassword == "" || checked == false) {
 
         } else {
@@ -90,6 +96,20 @@ export default function RiderSignUp( {navigation} ) {
     if (isAuthenticating) {
         return <LoadingOverlay message="Creating account..."/>
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function isEmpty(text) {
     if(isSubmitted && text == '') {
@@ -292,7 +312,7 @@ function isEmpty(text) {
                         </Pressable>
 
                         <Portal>
-                            <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+                            <Dialog visible={visible} onDismiss={hideDialog}>
                                 <Dialog.ScrollArea backgroundColor={AppStyles.color.gray} extraScrollHeight={40}>
                                     <ScrollView>
                                         <Paragraph>{Agreement.tos}</Paragraph>
@@ -410,5 +430,3 @@ const styles = StyleSheet.create({
         backgroundColor: AppStyles.color.gray,
     },
 });
-
-// https://www.npmjs.com/package/react-native-next-input
