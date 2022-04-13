@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import EmailField from "../../components/EmailField";
-import PasswordField from "../../components/PasswordField";
+import LoginForm from "../../components/LoginForm";
 import { AppStyles } from "../../utils/styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { Snackbar } from "react-native-paper";
@@ -9,7 +8,7 @@ import { Snackbar } from "react-native-paper";
 import { login } from "../../services/auth";
 import { AuthContext } from "../../services/auth-context";
 
-export default function RiderLogin(props) {
+export default function RiderLogin(props, { navigation }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const email = "user@gmail.com";
   const password = "password";
@@ -21,6 +20,9 @@ export default function RiderLogin(props) {
 
   const authCtx = useContext(AuthContext);
 
+  function signUpPressHandler() {
+    props.navigation.navigate("Sign up");
+  }
   async function loginHandler() {
     setIsAuthenticating(true);
     try {
@@ -61,21 +63,8 @@ export default function RiderLogin(props) {
         <Text style={styles.signInText}>Sign In As Rider</Text>
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
-
-      <View style={styles.inputView}>
-        <Text style={styles.textName}>Email</Text>
-        <EmailField text="example@email.com" />
-      </View>
-
-      <View style={styles.inputView}>
-        <Text style={styles.textName}>Password</Text>
-        <PasswordField />
-      </View>
-
-      <View style={styles.signInContainer}>
-        <TouchableOpacity onPress={loginHandler} style={styles.loginBtn}>
-          <Text style={styles.loginText}>Sign In</Text>
-        </TouchableOpacity>
+      <View style={styles.formContainer}>
+        <LoginForm text="example@email.com" />
       </View>
 
       <View style={styles.touchables}>
@@ -83,7 +72,9 @@ export default function RiderLogin(props) {
           <Text style={styles.forgotBtn}>Forgot Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.registerBtn}>
-          <Text style={styles.signUpText}>Sign Up</Text>
+          <Text style={styles.signUpText} onPress={signUpPressHandler}>
+            Sign Up
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -118,24 +109,8 @@ const styles = StyleSheet.create({
     backgroundColor: AppStyles.color.black,
     alignItems: "center",
   },
-  inputView: {
-    backgroundColor: AppStyles.color.black,
-    width: "75%",
-    marginTop: 20,
-  },
-  loginText: {
-    fontWeight: "bold",
-    fontSize: 16,
-    color: AppStyles.color.white,
-  },
-  loginBtn: {
-    width: "80%",
-    borderRadius: 5,
-    height: 50,
-    width: 300,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: AppStyles.color.salmonred,
+  formContainer: {
+    paddingBottom: "3%",
   },
   logoContainer: {
     flex: 1,
@@ -149,12 +124,6 @@ const styles = StyleSheet.create({
     width: "60%",
     height: "60%",
     resizeMode: "contain",
-  },
-  textName: {
-    fontWeight: "bold",
-    fontSize: AppStyles.fontSize.normal,
-    color: AppStyles.color.salmonred,
-    marginLeft: 5,
   },
   touchables: {
     flexDirection: "row",
@@ -175,20 +144,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: AppStyles.color.salmonred,
   },
-  welcomeContainer: {
-    marginLeft: -45,
-  },
-  welcomeText: {
-    color: AppStyles.color.gray,
-    lineHeight: 25,
-    fontWeight: "400",
-    fontSize: AppStyles.fontSize.normal,
-  },
-  signInContainer: {
-    alignItems: "stretch",
-    paddingTop: "10%",
-    paddingBottom: "5%",
-  },
   signInText: {
     color: AppStyles.color.gray,
     fontWeight: "bold",
@@ -200,5 +155,14 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     backgroundColor: AppStyles.color.gray,
+  },
+  welcomeContainer: {
+    marginLeft: -45,
+  },
+  welcomeText: {
+    color: AppStyles.color.gray,
+    lineHeight: 25,
+    fontWeight: "400",
+    fontSize: AppStyles.fontSize.normal,
   },
 });
