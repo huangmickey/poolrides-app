@@ -45,7 +45,7 @@ export default function RiderSignUp( {navigation} ) {
     async function signUpHandler() {
 
         setIsSubmitted(true);
-        if (firstname == "" || lastname == "" || date == "" || phone == "" || email == "" || password == "" || confirmpassword == "" || checked == false) {
+        if (firstname == "" || lastname == "" || date == "" || validator.isDate(date, {format: 'MM/DD/YYYY'}) || phone == "" || email == "" || password == "" || confirmpassword == "" || checked == false) {
 
         } else {
 
@@ -93,6 +93,15 @@ export default function RiderSignUp( {navigation} ) {
 
 function isEmpty(text) {
     if(isSubmitted && text == '') {
+        return AppStyles.color.salmonred;
+    } else {
+        return AppStyles.color.white;
+    }
+}
+
+function isValidDate(text) {
+    console.log(text);
+    if(isSubmitted && text =="" || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})) {
         return AppStyles.color.salmonred;
     } else {
         return AppStyles.color.white;
@@ -151,7 +160,7 @@ function isEmpty(text) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(date)}]}>
+            <View style={[styles.InputContainer, {borderColor: isValidDate(date)}]}>
                 <FloatingLabelInput 
                     containerStyles={styles.textContainer}
                     customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}

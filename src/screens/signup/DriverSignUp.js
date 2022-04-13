@@ -6,6 +6,7 @@ import { FloatingLabelInput } from 'react-native-floating-label-input';         
 import { Agreement } from '../../utils/tos'; 
 import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
 import LoadingOverlay from '../../components/LoadingOverlay';
+import validator from 'validator';
 
 import { AppStyles } from '../../utils/styles';
 import { createUser } from '../../services/auth';
@@ -22,15 +23,16 @@ export default function DriverSignUp( {navigation} ) {
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
     const [checked, setChecked] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const keyboardAppearance = 'dark';
     const maxLength = 16;           //Note that the Max length for Phone and Date are fix in the element not global
     const returnKeyType= 'next';
     const labelColor = AppStyles.color.gray;   
 
-    const [visible, setVisible] = useState(false);
-    const showDialog = () => setVisible(true);
-    const hideDialog = () => setVisible(false);
+    const [dialogVisible, setdialogVisible] = useState(false);
+    const showDialog = () => setdialogVisible(true);
+    const hideDialog = () => setdialogVisible(false);
 
     const [isAuthenticating, setIsAuthenticating] = useState(false); // Check if firebase is auth
     
@@ -41,19 +43,15 @@ export default function DriverSignUp( {navigation} ) {
     
     const authCtx = useContext(AuthContext);
 
-
-
-
-
-
-
-
-
     async function signUpHandler() {
 
-        if (firstname == "" || lastname == "" || date == "" || phone == "" || email == "" || password == "" || confirmpassword == "" || checked == false) {
-
-        } else {
+        setIsSubmitted(true);
+        if (firstname != "" && lastname != "" && validator.isDate(date, {format: 'MM/DD/YYYY'}) 
+            && phone.length == 14 && validator.isEmail(email) 
+            && confirmpassword == password && checked == true
+            && validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, returnScore: false, 
+                                                   pointsPerUnique: 1, pointsPerRepeat: 0.5, pointsForContainingLower: 10, pointsForContainingUpper: 10, 
+                                                   pointsForContainingNumber: 10, pointsForContainingSymbol: 10 })) {
 
             setIsAuthenticating(true);
             try {
@@ -87,9 +85,12 @@ export default function DriverSignUp( {navigation} ) {
                 phone: phone,
                 date: date,
             };
-            const userType = 'riders';
+            const userType = 'driver';
             console.log(UserData);
             storeUser(userType, UserData);
+        
+        } else {
+            console.log("error: something is missing or incorrect");
         }
     }
 
@@ -97,27 +98,48 @@ export default function DriverSignUp( {navigation} ) {
         return <LoadingOverlay message="Creating account..."/>
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function isEmpty(text) {
-    if(isSubmitted && text == '') {
-        return AppStyles.color.salmonred;
-    } else {
-        return AppStyles.color.white;
+    function isEmpty(text) {
+        if(isSubmitted && text == '' ) {
+            return AppStyles.color.salmonred;
+        } else {
+            return AppStyles.color.white;
+        }
     }
-}
+
+    function isValidDate(text) {
+        if(isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})) {
+            return AppStyles.color.salmonred;
+        } else {
+            return AppStyles.color.white;
+        }
+    }
+
+    function isValidEmail(text) {
+        if(isSubmitted && !validator.isEmail(text)) {
+            return AppStyles.color.salmonred;
+        } else {
+            return AppStyles.color.white;
+        }
+    }
+        
+    function isValidPhone(text) {
+        if(isSubmitted && text.length < 14) {
+            return AppStyles.color.salmonred;
+        } else {
+            return AppStyles.color.white;
+        }
+    }
+
+    function isValidPassword(text) {
+        if(isSubmitted && !validator.isStrongPassword(text, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1,
+                                                             minSymbols: 1, returnScore: false, pointsPerUnique: 1, pointsPerRepeat: 0.5,
+                                                             pointsForContainingLower: 10, pointsForContainingUpper: 10, pointsForContainingNumber: 10, 
+                                                             pointsForContainingSymbol: 10 })) {
+            return AppStyles.color.salmonred;
+        } else {
+            return AppStyles.color.white;
+        }
+    }
 
     return (
         <Provider>
@@ -171,7 +193,7 @@ function isEmpty(text) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(date)}]}>
+            <View style={[styles.InputContainer, {borderColor: isValidDate(date)}]}>
                 <FloatingLabelInput 
                     containerStyles={styles.textContainer}
                     customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -197,7 +219,7 @@ function isEmpty(text) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(email)}]}>
+            <View style={[styles.InputContainer, {borderColor: isValidEmail(email)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -207,7 +229,7 @@ function isEmpty(text) {
                 label={'E-mail Address:'}
 
                 keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
+                maxLength={30}
                 returnKeyType={returnKeyType}
 
                 onChangeText={setEmail}
@@ -218,7 +240,7 @@ function isEmpty(text) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(phone)}]}>
+            <View style={[styles.InputContainer, {borderColor: isValidPhone(phone)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -243,7 +265,7 @@ function isEmpty(text) {
             />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(password)}]}>
+            <View style={[styles.InputContainer, {borderColor: isValidPassword(password)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -268,7 +290,7 @@ function isEmpty(text) {
             </View>            
 
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(confirmpassword)}]}>
+            <View style={[styles.InputContainer, {borderColor: isValidPassword(confirmpassword)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
@@ -312,7 +334,7 @@ function isEmpty(text) {
                         </Pressable>
 
                         <Portal>
-                            <Dialog visible={visible} onDismiss={hideDialog}>
+                            <Dialog visible={dialogVisible} onDismiss={hideDialog}>
                                 <Dialog.ScrollArea backgroundColor={AppStyles.color.gray} extraScrollHeight={40}>
                                     <ScrollView>
                                         <Paragraph>{Agreement.tos}</Paragraph>
@@ -430,3 +452,5 @@ const styles = StyleSheet.create({
         backgroundColor: AppStyles.color.gray,
     },
 });
+
+// https://www.npmjs.com/package/react-native-next-input
