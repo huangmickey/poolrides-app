@@ -5,17 +5,53 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Keyboard,
 } from "react-native";
 import { AppStyles } from "../utils/styles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 function LoginForm({ text }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [inputs, setInputs] = useState({
+    email: "",
+    password: "",
+  });
   const [hidePassword, setHidePassword] = useState(true);
+  const [errors, setErrors] = useState({});
   const keyboardAppearance = "dark";
   const maxLength = 16; //Note that the Max length for Phone and Date are fix in the element not global
   const returnKeyType = "next";
+
+  const validate = () => {
+    Keyboard.dismiss();
+    let valid = true;
+    if (!inputs.email) {
+      handleError("*Please input email", "email");
+      valid = false;
+    } else if (!inputs.email.match(/\S+@\S+\.\S+/)) {
+      handleError("*Please input valid email", "email");
+      valid = false;
+    }
+
+    if (!inputs.password) {
+      handleError("*Please input password", "password");
+      valid = false;
+    } else if (inputs.password.length < 6) {
+      handleError("*Please input valid password", "password");
+      valid = false;
+    }
+
+    // if(valid){
+    //   call function to authenticate here
+    // }
+  };
+
+  const handleOnChange = (text, input) => {
+    setInputs((prevState) => ({ ...prevState, [input]: text }));
+  };
+
+  const handleError = (errorMessage, input) => {
+    setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
+  };
 
   return (
     <View style={styles.inputField}>
@@ -23,7 +59,7 @@ function LoginForm({ text }) {
         <Text style={styles.textName} marginTop={10}>
           Email
         </Text>
-        <View style={styles.inputView}>
+        <View style={styles.inputView} marginBottom={10}>
           <TextInput
             style={styles.textInput}
             placeholder={text}
@@ -31,8 +67,14 @@ function LoginForm({ text }) {
             keyboardAppearance={keyboardAppearance}
             maxLength={maxLength}
             returnKeyType={returnKeyType}
-            onChangeText={(email) => setEmail(email)}
+            onChangeText={(text) => handleOnChange(text, "email")}
+            onFocus={() => {
+              handleError(null, "email");
+            }}
           />
+          <View>
+            <Text style={styles.errorMsg}>{errors.email}</Text>
+          </View>
         </View>
       </View>
       <View>
@@ -57,14 +99,26 @@ function LoginForm({ text }) {
             keyboardAppearance={keyboardAppearance}
             maxLength={maxLength}
             returnKeyType={returnKeyType}
-            onChangeText={(password) => setPassword(password)}
+            onChangeText={(text) => handleOnChange(text, "password")}
             textAlign={"center"}
+            onFocus={() => {
+              handleError(null, "password");
+            }}
           />
+          <View>
+            <Text style={styles.errorMsg}>{errors.password}</Text>
+          </View>
         </View>
       </View>
 
       <View style={styles.signInContainer}>
-        <TouchableOpacity style={styles.loginBtn}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={styles.loginBtn}
+          onPress={() => {
+            validate();
+          }}
+        >
           <Text style={styles.loginText}>Sign In</Text>
         </TouchableOpacity>
       </View>
@@ -133,6 +187,11 @@ const styles = StyleSheet.create({
     backgroundColor: AppStyles.color.black,
     width: "75%",
     marginTop: 20,
+  },
+  errorMsg: {
+    color: "red",
+    position: "absolute",
+    top: 4,
   },
 });
 export default LoginForm;
