@@ -21,11 +21,6 @@ export default function CustomButton({ title, color, textColor, onPress }) {
             >
                 {title}
             </AwesomeButton>
-        // <Button 
-        // title={title} 
-        // color={color} 
-        // onPress={onPress} 
-        // />
     );
 }
 
