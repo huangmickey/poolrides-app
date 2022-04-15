@@ -24,9 +24,10 @@ export default function DriverSignUp( {navigation} ) {
     const [confirmpassword, setConfirmPassword] = useState('');
     const [checked, setChecked] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [errorMsg,setErrorMsg] = useState(['']);
 
     const keyboardAppearance = 'dark';
-    const maxLength = 16;           //Note that the Max length for Phone and Date are fix in the element not global
+    const maxLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
     const returnKeyType= 'next';
     const labelColor = AppStyles.color.gray;   
 
@@ -98,47 +99,64 @@ export default function DriverSignUp( {navigation} ) {
         return <LoadingOverlay message="Creating account..."/>
     }
 
-    function isEmpty(text) {
-        if(isSubmitted && text == '' ) {
-            return AppStyles.color.salmonred;
-        } else {
-            return AppStyles.color.white;
-        }
-    }
 
-    function isValidDate(text) {
-        if(isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})) {
-            return AppStyles.color.salmonred;
-        } else {
-            return AppStyles.color.white;
+    function validationHandler(text) {
+        switch(text) {
+            case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text) || confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
         }
     }
-
-    function isValidEmail(text) {
-        if(isSubmitted && !validator.isEmail(text)) {
-            return AppStyles.color.salmonred;
-        } else {
-            return AppStyles.color.white;
-        }
-    }
-        
-    function isValidPhone(text) {
-        if(isSubmitted && text.length < 14) {
-            return AppStyles.color.salmonred;
-        } else {
-            return AppStyles.color.white;
-        }
-    }
-
-    function isValidPassword(text) {
-        if(isSubmitted && !validator.isStrongPassword(text, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1,
-                                                             minSymbols: 1, returnScore: false, pointsPerUnique: 1, pointsPerRepeat: 0.5,
-                                                             pointsForContainingLower: 10, pointsForContainingUpper: 10, pointsForContainingNumber: 10, 
-                                                             pointsForContainingSymbol: 10 })) {
-            return AppStyles.color.salmonred;
-        } else {
-            return AppStyles.color.white;
-        }
+    
+    
+    // const errorHandler = (e) => {
+    //     const err = errorMsg;
+    //     if (firstname == '') {
+    //         setErrorMsg('First name cannot be empty \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'First name cannot be empty \n'))
+    //     }
+    //     if (lastname == '') {
+    //         setErrorMsg([...err,'Last name cannot be empty \n'])
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Last name cannot be empty \n'))
+    //     }
+    //     if (date == '' || date != validator.isDate({format: 'MM/DD/YYYY'})) {
+    //         setErrorMsg('Please enter a valid birth date \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid birth date \n'))
+    //     }
+    //     if (email == '' || email != validator.isEmail) {
+    //         setErrorMsg('Please enter a valid Email \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid Email \n'))
+    //     }
+    //     if (phone == '' || phone != validator.isMobilePhone) {
+    //         setErrorMsg('Please enter a valid phone number \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid phone number \n'))
+    //     }
+    //     if (password == '' || phone != validator.isStrongPassword) {
+    //         setErrorMsg('Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n'))
+    //     }
+    //     if (confirmpassword == '' || confirmpassword == !validator.isStrongPassword || confirmpassword == !password) {
+    //         setErrorMsg('Please make sure your passwords match. \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please make sure your passwords match. \n'))
+    //     }
+    // }
+    
+    
+    
+    const commonHandler = () => {
+        signUpHandler();
+        // errorHandler();
     }
 
     return (
@@ -146,13 +164,14 @@ export default function DriverSignUp( {navigation} ) {
         <View style={styles.container}>
 
         <Text style={[styles.title, styles.leftTitle]}>Create new account</Text>
+        <Text style={[styles.formError]}>{errorMsg}</Text>
         
         <KeyboardAwareScrollView 
             contentContainerStyle={styles.scrollviewContainer}
             enableOnAndroid={true}
             extraScrollHeight={40}
         >
-            <View style={[styles.InputContainer, {borderColor: isEmpty(firstname)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(firstname)}]}>
                 <FloatingLabelInput                                    
                     containerStyles={styles.textContainer}
                     customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
@@ -172,7 +191,7 @@ export default function DriverSignUp( {navigation} ) {
                     />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(lastname)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(lastname)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -193,7 +212,7 @@ export default function DriverSignUp( {navigation} ) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isValidDate(date)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(date)}]}>
                 <FloatingLabelInput 
                     containerStyles={styles.textContainer}
                     customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -219,7 +238,7 @@ export default function DriverSignUp( {navigation} ) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isValidEmail(email)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(email)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -240,7 +259,7 @@ export default function DriverSignUp( {navigation} ) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isValidPhone(phone)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(phone)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -265,7 +284,7 @@ export default function DriverSignUp( {navigation} ) {
             />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isValidPassword(password)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(password)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -290,7 +309,7 @@ export default function DriverSignUp( {navigation} ) {
             </View>            
 
 
-            <View style={[styles.InputContainer, {borderColor: isValidPassword(confirmpassword)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(confirmpassword)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
@@ -349,7 +368,7 @@ export default function DriverSignUp( {navigation} ) {
                 containerStyle={styles.buttonContainer}
                 style={styles.buttonText}
                 title={'Sign Up'}
-                onPress={signUpHandler}
+                onPress={commonHandler}
                 > Sign Up
             </Button>
 

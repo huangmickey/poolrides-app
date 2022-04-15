@@ -6,12 +6,13 @@ import { FloatingLabelInput } from 'react-native-floating-label-input';         
 import { Agreement } from '../../utils/tos'; 
 import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
 import LoadingOverlay from '../../components/LoadingOverlay';
-
+import validator from 'validator';
 import { AppStyles } from '../../utils/styles';
 import { createUser } from '../../services/auth';
 import { AuthContext } from '../../services/auth-context';
 
 import { storeUser } from '../../utils/http';
+import { shouldUseActivityState } from 'react-native-screens';
 
 export default function RiderSignUp( {navigation} ) {
     const [firstname, setFirstname] = useState('');
@@ -23,9 +24,10 @@ export default function RiderSignUp( {navigation} ) {
     const [confirmpassword, setConfirmPassword] = useState('');
     const [checked, setChecked] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [errorMsg,setErrorMsg] = useState(['']);
 
     const keyboardAppearance = 'dark';
-    const maxLength = 16;           //Note that the Max length for Phone and Date are fix in the element not global
+    const maxLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
     const returnKeyType= 'next';
     const labelColor = AppStyles.color.gray;   
 
@@ -43,10 +45,9 @@ export default function RiderSignUp( {navigation} ) {
     const authCtx = useContext(AuthContext);
 
     async function signUpHandler() {
-
         setIsSubmitted(true);
-        if (firstname == "" || lastname == "" || date == "" || validator.isDate(date, {format: 'MM/DD/YYYY'}) || phone == "" || email == "" || password == "" || confirmpassword == "" || checked == false) {
-
+        if (firstname == "" || lastname == "" || date == "" || validator.isDate(date, {format: 'MM/DD/YYYY'}) || phone == "" || phone == !validator.isMobilePhone || email == "" ||email == !validator.isEmail || password == "" || password == !validator.isStrongPassword || confirmpassword == "" || confirmpassword != password || checked == false) {
+            //do nothing
         } else {
 
             setIsAuthenticating(true);
@@ -89,23 +90,67 @@ export default function RiderSignUp( {navigation} ) {
 
     if (isAuthenticating) {
         return <LoadingOverlay message="Creating account..."/>
-    }
+}
 
-function isEmpty(text) {
-    if(isSubmitted && text == '') {
-        return AppStyles.color.salmonred;
-    } else {
-        return AppStyles.color.white;
+
+
+function validationHandler(text) {
+    switch(text) {
+        case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+        case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+        case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
+        case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+        case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+        case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+        case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text) || confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
     }
 }
 
-function isValidDate(text) {
-    console.log(text);
-    if(isSubmitted && text =="" || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})) {
-        return AppStyles.color.salmonred;
-    } else {
-        return AppStyles.color.white;
-    }
+
+// const errorHandler = (e) => {
+//     const err = errorMsg;
+//     if (firstname == '') {
+//         setErrorMsg('First name cannot be empty \n')
+//     } else {
+//         setErrorMsg(errorMsg.filter(err => err != 'First name cannot be empty \n'))
+//     }
+//     if (lastname == '') {
+//         setErrorMsg([...err,'Last name cannot be empty \n'])
+//     } else {
+//         setErrorMsg(errorMsg.filter(err => err != 'Last name cannot be empty \n'))
+//     }
+//     if (date == '' || date != validator.isDate({format: 'MM/DD/YYYY'})) {
+//         setErrorMsg('Please enter a valid birth date \n')
+//     } else {
+//         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid birth date \n'))
+//     }
+//     if (email == '' || email != validator.isEmail) {
+//         setErrorMsg('Please enter a valid Email \n')
+//     } else {
+//         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid Email \n'))
+//     }
+//     if (phone == '' || phone != validator.isMobilePhone) {
+//         setErrorMsg('Please enter a valid phone number \n')
+//     } else {
+//         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid phone number \n'))
+//     }
+//     if (password == '' || phone != validator.isStrongPassword) {
+//         setErrorMsg('Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n')
+//     } else {
+//         setErrorMsg(errorMsg.filter(err => err != 'Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n'))
+//     }
+//     if (confirmpassword == '' || confirmpassword == !validator.isStrongPassword || confirmpassword == !password) {
+//         setErrorMsg('Please make sure your passwords match. \n')
+//     } else {
+//         setErrorMsg(errorMsg.filter(err => err != 'Please make sure your passwords match. \n'))
+//     }
+// }
+
+
+
+const commonHandler = () => {
+    signUpHandler();
+    // errorHandler();
 }
 
     return (
@@ -113,13 +158,14 @@ function isValidDate(text) {
         <View style={styles.container}>
 
         <Text style={[styles.title, styles.leftTitle]}>Create new account</Text>
+        <Text style={[styles.formError]}>{errorMsg}</Text>
         
         <KeyboardAwareScrollView 
             contentContainerStyle={styles.scrollviewContainer}
             enableOnAndroid={true}
             extraScrollHeight={40}
         >
-            <View style={[styles.InputContainer, {borderColor: isEmpty(firstname)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(firstname)}]}>
                 <FloatingLabelInput                                    
                     containerStyles={styles.textContainer}
                     customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
@@ -139,7 +185,7 @@ function isValidDate(text) {
                     />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(lastname)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(lastname)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -160,7 +206,7 @@ function isValidDate(text) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isValidDate(date)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(date)}]}>
                 <FloatingLabelInput 
                     containerStyles={styles.textContainer}
                     customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -186,7 +232,7 @@ function isValidDate(text) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(email)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(email)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -207,7 +253,7 @@ function isValidDate(text) {
                 />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(phone)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(phone)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -232,7 +278,7 @@ function isValidDate(text) {
             />
             </View>
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(password)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(password)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
@@ -257,7 +303,7 @@ function isValidDate(text) {
             </View>            
 
 
-            <View style={[styles.InputContainer, {borderColor: isEmpty(confirmpassword)}]}>
+            <View style={[styles.InputContainer, {borderColor: validationHandler(confirmpassword)}]}>
             <FloatingLabelInput 
                 containerStyles={styles.textContainer}
                 customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
@@ -316,7 +362,7 @@ function isValidDate(text) {
                 containerStyle={styles.buttonContainer}
                 style={styles.buttonText}
                 title={'Sign Up'}
-                onPress={signUpHandler}
+                onPress={commonHandler}
                 > Sign Up
             </Button>
 
@@ -387,6 +433,11 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginLeft: '5%',
         backgroundColor: AppStyles.color.black,
+    },
+    formError: {
+        fontSize: 14,
+        color: AppStyles.color.salmonred,
+        marginLeft: '12%',
     },
     buttonText: {
         color: AppStyles.color.white,

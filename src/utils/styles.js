@@ -9,6 +9,7 @@ export const AppStyles = {
     white: '#ffffff',
     salmonred: '#f85f6a',
     text: '#ffffff',
+    errorred: '#ff9494',
   },
   textFontSizes: {
     sm: 8,
