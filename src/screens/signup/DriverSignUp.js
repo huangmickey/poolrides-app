@@ -7,14 +7,14 @@ import { Agreement } from '../../utils/tos';
 import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import validator from 'validator';
+
 import { AppStyles } from '../../utils/styles';
 import { createUser } from '../../services/auth';
 import { AuthContext } from '../../services/auth-context';
 
 import { storeUser } from '../../utils/http';
-import { shouldUseActivityState } from 'react-native-screens';
 
-export default function RiderSignUp( {navigation} ) {
+export default function DriverSignUp( {navigation} ) {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [date, setDate] = useState('');    
@@ -45,10 +45,14 @@ export default function RiderSignUp( {navigation} ) {
     const authCtx = useContext(AuthContext);
 
     async function signUpHandler() {
+
         setIsSubmitted(true);
-        if (firstname == "" || lastname == "" || date == "" || validator.isDate(date, {format: 'MM/DD/YYYY'}) || phone == "" || phone == !validator.isMobilePhone || email == "" ||email == !validator.isEmail || password == "" || password == !validator.isStrongPassword || confirmpassword == "" || confirmpassword != password || checked == false) {
-            //do nothing
-        } else {
+        if (firstname != "" && lastname != "" && validator.isDate(date, {format: 'MM/DD/YYYY'}) 
+            && phone.length == 14 && validator.isEmail(email) 
+            && confirmpassword == password && checked == true
+            && validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, returnScore: false, 
+                                                   pointsPerUnique: 1, pointsPerRepeat: 0.5, pointsForContainingLower: 10, pointsForContainingUpper: 10, 
+                                                   pointsForContainingNumber: 10, pointsForContainingSymbol: 10 })) {
 
             setIsAuthenticating(true);
             try {
@@ -82,76 +86,78 @@ export default function RiderSignUp( {navigation} ) {
                 phone: phone,
                 date: date,
             };
-            const userType = 'riders';
+            const userType = 'driver';
             console.log(UserData);
             storeUser(userType, UserData);
+        
+        } else {
+            console.log("error: something is missing or incorrect");
         }
     }
 
     if (isAuthenticating) {
         return <LoadingOverlay message="Creating account..."/>
-}
-
-
-
-function validationHandler(text) {
-    switch(text) {
-        case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text) || confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
     }
-}
 
 
-// const errorHandler = (e) => {
-//     const err = errorMsg;
-//     if (firstname == '') {
-//         setErrorMsg('First name cannot be empty \n')
-//     } else {
-//         setErrorMsg(errorMsg.filter(err => err != 'First name cannot be empty \n'))
-//     }
-//     if (lastname == '') {
-//         setErrorMsg([...err,'Last name cannot be empty \n'])
-//     } else {
-//         setErrorMsg(errorMsg.filter(err => err != 'Last name cannot be empty \n'))
-//     }
-//     if (date == '' || date != validator.isDate({format: 'MM/DD/YYYY'})) {
-//         setErrorMsg('Please enter a valid birth date \n')
-//     } else {
-//         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid birth date \n'))
-//     }
-//     if (email == '' || email != validator.isEmail) {
-//         setErrorMsg('Please enter a valid Email \n')
-//     } else {
-//         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid Email \n'))
-//     }
-//     if (phone == '' || phone != validator.isMobilePhone) {
-//         setErrorMsg('Please enter a valid phone number \n')
-//     } else {
-//         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid phone number \n'))
-//     }
-//     if (password == '' || phone != validator.isStrongPassword) {
-//         setErrorMsg('Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n')
-//     } else {
-//         setErrorMsg(errorMsg.filter(err => err != 'Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n'))
-//     }
-//     if (confirmpassword == '' || confirmpassword == !validator.isStrongPassword || confirmpassword == !password) {
-//         setErrorMsg('Please make sure your passwords match. \n')
-//     } else {
-//         setErrorMsg(errorMsg.filter(err => err != 'Please make sure your passwords match. \n'))
-//     }
-// }
-
-
-
-const commonHandler = () => {
-    signUpHandler();
-    // errorHandler();
-}
+    function validationHandler(text) {
+        switch(text) {
+            case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text) || confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+        }
+    }
+    
+    
+    // const errorHandler = (e) => {
+    //     const err = errorMsg;
+    //     if (firstname == '') {
+    //         setErrorMsg('First name cannot be empty \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'First name cannot be empty \n'))
+    //     }
+    //     if (lastname == '') {
+    //         setErrorMsg([...err,'Last name cannot be empty \n'])
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Last name cannot be empty \n'))
+    //     }
+    //     if (date == '' || date != validator.isDate({format: 'MM/DD/YYYY'})) {
+    //         setErrorMsg('Please enter a valid birth date \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid birth date \n'))
+    //     }
+    //     if (email == '' || email != validator.isEmail) {
+    //         setErrorMsg('Please enter a valid Email \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid Email \n'))
+    //     }
+    //     if (phone == '' || phone != validator.isMobilePhone) {
+    //         setErrorMsg('Please enter a valid phone number \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid phone number \n'))
+    //     }
+    //     if (password == '' || phone != validator.isStrongPassword) {
+    //         setErrorMsg('Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n'))
+    //     }
+    //     if (confirmpassword == '' || confirmpassword == !validator.isStrongPassword || confirmpassword == !password) {
+    //         setErrorMsg('Please make sure your passwords match. \n')
+    //     } else {
+    //         setErrorMsg(errorMsg.filter(err => err != 'Please make sure your passwords match. \n'))
+    //     }
+    // }
+    
+    
+    
+    const commonHandler = () => {
+        signUpHandler();
+        // errorHandler();
+    }
 
     return (
         <Provider>
@@ -242,7 +248,7 @@ const commonHandler = () => {
                 label={'E-mail Address:'}
 
                 keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
+                maxLength={30}
                 returnKeyType={returnKeyType}
 
                 onChangeText={setEmail}
@@ -433,11 +439,6 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginLeft: '5%',
         backgroundColor: AppStyles.color.black,
-    },
-    formError: {
-        fontSize: 14,
-        color: AppStyles.color.salmonred,
-        marginLeft: '12%',
     },
     buttonText: {
         color: AppStyles.color.white,
