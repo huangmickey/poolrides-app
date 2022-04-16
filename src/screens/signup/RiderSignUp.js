@@ -14,7 +14,7 @@ import { shouldUseActivityState } from 'react-native-screens';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
-import ErrorHandler from '../../utils/ErrorHandler';
+import AuthErrorHandler from '../../utils/AuthErrorHandler';
 
 export default function RiderSignUp( {navigation} ) {
     const [firstname, setFirstname] = useState('abc');
@@ -75,7 +75,7 @@ export default function RiderSignUp( {navigation} ) {
 
             })
             .catch((error) => {
-                setSnackBarText(ErrorHandler(error.code));
+                setSnackBarText(AuthErrorHandler(error.code));
                 onToggleSnackBar();
                 setIsAuthenticating(false);
             })

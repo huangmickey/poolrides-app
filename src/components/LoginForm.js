@@ -9,8 +9,11 @@ import {
 } from "react-native";
 import { AppStyles } from "../utils/styles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { authentication } from '../firebase/firebase-config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import AuthErrorHandler from "../utils/AuthErrorHandler";
 
-function LoginForm({ text }) {
+function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating }) {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -18,7 +21,7 @@ function LoginForm({ text }) {
   const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState({});
   const keyboardAppearance = "dark";
-  const maxLength = 16; //Note that the Max length for Phone and Date are fix in the element not global
+  const maxLength = 32; //Note that the Max length for Phone and Date are fix in the element not global
   const returnKeyType = "next";
 
   const validate = () => {
@@ -35,14 +38,24 @@ function LoginForm({ text }) {
     if (!inputs.password) {
       handleError("*Please input password", "password");
       valid = false;
-    } else if (inputs.password.length < 6) {
+    } else if (inputs.password.length == 0) {
       handleError("*Please input valid password", "password");
       valid = false;
     }
 
-    // if(valid){
-    //   call function to authenticate here
-    // }
+    if (valid) {
+      setIsAuthenticating(true);
+      signInWithEmailAndPassword(authentication, inputs.email, inputs.password)
+        .then((userCredential) => {
+          console.log('successfully login');
+        })
+        .catch((error) => {
+          console.log(AuthErrorHandler(error.code));
+          setSnackBarText(AuthErrorHandler(error.code));
+          snackBarToggle();
+          setIsAuthenticating(false);
+        });
+    }
   };
 
   const handleOnChange = (text, input) => {

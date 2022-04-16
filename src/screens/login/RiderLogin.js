@@ -17,7 +17,6 @@ export default function RiderLogin(props, { navigation }) {
   const [snackBarText, setSnackBarText] = useState("");
 
   
-
   function signUpPressHandler() {
     props.navigation.navigate("Sign up");
   }
@@ -43,7 +42,7 @@ export default function RiderLogin(props, { navigation }) {
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
       <View style={styles.formContainer}>
-        <LoginForm text="example@email.com" />
+        <LoginForm text="example@email.com" setIsAuthenticating={setIsAuthenticating} setSnackBarText={setSnackBarText} snackBarToggle={onToggleSnackBar}/>
       </View>
 
       <View style={styles.touchables}>

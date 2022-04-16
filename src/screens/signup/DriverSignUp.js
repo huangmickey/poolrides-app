@@ -11,7 +11,7 @@ import validator from 'validator';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
-import ErrorHandler from '../../utils/ErrorHandler';
+import AuthErrorHandler from '../../utils/AuthErrorHandler';
 
 import { AppStyles } from '../../utils/styles';
 
@@ -74,7 +74,7 @@ export default function DriverSignUp( {navigation} ) {
 
             })
             .catch((error) => {
-                setSnackBarText(ErrorHandler(error.code));
+                setSnackBarText(AuthErrorHandler(error.code));
                 onToggleSnackBar();
                 setIsAuthenticating(false);
             })
