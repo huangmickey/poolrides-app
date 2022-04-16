@@ -1,6 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AppStyles } from '../../utils/styles';
-import EmailField from "../../components/EmailField";
 import CustomButton from "../../components/CustomButton";
 
 export default function EnterEmail({navigation}){
@@ -23,7 +22,6 @@ export default function EnterEmail({navigation}){
             </View>
             <View style={styles.inputView}>
                 <Text style={styles.textType}>Email</Text>
-                <EmailField text="example@email.com" />
              </View>
 
              <View style={styles.buttonBox}>

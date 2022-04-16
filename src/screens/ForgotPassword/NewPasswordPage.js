@@ -1,6 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AppStyles } from '../../utils/styles';
-import PasswordField from "../../components/PasswordField";
 import CustomButton from "../../components/CustomButton";
 
 export default function NewPasswordPage({navigation}){
@@ -18,11 +17,9 @@ export default function NewPasswordPage({navigation}){
             </View>
             <View style={styles.inputView}>
                 <Text style={styles.textName}>Enter New Password</Text>
-                <PasswordField />
             </View>
             <View style={styles.inputView}>
                 <Text style={styles.textName}>Confirm New Password</Text>
-                <PasswordField />
             </View>
             <View style={styles.buttonBox}>
                 <CustomButton title={"Change Password"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={newPasswordPressHandler}/>  
