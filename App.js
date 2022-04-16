@@ -14,6 +14,9 @@ import DriverLogin from './src/screens/login/DriverLogin';
 import GeneralPreferences from './src/screens/GeneralPreferences';
 import AuthContextProvider, { AuthContext } from './src/services/auth-context';
 import RiderDashboard from './src/screens/RiderDashboard';
+import EnterEmail from './src/screens/ForgotPassword/EnterEmail';
+import VerifyCode from './src/screens/ForgotPassword/VerifyCode';
+import NewPasswordPage from './src/screens/ForgotPassword/NewPasswordPage';
 
 //****************************************************************************//
 //****************************************************************************//
@@ -29,6 +32,9 @@ function AuthStack() {
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Login" component={DriverLogin} />
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Login" component={RiderLogin} />
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="General Preferences" component={GeneralPreferences} />
+      <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Enter Email" component={EnterEmail} />
+      <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="New Password Page" component={NewPasswordPage} />
+      <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Verify Code" component={VerifyCode} />
     </Stack.Navigator>
   )
 }
@@ -79,7 +85,6 @@ export default function App() {
                 <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Login" component={DriverLogin} />
                 <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Login" component={RiderLogin} />
                 <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="General Preferences" component={GeneralPreferences} />
-
               </Stack.Navigator>
             </NavigationContainer> */}
       </>
