@@ -1,24 +1,97 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native"
-import { AppStyles } from '../../utils/styles';
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import LoginForm from "../../components/LoginForm";
+import { AppStyles } from "../../utils/styles";
 
 export default function DriverLogin({ navigation }) {
+  function signUpPressHandler() {
+    navigation.navigate("Sign up");
+  }
 
-    return (
-        <View style={styles.screenContainer}>
-            <View flexGrow={1} alignItems={'center'} justifyContent={'center'}>
-                <Text style={styles.text}>Driver Login Page</Text>
-            </View>
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image
+          style={styles.logo}
+          source={require("../../../assets/splash.png")}
+        />
+      </View>
+
+      <View style={styles.welcomeContainer}>
+        <Text style={styles.signInText}>Sign In As Driver</Text>
+        <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
+      </View>
+      <View style={styles.formContainer}>
+        <LoginForm text="example@email.com" />
+      </View>
+
+      <View style={styles.touchables}>
+        <TouchableOpacity>
+          <Text style={styles.forgotBtn}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.registerBtn}>
+          <Text style={styles.signUpText} onPress={signUpPressHandler}>
+            Sign Up
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    screenContainer: {
-        flex: 1,
-        backgroundColor: AppStyles.color.black
-    },
-    text: {
-        color: "white",
-    }
+  container: {
+    flex: 1,
+    backgroundColor: AppStyles.color.black,
+    alignItems: "center",
+  },
+  formContainer: {
+    paddingBottom: "3%",
+  },
+  logoContainer: {
+    flex: 1,
+    flexGrow: 3,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "stretch",
+    marginBottom: "15%",
+  },
+  logo: {
+    width: "60%",
+    height: "60%",
+    resizeMode: "contain",
+  },
+  touchables: {
+    flexDirection: "row",
+    paddingBottom: "30%",
+  },
+  registerBtn: {
+    height: "50%",
+    marginLeft: "30%",
+  },
+  forgotBtn: {
+    marginBottom: 30,
+    color: AppStyles.color.platinum,
+    alignSelf: "flex-start",
+    fontSize: 15,
+  },
+  signUpText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: AppStyles.color.salmonred,
+  },
+  signInText: {
+    color: AppStyles.color.gray,
+    fontWeight: "bold",
+    fontSize: AppStyles.textFontSizes.header,
+  },
+  welcomeContainer: {
+    marginLeft: -45,
+  },
+  welcomeText: {
+    color: AppStyles.color.gray,
+    lineHeight: 25,
+    fontWeight: "400",
+    fontSize: AppStyles.fontSize.normal,
+  },
 });
