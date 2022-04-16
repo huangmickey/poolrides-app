@@ -10,6 +10,7 @@ import DriverSignUp from './src/screens/signup/DriverSignUp';
 import RiderLogin from './src/screens/login/RiderLogin';
 import DriverLogin from './src/screens/login/DriverLogin';
 import GeneralPreferences from './src/screens/GeneralPreferences';
+import MusicPreferences from './src/screens/MusicPreferences';
 import RiderDashboard from './src/screens/RiderDashboard';
 import EnterEmail from './src/screens/ForgotPassword/EnterEmail';
 import VerifyCode from './src/screens/ForgotPassword/VerifyCode';
@@ -28,6 +29,7 @@ function AuthStack() {
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Login" component={DriverLogin} />
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Login" component={RiderLogin} />
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="General Preferences" component={GeneralPreferences} />
+      <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Music Preferences" component={MusicPreferences} />
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Enter Email" component={EnterEmail} />
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="New Password Page" component={NewPasswordPage} />
       <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Verify Code" component={VerifyCode} />

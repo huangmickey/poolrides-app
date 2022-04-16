@@ -4,7 +4,7 @@ import CustomChip from '../components/Chip';
 import { AppStyles } from '../utils/styles';
 import CustomButton from '../components/CustomButton';
 
-export default function GeneralPreferences( {navigation} ) {
+export default function GeneralPreferences( { navigation } ) {
     const [generalInterests, setGeneralInterests] = useState(new Map([
       ["Anime", false],
       ["Art", false],
@@ -68,6 +68,7 @@ export default function GeneralPreferences( {navigation} ) {
 
     function continueHandler() {
       console.log(generalInterests);
+      navigation.navigate('Music Preferences');
     }
 }
 
