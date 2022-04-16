@@ -8,23 +8,25 @@ import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-n
 import LoadingOverlay from '../../components/LoadingOverlay';
 import validator from 'validator';
 import { AppStyles } from '../../utils/styles';
-import { createUser } from '../../services/auth';
-import { AuthContext } from '../../services/auth-context';
 
-import { storeUser } from '../../utils/http';
 import { shouldUseActivityState } from 'react-native-screens';
 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore/lite';
+import { db, authentication } from '../../firebase/firebase-config';
+import ErrorHandler from '../../utils/ErrorHandler';
+
 export default function RiderSignUp( {navigation} ) {
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [date, setDate] = useState('');    
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmpassword, setConfirmPassword] = useState('');
-    const [checked, setChecked] = useState(false);
+    const [firstname, setFirstname] = useState('abc');
+    const [lastname, setLastname] = useState('abc');
+    const [date, setDate] = useState('01/01/2019');    
+    const [phone, setPhone] = useState('(916) 911-9111');
+    const [email, setEmail] = useState('test1@gmail.com');
+    const [password, setPassword] = useState('Password123!');
+    const [confirmpassword, setConfirmPassword] = useState('Password123!');
+    const [checked, setChecked] = useState(true);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [errorMsg,setErrorMsg] = useState(['']);
+    const [errorMsg, setErrorMsg] = useState(['']);
 
     const keyboardAppearance = 'dark';
     const maxLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
@@ -35,76 +37,64 @@ export default function RiderSignUp( {navigation} ) {
     const showDialog = () => setdialogVisible(true);
     const hideDialog = () => setdialogVisible(false);
 
-    const [isAuthenticating, setIsAuthenticating] = useState(false); // Check if firebase is auth
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
     
     const [snackBarVisisble, setSnackBarVisible] = useState(false);
     const [snackBarText, setSnackBarText] = useState(''); 
     const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
     const onDismissSnackBar = () => setSnackBarVisible(false);
     
-    const authCtx = useContext(AuthContext);
-
+    
     async function signUpHandler() {
-        setIsSubmitted(true);
-        if (firstname == "" || lastname == "" || date == "" || validator.isDate(date, {format: 'MM/DD/YYYY'}) || phone == "" || phone == !validator.isMobilePhone || email == "" ||email == !validator.isEmail || password == "" || password == !validator.isStrongPassword || confirmpassword == "" || confirmpassword != password || checked == false) {
+        if (firstname == "" || lastname == "" || date == "" || 
+        !validator.isDate(date, {format: 'MM/DD/YYYY'}) || 
+        phone == "" || phone == !validator.isMobilePhone || 
+        email == "" ||email == !validator.isEmail || password == "" || 
+        password == !validator.isStrongPassword || confirmpassword == "" || 
+        confirmpassword != password || checked == false) {
             //do nothing
         } else {
-
             setIsAuthenticating(true);
-            try {
-                const token = await createUser(email, password);
-                authCtx.authenticate(token);
-            } catch (error) {
-                const errorMessage = error.response.data.error.message;
-                console.log(errorMessage);
-                switch(errorMessage) {
-                    case 'INVALID_EMAIL':
-                        setSnackBarText('Invalid Email Entered');
-                        onToggleSnackBar();
-                        break;
-                    case 'EMAIL_EXISTS':
-                        setSnackBarText('Email already exists!');
-                        onToggleSnackBar();
-                        break;
-                    case 'MISSING_PASSWORD':
-                        setSnackBarText('Missing password!');
-                        onToggleSnackBar();
-                        break;
-                    default:
+            createUserWithEmailAndPassword(authentication, email, password)
+            .then((response) => {
+                // console.log(response);
+                const userUID = authentication.currentUser.uid;
+                console.log(userUID);
+                
+                const userData = {
+                    dob: date,
+                    email: email,
+                    firstname: firstname,
+                    lastname: lastname,
+                    phone: phone,
+                    usertype: 'Rider',
                 }
-                setIsAuthenticating(false);
-            }
+                
+                console.log(userData);
+                setDoc(doc(db, "users", userUID), userData);
 
-            const UserData = {
-                email: email,
-                firstName: firstname,
-                lastName: lastname,
-                phone: phone,
-                date: date,
-            };
-            const userType = 'riders';
-            console.log(UserData);
-            storeUser(userType, UserData);
+            })
+            .catch((error) => {
+                setSnackBarText(ErrorHandler(error.code));
+                onToggleSnackBar();
+                setIsAuthenticating(false);
+            })
+        } // end of else
+        
+    } // end of signUpHandler()
+
+    
+    function validationHandler(text) {
+        switch(text) {
+            case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text) || confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
         }
     }
-
-    if (isAuthenticating) {
-        return <LoadingOverlay message="Creating account..."/>
-}
-
-
-
-function validationHandler(text) {
-    switch(text) {
-        case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-        case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text) || confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-    }
-}
 
 
 // const errorHandler = (e) => {
@@ -148,10 +138,14 @@ function validationHandler(text) {
 
 
 
-const commonHandler = () => {
-    signUpHandler();
-    // errorHandler();
-}
+    const commonHandler = () => {
+        signUpHandler();
+        // errorHandler();
+    }
+
+    if (isAuthenticating) {
+        return <LoadingOverlay message="Creating account..."/>
+    }
 
     return (
         <Provider>

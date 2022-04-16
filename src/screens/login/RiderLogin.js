@@ -5,8 +5,6 @@ import { AppStyles } from "../../utils/styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { Snackbar } from "react-native-paper";
 
-import { login } from "../../services/auth";
-import { AuthContext } from "../../services/auth-context";
 
 export default function RiderLogin(props, { navigation }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -18,32 +16,13 @@ export default function RiderLogin(props, { navigation }) {
   const onDismissSnackBar = () => setSnackBarVisible(false);
   const [snackBarText, setSnackBarText] = useState("");
 
-  const authCtx = useContext(AuthContext);
+  
 
   function signUpPressHandler() {
     props.navigation.navigate("Sign up");
   }
   async function loginHandler() {
-    setIsAuthenticating(true);
-    try {
-      const token = await login(email, password);
-      authCtx.authenticate(token);
-    } catch (error) {
-      const errorMessage = error.response.data.error.message;
-      switch (errorMessage) {
-        case "INVALID_PASSWORD":
-          setSnackBarText("Login credentials invalid");
-          onToggleSnackBar();
-          break;
-        case "TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.":
-          setSnackBarText("Too many attempts, try later or reset password");
-          onToggleSnackBar();
-          break;
-        default:
-      }
-      console.log(errorMessage);
-      setIsAuthenticating(false);
-    }
+    
   }
 
   if (isAuthenticating) {

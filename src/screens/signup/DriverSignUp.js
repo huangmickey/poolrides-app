@@ -8,23 +8,25 @@ import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-n
 import LoadingOverlay from '../../components/LoadingOverlay';
 import validator from 'validator';
 
-import { AppStyles } from '../../utils/styles';
-import { createUser } from '../../services/auth';
-import { AuthContext } from '../../services/auth-context';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore/lite';
+import { db, authentication } from '../../firebase/firebase-config';
+import ErrorHandler from '../../utils/ErrorHandler';
 
-import { storeUser } from '../../utils/http';
+import { AppStyles } from '../../utils/styles';
+
 
 export default function DriverSignUp( {navigation} ) {
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [date, setDate] = useState('');    
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmpassword, setConfirmPassword] = useState('');
-    const [checked, setChecked] = useState(false);
+    const [firstname, setFirstname] = useState('Driver');
+    const [lastname, setLastname] = useState('Driver');
+    const [date, setDate] = useState('01/01/2002');    
+    const [phone, setPhone] = useState('(916) 111-1111');
+    const [email, setEmail] = useState('testdriver@gmail.com');
+    const [password, setPassword] = useState('Password123!');
+    const [confirmpassword, setConfirmPassword] = useState('Password123!');
+    const [checked, setChecked] = useState(true);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [errorMsg,setErrorMsg] = useState(['']);
+    const [errorMsg, setErrorMsg] = useState(['']);
 
     const keyboardAppearance = 'dark';
     const maxLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
@@ -42,58 +44,45 @@ export default function DriverSignUp( {navigation} ) {
     const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
     const onDismissSnackBar = () => setSnackBarVisible(false);
     
-    const authCtx = useContext(AuthContext);
-
     async function signUpHandler() {
 
-        setIsSubmitted(true);
         if (firstname != "" && lastname != "" && validator.isDate(date, {format: 'MM/DD/YYYY'}) 
             && phone.length == 14 && validator.isEmail(email) 
             && confirmpassword == password && checked == true
             && validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, returnScore: false, 
                                                    pointsPerUnique: 1, pointsPerRepeat: 0.5, pointsForContainingLower: 10, pointsForContainingUpper: 10, 
                                                    pointsForContainingNumber: 10, pointsForContainingSymbol: 10 })) {
-
+            
             setIsAuthenticating(true);
-            try {
-                const token = await createUser(email, password);
-                authCtx.authenticate(token);
-            } catch (error) {
-                const errorMessage = error.response.data.error.message;
-                console.log(errorMessage);
-                switch(errorMessage) {
-                    case 'INVALID_EMAIL':
-                        setSnackBarText('Invalid Email Entered');
-                        onToggleSnackBar();
-                        break;
-                    case 'EMAIL_EXISTS':
-                        setSnackBarText('Email already exists!');
-                        onToggleSnackBar();
-                        break;
-                    case 'MISSING_PASSWORD':
-                        setSnackBarText('Missing password!');
-                        onToggleSnackBar();
-                        break;
-                    default:
+            createUserWithEmailAndPassword(authentication, email, password)
+            .then((response) => {
+                // console.log(response);
+                const userUID = authentication.currentUser.uid;
+                console.log(userUID);
+                
+                const userData = {
+                    dob: date,
+                    email: email,
+                    firstname: firstname,
+                    lastname: lastname,
+                    phone: phone,
+                    usertype: 'Driver',
                 }
-                setIsAuthenticating(false);
-            }
+                
+                console.log(userData);
+                setDoc(doc(db, "users", userUID), userData);
 
-            const UserData = {
-                email: email,
-                firstName: firstname,
-                lastName: lastname,
-                phone: phone,
-                date: date,
-            };
-            const userType = 'driver';
-            console.log(UserData);
-            storeUser(userType, UserData);
-        
+            })
+            .catch((error) => {
+                setSnackBarText(ErrorHandler(error.code));
+                onToggleSnackBar();
+                setIsAuthenticating(false);
+            })
+            
         } else {
-            console.log("error: something is missing or incorrect");
-        }
-    }
+            
+        } // end of else
+    } // end of signUpHandler()
 
     if (isAuthenticating) {
         return <LoadingOverlay message="Creating account..."/>
