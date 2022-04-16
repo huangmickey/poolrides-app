@@ -12,6 +12,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { authentication } from '../firebase/firebase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import AuthErrorHandler from "../utils/AuthErrorHandler";
+import { NavigationContainer } from "@react-navigation/native";
 
 function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating }) {
   const [inputs, setInputs] = useState({

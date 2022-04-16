@@ -4,34 +4,39 @@ import CustomChip from '../components/Chip';
 import { AppStyles } from '../utils/styles';
 import CustomButton from '../components/CustomButton';
 
-export default function GeneralPreferences( { navigation } ) {
-    const [generalInterests, setGeneralInterests] = useState(new Map([
-      ["Anime", false],
-      ["Art", false],
-      ["Cars", false],
-      ["Chess", false],
-      ["Church", false],
-      ["Cooking", false],
-      ["Dance", false],
-      ["Fishing", false],
-      ["Fashion", false],
-      ["Food", false],
-      ["Gaming", false],
-      ["Garden", false],
-      ["Gym", false],
-      ["Movies", false],
-      ["Nature", false],
-      ["Party", false],
-      ["Pets", false],
-      ["Reading", false],
-      ["Singing", false],
-      ["Sports", false],
-      ["Tech", false],
-      ["Travel", false],
-      ["Writing", false],
-      ["Yoga", false],
-    ]));
+import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
+import { db, authentication } from '../firebase/firebase-config';
 
+
+export default function GeneralInterests( { navigation } ) {
+
+    const [generalInterests] = useState({
+      Anime: false,
+      Art: false,
+      Cars: false,
+      Chess: false,
+      Church: false,
+      Cooking: false,
+      Dance: false,
+      Fishing: false,
+      Fashion: false,
+      Food: false,
+      Gaming: false,
+      Garden: false,
+      Gym: false,
+      Movies: false,
+      Nature: false,
+      Party: false,
+      Pets: false,
+      Reading: false,
+      Singing: false,
+      Sports: false,
+      Tech: false,
+      Travel: false,
+      Writing: false,
+      Yoga: false,
+    });
+    
     return (
         <View style={styles.container}>
 
@@ -42,10 +47,10 @@ export default function GeneralPreferences( { navigation } ) {
           <View>
             <ScrollView persistentScrollbar={true} style={styles.scrollView}>
               <View style={styles.chipContainer}>
-                {Array.from(generalInterests.entries()).map((entry) => {
+                {Array.from(Object.entries(generalInterests)).map((entry) => {
                   const [key] = entry;
-                  return (<CustomChip key={key} text={key} map={generalInterests}/>);
-                })}
+                  return (<CustomChip key={key} interest={key} interestsObj={generalInterests}/>);
+                })} 
               </View>
             </ScrollView>
           </View>
@@ -66,9 +71,20 @@ export default function GeneralPreferences( { navigation } ) {
         </View>
     )
 
-    function continueHandler() {
-      console.log(generalInterests);
-      navigation.navigate('Music Preferences');
+    async function continueHandler() {
+      console.log(generalPreferences);
+      const uid = authentication.currentUser.uid;
+      
+      console.log(uid);
+      
+      console.log(authentication);
+      const userDocRef = doc(db, "users", uid);
+      
+      await updateDoc(userDocRef, {
+        generalinterests: generalInterests,
+      });
+
+      navigation.navigate('Music Interests');
     }
 }
 

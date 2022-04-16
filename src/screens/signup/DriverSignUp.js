@@ -17,13 +17,13 @@ import { AppStyles } from '../../utils/styles';
 
 
 export default function DriverSignUp( {navigation} ) {
-    const [firstname, setFirstname] = useState('Driver');
-    const [lastname, setLastname] = useState('Driver');
-    const [date, setDate] = useState('01/01/2002');    
-    const [phone, setPhone] = useState('(916) 111-1111');
-    const [email, setEmail] = useState('testdriver@gmail.com');
-    const [password, setPassword] = useState('Password123!');
-    const [confirmpassword, setConfirmPassword] = useState('Password123!');
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
+    const [date, setDate] = useState('');    
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmpassword, setConfirmPassword] = useState('');
     const [checked, setChecked] = useState(true);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [errorMsg, setErrorMsg] = useState(['']);

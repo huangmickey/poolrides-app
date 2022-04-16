@@ -17,9 +17,6 @@ export default function RiderLogin(props, { navigation }) {
   function signUpPressHandler() {
     props.navigation.navigate("Sign up");
   }
-  async function loginHandler() {
-    
-  }
 
   if (isAuthenticating) {
     return <LoadingOverlay message="Logging you in..." />;

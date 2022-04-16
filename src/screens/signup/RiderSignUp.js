@@ -9,22 +9,20 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 import validator from 'validator';
 import { AppStyles } from '../../utils/styles';
 
-import { shouldUseActivityState } from 'react-native-screens';
-
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 import AuthErrorHandler from '../../utils/AuthErrorHandler';
 
 export default function RiderSignUp( {navigation} ) {
-    const [firstname, setFirstname] = useState('abc');
-    const [lastname, setLastname] = useState('abc');
-    const [date, setDate] = useState('01/01/2019');    
-    const [phone, setPhone] = useState('(916) 911-9111');
-    const [email, setEmail] = useState('test1@gmail.com');
-    const [password, setPassword] = useState('Password123!');
-    const [confirmpassword, setConfirmPassword] = useState('Password123!');
-    const [checked, setChecked] = useState(true);
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
+    const [date, setDate] = useState('');    
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmpassword, setConfirmPassword] = useState('');
+    const [checked, setChecked] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [errorMsg, setErrorMsg] = useState(['']);
 

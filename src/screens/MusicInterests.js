@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { AppStyles } from '../utils/styles';
 
-export default function MusicPreferences() {
+export default function MusicInterests() {
     return (
         <View style={styles.container}>
             <View>
