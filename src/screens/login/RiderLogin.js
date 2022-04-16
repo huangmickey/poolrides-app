@@ -8,9 +8,6 @@ import { Snackbar } from "react-native-paper";
 
 export default function RiderLogin(props, { navigation }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const email = "user@gmail.com";
-  const password = "password";
-
   const [snackBarVisisble, setSnackBarVisible] = useState(false);
   const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
   const onDismissSnackBar = () => setSnackBarVisible(false);

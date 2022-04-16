@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import LoginForm from "../../components/LoginForm";
 import { AppStyles } from "../../utils/styles";
+import { Snackbar } from "react-native-paper";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 export default function DriverLogin({ navigation }) {
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [snackBarVisisble, setSnackBarVisible] = useState(false);
+  const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
+  const onDismissSnackBar = () => setSnackBarVisible(false);
+  const [snackBarText, setSnackBarText] = useState("");
+
   function signUpPressHandler() {
     navigation.navigate("Sign up");
+  }
+
+  if (isAuthenticating) {
+    return <LoadingOverlay message="Logging you in..." />;
   }
 
   return (
@@ -22,7 +34,7 @@ export default function DriverLogin({ navigation }) {
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
       <View style={styles.formContainer}>
-        <LoginForm text="example@email.com" />
+        <LoginForm text="example@email.com" setIsAuthenticating={setIsAuthenticating} setSnackBarText={setSnackBarText} snackBarToggle={onToggleSnackBar} />
       </View>
 
       <View style={styles.touchables}>
@@ -35,6 +47,29 @@ export default function DriverLogin({ navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <View style={styles.snackBarContainer}>
+        <Snackbar
+          theme={{
+            colors: {
+              onSurface: AppStyles.color.gray,
+              surface: AppStyles.color.white,
+              accent: AppStyles.color.salmonred,
+            },
+          }}
+          visible={snackBarVisisble}
+          onDismiss={onDismissSnackBar}
+          action={{
+            label: "Dismiss",
+            onPress: () => {
+              onDismissSnackBar();
+            },
+          }}
+        >
+          {snackBarText}
+        </Snackbar>
+      </View>
+
     </View>
   );
 }
@@ -93,5 +128,12 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     fontWeight: "400",
     fontSize: AppStyles.fontSize.normal,
+  },
+  snackBarContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    backgroundColor: AppStyles.color.gray,
   },
 });
