@@ -13,7 +13,6 @@ export default function Signup({ navigation }) {
     }
 
     function signInHandler() {
-
         navigation.navigate("Startup");
     }
 

@@ -14,7 +14,7 @@ import { doc, setDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 import AuthErrorHandler from '../../utils/AuthErrorHandler';
 
-export default function RiderSignUp( {navigation} ) {
+export default function RiderSignUp() {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [date, setDate] = useState('');    
@@ -42,41 +42,43 @@ export default function RiderSignUp( {navigation} ) {
     const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
     const onDismissSnackBar = () => setSnackBarVisible(false);
     
-    
-    async function signUpHandler() {
+    function signUpHandler() {
         if (firstname == "" || lastname == "" || date == "" || 
         !validator.isDate(date, {format: 'MM/DD/YYYY'}) || 
         phone == "" || phone == !validator.isMobilePhone || 
         email == "" ||email == !validator.isEmail || password == "" || 
         password == !validator.isStrongPassword || confirmpassword == "" || 
         confirmpassword != password || checked == false) {
-            //do nothing
+            setIsSubmitted(true);
         } else {
+            const userData = {
+                dob: date,
+                email: email,
+                firstname: firstname,
+                lastname: lastname,
+                phone: phone,
+                usertype: 'Rider',
+            }
             setIsAuthenticating(true);
             createUserWithEmailAndPassword(authentication, email, password)
             .then((response) => {
-                // console.log(response);
-                const userUID = authentication.currentUser.uid;
-                console.log(userUID);
                 
-                const userData = {
-                    dob: date,
-                    email: email,
-                    firstname: firstname,
-                    lastname: lastname,
-                    phone: phone,
-                    usertype: 'Rider',
-                }
-                
+                const userUID = response.user.uid;
+                setDoc(doc(db, "users", userUID), userData)
+                .catch(error => {
+                    console.log('Database entry error' + error);
+                })
+                console.log(userUID + " : " + response.user.email + " => successfuly signed up")
                 console.log(userData);
-                setDoc(doc(db, "users", userUID), userData);
-
+                console.log('User Data went into database successfully');
             })
             .catch((error) => {
                 setSnackBarText(AuthErrorHandler(error.code));
                 onToggleSnackBar();
                 setIsAuthenticating(false);
             })
+            
+            
         } // end of else
         
     } // end of signUpHandler()

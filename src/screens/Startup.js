@@ -32,7 +32,7 @@ export default function Startup({ navigation }) {
             <View style={styles.buttonBox}>
                 <CustomButton title={"Rider Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderLoginPressHandler}/>  
             </View>
-
+            
             <View style={styles.signUpContainer}>
             < Text style={styles.text}>New to PoolRides?</Text>
                 <Pressable onPress={signUpPressHandler}>

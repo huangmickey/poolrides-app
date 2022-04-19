@@ -4,18 +4,18 @@ import LoginForm from "../../components/LoginForm";
 import { AppStyles } from "../../utils/styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { Snackbar } from "react-native-paper";
+import { authentication } from "../../firebase/firebase-config";
 
 
-export default function RiderLogin(props, { navigation }) {
+export default function RiderLogin({navigation}) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [snackBarVisisble, setSnackBarVisible] = useState(false);
   const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
   const onDismissSnackBar = () => setSnackBarVisible(false);
   const [snackBarText, setSnackBarText] = useState("");
 
-  
   function signUpPressHandler() {
-    props.navigation.navigate("Sign up");
+    navigation.navigate("Sign up");
   }
 
   if (isAuthenticating) {
@@ -49,7 +49,6 @@ export default function RiderLogin(props, { navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
-
       <View style={styles.snackBarContainer}>
         <Snackbar
           theme={{

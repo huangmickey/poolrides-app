@@ -12,7 +12,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { authentication } from '../firebase/firebase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import AuthErrorHandler from "../utils/AuthErrorHandler";
-import { NavigationContainer } from "@react-navigation/native";
 
 function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating }) {
   const [inputs, setInputs] = useState({
@@ -25,7 +24,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
   const maxLength = 32; //Note that the Max length for Phone and Date are fix in the element not global
   const returnKeyType = "next";
 
-  const validate = () => {
+  function validate() {
     Keyboard.dismiss();
     let valid = true;
     if (!inputs.email) {
@@ -47,11 +46,10 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
     if (valid) {
       setIsAuthenticating(true);
       signInWithEmailAndPassword(authentication, inputs.email, inputs.password)
-        .then((userCredential) => {
-          console.log('successfully login');
+        .then((user) => {
+          console.log(user.user.email + " => successfuly signed in ");
         })
         .catch((error) => {
-          console.log(AuthErrorHandler(error.code));
           setSnackBarText(AuthErrorHandler(error.code));
           snackBarToggle();
           setIsAuthenticating(false);
@@ -124,14 +122,12 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
           </View>
         </View>
       </View>
-
+  
       <View style={styles.signInContainer}>
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.loginBtn}
-          onPress={() => {
-            validate();
-          }}
+          onPress={validate}
         >
           <Text style={styles.loginText}>Sign In</Text>
         </TouchableOpacity>

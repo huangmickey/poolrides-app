@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, View, Text} from 'react-native';
-import CustomChip from '../components/Chip';
-import { AppStyles } from '../utils/styles';
-import CustomButton from '../components/CustomButton';
+import CustomChip from '../../components/Chip';
+import { AppStyles } from '../../utils/styles';
+import CustomButton from '../../components/CustomButton';
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
-import { db, authentication } from '../firebase/firebase-config';
+import { db, authentication } from '../../firebase/firebase-config';
 
 
-export default function GeneralInterests( { navigation } ) {
+export default function GeneralInterests( { navigation, route } ) {
 
     const [generalInterests] = useState({
       Anime: false,
@@ -72,18 +72,13 @@ export default function GeneralInterests( { navigation } ) {
     )
 
     async function continueHandler() {
-      console.log(generalPreferences);
       const uid = authentication.currentUser.uid;
-      
-      console.log(uid);
-      
-      console.log(authentication);
       const userDocRef = doc(db, "users", uid);
       
       await updateDoc(userDocRef, {
         generalinterests: generalInterests,
       });
-
+      
       navigation.navigate('Music Interests');
     }
 }

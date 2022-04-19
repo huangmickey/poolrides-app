@@ -7,7 +7,7 @@ import { Agreement } from '../../utils/tos';
 import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import validator from 'validator';
-
+import CustomButton from '../../components/CustomButton';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
@@ -24,7 +24,7 @@ export default function DriverSignUp( {navigation} ) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
-    const [checked, setChecked] = useState(true);
+    const [checked, setChecked] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [errorMsg, setErrorMsg] = useState(['']);
 
@@ -44,7 +44,7 @@ export default function DriverSignUp( {navigation} ) {
     const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
     const onDismissSnackBar = () => setSnackBarVisible(false);
     
-    async function signUpHandler() {
+    function signUpHandler() {
 
         if (firstname != "" && lastname != "" && validator.isDate(date, {format: 'MM/DD/YYYY'}) 
             && phone.length == 14 && validator.isEmail(email) 
@@ -56,10 +56,7 @@ export default function DriverSignUp( {navigation} ) {
             setIsAuthenticating(true);
             createUserWithEmailAndPassword(authentication, email, password)
             .then((response) => {
-                // console.log(response);
-                const userUID = authentication.currentUser.uid;
-                console.log(userUID);
-                
+                const userUID = response.user.uid;
                 const userData = {
                     dob: date,
                     email: email,
@@ -68,10 +65,10 @@ export default function DriverSignUp( {navigation} ) {
                     phone: phone,
                     usertype: 'Driver',
                 }
-                
-                console.log(userData);
                 setDoc(doc(db, "users", userUID), userData);
-
+                console.log(userUID + " : " + response.user.email + " => successfuly signed up")
+                console.log(userData);
+                console.log('User Data went into database successfully');
             })
             .catch((error) => {
                 setSnackBarText(AuthErrorHandler(error.code));
@@ -80,7 +77,7 @@ export default function DriverSignUp( {navigation} ) {
             })
             
         } else {
-            
+            setIsSubmitted(true);
         } // end of else
     } // end of signUpHandler()
 
