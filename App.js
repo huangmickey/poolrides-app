@@ -6,8 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Signup from './src/screens/Signup';
 import RiderSignUp from './src/screens/signup/RiderSignUp';
 import DriverSignUp from './src/screens/signup/DriverSignUp';
-import RiderLogin from './src/screens/login/RiderLogin';
-import DriverLogin from './src/screens/login/DriverLogin';
+import Login from './src/screens/Login';
 import GeneralInterests from './src/screens/interests/GeneralInterests';
 import MusicInterests from './src/screens/interests/MusicInterests';
 import RiderDashboard from './src/screens/dashboard/RiderDashboard';
@@ -15,8 +14,7 @@ import DriverDashboard from './src/screens/dashboard/DriverDashboard';
 import EnterEmail from './src/screens/ForgotPassword/EnterEmail';
 import NewPasswordPage from './src/screens/ForgotPassword/NewPasswordPage';
 import VerifyAccount from './src/screens/interests/VerifyAccount';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore/lite';
-import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from './src/firebase/firebase-config';
 import { AppStyles } from './src/utils/styles';
 import { onIdTokenChanged } from 'firebase/auth';
@@ -29,7 +27,6 @@ function App() {
   const [userType, setUserType] = useState();
   const [isGeneralFilled, setIsGeneralFilled] = useState();
   const [isMusicFilled, setIsMusicFilled] = useState();
-  const [isFirstTimeSignUp, setIsFirstTimeSignUp] = useState();
 
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(authentication, (user) => {
@@ -78,8 +75,7 @@ function App() {
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Sign up" component={Signup} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Sign up" component={RiderSignUp} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Sign up" component={DriverSignUp} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Login" component={DriverLogin} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Login" component={RiderLogin} />
+        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Login" component={Login} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Enter Email" component={EnterEmail} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="New Password Page" component={NewPasswordPage} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Verify Account" component={VerifyAccount} />
