@@ -1,12 +1,12 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { AppStyles } from '../../utils/styles';
 import CustomButton from "../../components/CustomButton";
-import VerifyCodeField  from "../../components/VerifyCodeField";
+import EnterEmailforPwordReset  from "../../components/EnterEmailforPwordReset";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
-export default function VerifyCode({navigation}){
-    function verifyCodePressHandler(){
-        navigation.navigate("New Password Page");
-    }
+export default function ForgotPwordEmail(){
+
+    const auth = getAuth();
 
     return(
         <View style={styles.container}>
@@ -16,12 +16,12 @@ export default function VerifyCode({navigation}){
             />
             </View>
             <View style={styles.inputView}>
-                <Text style={styles.textType}>VerifyCode</Text>
-                <VerifyCodeField text="******"/>
+                <Text style={styles.textType}>Enter your Email</Text>
+                <EnterEmailforPwordReset text="Email"/>
              </View>
 
              <View style={styles.buttonBox}>
-                <CustomButton title={"Submit"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={verifyCodePressHandler}/>  
+                <CustomButton title={"Reset Your Password"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={() =>sendPasswordResetEmail(auth,EnterEmailforPwordReset.email)}/>  
             </View>
 
 

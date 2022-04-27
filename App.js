@@ -12,9 +12,9 @@ import GeneralInterests from './src/screens/interests/GeneralInterests';
 import MusicInterests from './src/screens/interests/MusicInterests';
 import RiderDashboard from './src/screens/dashboard/RiderDashboard';
 import DriverDashboard from './src/screens/dashboard/DriverDashboard';
-import EnterEmail from './src/screens/ForgotPassword/EnterEmail';
-import NewPasswordPage from './src/screens/ForgotPassword/NewPasswordPage';
+
 import VerifyAccount from './src/screens/interests/VerifyAccount';
+import ForgotPWordEmail from './src/screens/ForgotPassword/ForgotPWordEmail';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore/lite';
 import { onAuthStateChanged } from "firebase/auth";
 import { authentication, db } from './src/firebase/firebase-config';
@@ -80,8 +80,8 @@ function App() {
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Sign up" component={DriverSignUp} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Login" component={DriverLogin} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Login" component={RiderLogin} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Enter Email" component={EnterEmail} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="New Password Page" component={NewPasswordPage} />
+        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Forgot Pword" component={ForgotPWordEmail} />
+
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Verify Account" component={VerifyAccount} />
       </Stack.Navigator>
     )
@@ -120,7 +120,7 @@ function App() {
       </Stack.Navigator>
     )
   }
-
+//comment body out
   return (
     <>
       <NavigationContainer style={{backgroundColor: AppStyles.color.black}}>

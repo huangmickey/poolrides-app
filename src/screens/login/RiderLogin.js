@@ -17,6 +17,9 @@ export default function RiderLogin({navigation}) {
   function signUpPressHandler() {
     navigation.navigate("Sign up");
   }
+  function forgotPwordPressHandler(){
+    navigation.navigate("Forgot Pword");
+  }
 
   if (isAuthenticating) {
     return <LoadingOverlay message="Logging you in..." />;
@@ -41,7 +44,7 @@ export default function RiderLogin({navigation}) {
 
       <View style={styles.touchables}>
         <TouchableOpacity>
-          <Text style={styles.forgotBtn}>Forgot Password?</Text>
+          <Text style={styles.forgotBtn} onPress = {forgotPwordPressHandler}> Forgot Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.registerBtn}>
           <Text style={styles.signUpText} onPress={signUpPressHandler}>
