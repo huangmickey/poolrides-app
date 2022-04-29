@@ -81,6 +81,8 @@ function App() {
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Login" component={DriverLogin} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Login" component={RiderLogin} />
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Forgot Pword" component={ForgotPWordEmail} />
+        
+   
 
         <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Verify Account" component={VerifyAccount} />
       </Stack.Navigator>
