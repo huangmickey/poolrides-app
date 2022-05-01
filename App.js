@@ -4,19 +4,19 @@ import { NavigationContainer } from '@react-navigation/native';
 import Startup from './src/screens/Startup';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Signup from './src/screens/Signup';
-import RiderSignUp from './src/screens/signup/RiderSignUp';
-import DriverSignUp from './src/screens/signup/DriverSignUp';
-import GeneralInterests from './src/screens/interests/GeneralInterests';
-import MusicInterests from './src/screens/interests/MusicInterests';
-import RiderDashboard from './src/screens/dashboard/RiderDashboard';
-import DriverDashboard from './src/screens/dashboard/DriverDashboard';
+import RiderSignUp from './src/screens/Signup/RiderSignUp';
+import DriverSignUp from './src/screens/Signup/DriverSignUp';
+import GeneralInterests from './src/screens/Interests/GeneralInterests';
+import MusicInterests from './src/screens/Interests/MusicInterests';
+import RiderDashboard from './src/screens/Dashboard/RiderDashboard';
+import DriverDashboard from './src/screens/Dashboard/DriverDashboard';
 import IDVerification from './src/screens/IDVerification/IDVerification'
-import VerifyAccount from './src/screens/interests/VerifyAccount';
+import VerifyAccount from './src/screens/Interests/VerifyAccount';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from './src/firebase/firebase-config';
 import { AppStyles } from './src/utils/styles';
 import { onIdTokenChanged } from 'firebase/auth';
-import RiderProfile from './src/screens/profile/RiderProfile';
+import RiderProfile from './src/screens/Profile/RiderProfile';
 import { LogBox } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
 import Login from './src/screens/Login'
 import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
@@ -89,6 +89,7 @@ function App() {
         <Stack.Screen name="Driver Sign up" component={DriverSignUp} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Recover" component={RecoverPassword} />
+
       </Stack.Navigator>
     )
   }
@@ -132,6 +133,7 @@ function App() {
     <>
       <NavigationContainer>
         <StatusBar style='light' />
+        {/* <AuthDriverStack /> */}
         {!isLoggedIn && <AuthStack />}
         {isLoggedIn && !(isGeneralFilled && isMusicFilled) && !isEmailVerified && <AuthInterestsStack />}
         {isLoggedIn && isGeneralFilled && isMusicFilled && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack />}

@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
-import { Button, StyleSheet, View, Image, Text, Alert } from 'react-native';
+import React from 'react';
+import { Button, View, Text, Alert } from 'react-native';
 import { IDStyle } from '../../utils/styles';
 import * as ImagePicker from 'expo-image-picker';
-import { ActivityIndicator } from 'react-native-web';
-import { storage } from '../../firebase/firebase-config';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import { doc, getDoc } from 'firebase/firestore/lite';
-import { getAuth } from "firebase/auth";
-import { useNavigation } from '@react-navigation/native';
+import { doc, updateDoc } from 'firebase/firestore/lite';
+import { authentication, db } from '../../firebase/firebase-config';
 
 
-export default function IDVerification({ navigation }) {
+export default function IDVerification({ driverVerification }) {
 
-    const userDocRef = (doc(db, "users", userUID));
+    const userUID = authentication.currentUser.uid;
+    const userDocRef = doc(db, "users", userUID);
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
+        const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [16, 9],
@@ -37,7 +35,16 @@ export default function IDVerification({ navigation }) {
                     .then(downloadURL => {
                         console.log('Download URL: ', downloadURL);
                         updateDoc(userDocRef, { DriverID: downloadURL });
-                        Alert.alert('Upload to Server Successful!', 'Returning to Driver Dashboard.');
+                        Alert.alert(
+                            'Upload to Server Successful!',
+                            'Welcome to your dashboard!',
+                            {
+                                text: "Ok",
+                                onPress: driverVerification(true),
+
+                            },
+                        );
+                        updateDoc(userDocRef, { isVerified: true });
                     })
 
             } catch (e) {

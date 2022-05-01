@@ -1,11 +1,11 @@
-import { StyleSheet, TextInput,Text, View, Image,FlatList, SafeAreaView, StatusBar} from 'react-native';
-import React, { useState ,useEffect} from "react";
+import { StyleSheet, TextInput, Text, View, Image, FlatList, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState, useEffect } from "react";
 import DashboardButton from '../../components/DashboardButton';
 import { AppStyles } from '../../utils/styles';
 import { db, authentication } from '../../firebase/firebase-config';
 import { BottomNavigation } from 'react-native-paper';
 import { getAuth } from "firebase/auth";
-import {doc, getDoc} from 'firebase/firestore/lite';
+import { doc, getDoc } from 'firebase/firestore/lite';
 
 import CustomButton from '../../components/CustomButton';
 import { borderLeftColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
@@ -27,7 +27,7 @@ export default function RiderDashboard({ navigation }) {
     }
 
     getUserData();
-  }, []);
+  });
 
   function logoutHandler() {
     console.log("User Logged Out");
@@ -35,38 +35,38 @@ export default function RiderDashboard({ navigation }) {
   }
 
 
-//const auth = getAuth();  
-//const email = auth.currentUser.email;
+  //const auth = getAuth();  
+  //const email = auth.currentUser.email;
 
 
-async function checkDB(){
-  
-  const userUID = authentication.currentUser.uid;
+  async function checkDB() {
 
-  const userDocReference = doc(db,"users",userUID);
-  const userDocSnapshot = await getDoc(userDocReference);
+    const userUID = authentication.currentUser.uid;
 
-  
-  if(userDocSnapshot.exists()){
+    const userDocReference = doc(db, "users", userUID);
+    const userDocSnapshot = await getDoc(userDocReference);
 
-    const userFirstName = userDocSnapshot.data().firstname;
-    console.log(userFirstName);
+
+    if (userDocSnapshot.exists()) {
+
+      const userFirstName = userDocSnapshot.data().firstname;
+      console.log(userFirstName);
+    }
+    else {
+      console.log("No Such Document!");
+    }
   }
-  else{
-    console.log("No Such Document!");
-  }
-}
 
 
-  function testing(){
-    
-      console.log(auth.currentUser.email);
-    
+  function testing() {
+
+    console.log(auth.currentUser.email);
+
   }
 
   //want to add some icons to buttons
-  function PressHandlerDashboard(title){
-    switch(title){
+  function PressHandlerDashboard(title) {
+    switch (title) {
       case 'A':
         console.log("a");
         //navigation.navigate()
@@ -84,11 +84,11 @@ async function checkDB(){
       case 'D':
         console.log("d");
         testing();
-        
+
         //navigation.navigate()
         break;
       default:
-          console.log("something went wrong");
+        console.log("something went wrong");
     }
   }
 
@@ -114,69 +114,69 @@ async function checkDB(){
       icon: "../../../assets/history.png",
     },
   ];
-  
-  const Item = ({ title}) => (
+
+  const Item = ({ title }) => (
     <View style={styles.item}>
       <DashboardButton
-        title={title} color={AppStyles.color.mint} textColor={AppStyles.color.black} icon={"../../../assets/history.png"} onPress={() =>PressHandlerDashboard(title)}
+        title={title} color={AppStyles.color.mint} textColor={AppStyles.color.black} icon={"../../../assets/history.png"} onPress={() => PressHandlerDashboard(title)}
       />
     </View>
   );
-    const [isScrollEnabled, setIsScrollEnabled] = useState(false);
-    const renderItem = ({ item }) => (
-      <Item title={item.title} />
-    );
-  
+  const [isScrollEnabled, setIsScrollEnabled] = useState(false);
+  const renderItem = ({ item }) => (
+    <Item title={item.title} />
+  );
 
 
-    return (
-      <SafeAreaView style={styles.container}>
+
+  return (
+    <SafeAreaView style={styles.container}>
       <Text>
         <Text style={styles.text}>Welcome </Text>
         <Text style={styles.name}>{userInfo?.firstname}! </Text>
-      </Text>  
-        <Text style={styles.text}>This is the Rider Dashboard</Text>
-          <CustomButton 
-            title='Log out' 
-            color={AppStyles.color.mint} 
-            textColor={AppStyles.color.white} 
-            onPress={logoutHandler}/>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            horizontal={true}
-            scrollEnabled={isScrollEnabled}
-          />
-      </SafeAreaView>
-    );
-  }
-  
+      </Text>
+      <Text style={styles.text}>This is the Rider Dashboard</Text>
+      <CustomButton
+        title='Log out'
+        color={AppStyles.color.mint}
+        textColor={AppStyles.color.white}
+        onPress={logoutHandler} />
+      <FlatList
+        data={DATA}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        horizontal={true}
+        scrollEnabled={isScrollEnabled}
+      />
+    </SafeAreaView>
+  );
+}
+
 
 
 const styles = StyleSheet.create({
-    text: {
-      color: AppStyles.color.white,
-    },
-    container: {
-      flex: 1,
-      marginBottom:0,
-      backgroundColor: AppStyles.color.black,
-      
-      
-    },
-    item: {
-      justifyContent: 'space-between',
-      alignSelf: 'flex-end',
-      padding: 2,
-      marginVertical: 8,
-      marginHorizontal: 0,
-    },
-    title: {
-      fontSize: 32,
-    },
-    name:{
-      color: AppStyles.color.white,
-      fontWeight:'bold'
-    }
+  text: {
+    color: AppStyles.color.white,
+  },
+  container: {
+    flex: 1,
+    marginBottom: 0,
+    backgroundColor: AppStyles.color.black,
+
+
+  },
+  item: {
+    justifyContent: 'space-between',
+    alignSelf: 'flex-end',
+    padding: 2,
+    marginVertical: 8,
+    marginHorizontal: 0,
+  },
+  title: {
+    fontSize: 32,
+  },
+  name: {
+    color: AppStyles.color.white,
+    fontWeight: 'bold'
+  }
 });

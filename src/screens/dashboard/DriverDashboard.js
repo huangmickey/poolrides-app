@@ -1,14 +1,16 @@
 import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { AppStyles } from "../../utils/styles";
 import CustomButton from "../../components/CustomButton";
 import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
+import IDVerification from "../IDVerification/IDVerification";
+
 
 export default function DriverDashboard({ navigation }) {
   const [userInfo, setUserInfo] = useState();
-
+  const [isDriverVerified, setIsDriverVerified] = useState();
   useEffect(() => {
     // Update the document title using Firebase SDK
     const userUID = authentication.currentUser.uid; // Coming from auth when logged in
@@ -17,7 +19,7 @@ export default function DriverDashboard({ navigation }) {
       const userDocReference = doc(db, "users", userUID);
       const userDocSnapshot = await getDoc(userDocReference);
       setUserInfo(userDocSnapshot.data());
-      console.log(userInfo?.firstname);
+      setIsDriverVerified(userDocSnapshot.data().isVerified);
     };
 
     getUserData();
@@ -28,33 +30,49 @@ export default function DriverDashboard({ navigation }) {
     authentication.signOut();
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.logo}>
-        <Image
-          style={{
-            width: 160,
-            height: 100,
-            resizeMode: "contain",
-          }}
-          source={require("../../../assets/splash.png")}
-        />
-      </View>
-      <View style={styles.welcomeContainer}>
-        <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
-        <Text style={styles.welcomeText}>What would you like to do?</Text>
-      </View>
-      <View style={styles.navContainer}>
-        <NavOptions />
-      </View>
 
-      <CustomButton
-        title="Log out"
-        color={AppStyles.color.mint}
-        textColor={AppStyles.color.white}
-        onPress={logoutHandler}
-      />
-    </SafeAreaView>
+
+  return (
+    <>
+
+      {isDriverVerified ?
+        <SafeAreaView style={styles.container}>
+          <View style={styles.logo}>
+            <Image
+              style={{
+                width: 160,
+                height: 100,
+                resizeMode: "contain",
+              }}
+              source={require("../../../assets/splash.png")}
+            />
+          </View>
+          <View style={styles.welcomeContainer}>
+            <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
+            <Text style={styles.welcomeText}>What would you like to do?</Text>
+          </View>
+          <View style={styles.navContainer}>
+            <NavOptions />
+          </View>
+
+          <CustomButton
+            title="Log out"
+            color={AppStyles.color.mint}
+            textColor={AppStyles.color.white}
+            onPress={logoutHandler}
+          />
+        </SafeAreaView>
+
+        :
+        <SafeAreaView style={styles.container}>
+          <IDVerification driverVerification={setIsDriverVerified} />
+        </SafeAreaView>
+
+
+      }
+
+    </>
+
   );
 }
 
