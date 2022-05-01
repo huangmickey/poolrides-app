@@ -7,10 +7,10 @@ import {
   StyleSheet,
 } from "react-native";
 import React from "react";
-import carPic from "../../assets/car.png";
-import friendsPic from "../../assets/friends.png";
-import historyPic from "../../assets/history.png";
-import profilePic from "../../assets/profile.jpg";
+import carPic from "../../assets/caricon.png";
+import friendsPic from "../../assets/friendsicon.png";
+import historyPic from "../../assets/ridehistoryicon.png";
+import profilePic from "../../assets/profileicon.png";
 import { AppStyles } from "../utils/styles";
 import { Icon } from "react-native-elements";
 
@@ -25,24 +25,28 @@ const data = [
     title: "Go Online",
     image: CAR_IMG,
     screen: "MapScreen",
+    url: "https://img.icons8.com/ios-filled/100/000000/car.png",
   },
   {
     id: "456",
     title: "View Profile",
     image: PROFILE_IMG,
     screen: "ProfileScreen",
+    url: "https://img.icons8.com/material/100/000000/user-male-circle--v1.png",
   },
   {
     id: "678",
     title: "View Friends",
     image: FRIENDS_IMG,
     screen: "FriendsScreen",
+    url: "https://img.icons8.com/ios-glyphs/100/000000/friends.png",
   },
   {
     id: "890",
-    title: "View Ride History",
+    title: "Ride History",
     image: HISTORY_IMG,
     screen: "RideScreen",
+    url: "https://img.icons8.com/ios-glyphs/100/000000/order-history.png",
   },
 ];
 
@@ -57,11 +61,11 @@ const NavOptions = () => {
           <View>
             <Image
               style={{
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 resizeMode: "contain",
               }}
-              source={{ uri: item.image }}
+              source={{ uri: item.url }}
             />
             <Text style={styles.titles}>{item.title}</Text>
             <Icon
@@ -90,7 +94,7 @@ const styles = StyleSheet.create({
   },
   titles: {
     alignSelf: "center",
-    fontWeight: "600",
+    fontWeight: '900',
   },
   touchable: {
     padding: 2,
@@ -99,7 +103,8 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     margin: 4,
     width: 150,
-    backgroundColor: AppStyles.color.gray,
-    alignItems: "center",
+    backgroundColor: "#7a7a7a",
+    alignItems: 'center',
+
   },
 });

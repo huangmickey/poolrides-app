@@ -58,6 +58,7 @@ export default function RecoverPassword({ navigation }) {
                     </View>
                     <View style={styles.buttonBox}>
                         <CustomButton
+                            stretch={true}
                             title={"Reset Your Password"}
                             color={AppStyles.color.mint}
                             textColor={AppStyles.color.black}
@@ -93,6 +94,7 @@ export default function RecoverPassword({ navigation }) {
                     <Text style={styles.resetEmailText}>Password Reset Email has been sent to {email}</Text>
                     <View style={styles.buttonBox}>
                         <CustomButton
+                            stretch={true}
                             title={"Login"}
                             color={AppStyles.color.mint}
                             textColor={AppStyles.color.black}

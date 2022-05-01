@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image, Button } from "react-native";
 import React, { useState, useEffect } from "react";
 import { AppStyles } from "../../utils/styles";
 import CustomButton from "../../components/CustomButton";
@@ -6,6 +6,7 @@ import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 export default function DriverDashboard({ navigation }) {
@@ -37,15 +38,27 @@ export default function DriverDashboard({ navigation }) {
 
       {isDriverVerified ?
         <SafeAreaView style={styles.container}>
-          <View style={styles.logo}>
+          <View style={styles.header}>
             <Image
               style={{
-                width: 160,
+                width: 100,
                 height: 100,
                 resizeMode: "contain",
               }}
               source={require("../../../assets/splash.png")}
             />
+            <View style={
+              {
+                justifyContent: 'center',
+              }
+            }>
+              <Button
+                title='Log out'
+                color={AppStyles.color.salmonred}
+                onPress={logoutHandler}
+              >
+              </Button>
+            </View>
           </View>
           <View style={styles.welcomeContainer}>
             <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
@@ -55,12 +68,7 @@ export default function DriverDashboard({ navigation }) {
             <NavOptions />
           </View>
 
-          <CustomButton
-            title="Log out"
-            color={AppStyles.color.mint}
-            textColor={AppStyles.color.white}
-            onPress={logoutHandler}
-          />
+
         </SafeAreaView>
 
         :
@@ -84,9 +92,10 @@ const styles = StyleSheet.create({
   text: {
     color: AppStyles.color.white,
   },
-  logo: {
-    padding: 10,
-    paddingTop: 10,
+  header: {
+    paddingLeft: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   navContainer: {
     backgroundColor: AppStyles.color.black,
