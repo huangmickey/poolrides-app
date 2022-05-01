@@ -106,7 +106,7 @@ function App() {
     return (
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Driver Dashboard" component={DriverDashboard} />
-        <Stack.Screen name="Driver Profile" component={DriverProfile} />
+        <Stack.Screen options={{ headerShown: false }} name="Driver Profile" component={DriverProfile} />
       </Stack.Navigator>
     )
   }
@@ -115,7 +115,7 @@ function App() {
     return (
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Rider Dashboard" component={RiderDashboard} />
-        <Stack.Screen name="Rider Profile" component={RiderProfile} />
+        <Stack.Screen options={{ headerShown: false }} name="Rider Profile" component={RiderProfile} />
       </Stack.Navigator>
     )
   }

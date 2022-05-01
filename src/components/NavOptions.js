@@ -16,15 +16,15 @@ let data = [
     id: "123",
     title: "Go Online",
     ridertitle: 'Get Ride',
-    riderscreen: 'Rider Map Screen',
-    driverscreen: 'Driver Map Screen',
+    riderscreen: 'Rider Map',
+    driverscreen: 'Driver Map',
     url: "https://img.icons8.com/ios-filled/100/000000/car.png",
   },
   {
     id: "456",
     title: "View Profile",
-    riderscreen: 'Profile Screen',
-    driverscreen: 'Profile Screen',
+    riderscreen: 'Rider Profile',
+    driverscreen: 'Driver Profile',
     url: "https://img.icons8.com/material/100/000000/user-male-circle--v1.png",
   },
   {
@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
     width: 150,
     backgroundColor: "#7a7a7a",
     alignItems: 'center',
-
+    borderRadius: 30,
   },
 });
