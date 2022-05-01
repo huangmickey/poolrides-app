@@ -1,5 +1,5 @@
-import { StyleSheet, TextInput,Text, View, Button,FlatList, SafeAreaView, StatusBar} from 'react-native';
-import React, { useState } from "react";
+import { StyleSheet, TextInput,Text, View, Image,FlatList, SafeAreaView, StatusBar} from 'react-native';
+import React, { useState ,useEffect} from "react";
 import DashboardButton from '../../components/DashboardButton';
 import { AppStyles } from '../../utils/styles';
 import { db, authentication } from '../../firebase/firebase-config';
@@ -8,13 +8,32 @@ import { getAuth } from "firebase/auth";
 import {doc, getDoc} from 'firebase/firestore/lite';
 
 import CustomButton from '../../components/CustomButton';
+import { borderLeftColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 
 export default function RiderDashboard({ navigation }) {
+
+  const [userInfo, setUserInfo] = useState();
+
+  useEffect(() => {
+    // Update the document title using Firebase SDK
+    const userUID = authentication.currentUser.uid           // Coming from auth when logged in
+
+    const getUserData = async () => {
+      const userDocReference = doc(db, "users", userUID);
+      const userDocSnapshot = await getDoc(userDocReference);
+      setUserInfo(userDocSnapshot.data());
+      console.log(userInfo);
+    }
+
+    getUserData();
+  }, []);
+
   function logoutHandler() {
     console.log("User Logged Out");
     authentication.signOut();
   }
+
 
 //const auth = getAuth();  
 //const email = auth.currentUser.email;
@@ -38,7 +57,6 @@ async function checkDB(){
   }
 }
 
-//const fName = checkDB();
 
   function testing(){
     
@@ -78,25 +96,29 @@ async function checkDB(){
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
       title: 'A',
+      icon: "../../../assets/history.png",
     },
     {
       id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
       title: 'B',
+      icon: "../../../assets/history.png",
     },
     {
       id: '58694a0f-3da1-471f-bd96-145571e29d72',
       title: 'C',
+      icon: "../../../assets/history.png",
     },
     {
       id: '1234123047',
       title: 'D',
+      icon: "../../../assets/history.png",
     },
   ];
   
-  const Item = ({ title }) => (
+  const Item = ({ title}) => (
     <View style={styles.item}>
       <DashboardButton
-        title={title} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={() =>PressHandlerDashboard(title)}
+        title={title} color={AppStyles.color.mint} textColor={AppStyles.color.black} icon={"../../../assets/history.png"} onPress={() =>PressHandlerDashboard(title)}
       />
     </View>
   );
@@ -109,21 +131,23 @@ async function checkDB(){
 
     return (
       <SafeAreaView style={styles.container}>
-        <Text style = {styles.text}>{}</Text>
-        <Text style = {styles.text}>Name should be in Here^^ press C and it'll go to console.This is Rider Dashboard</Text>
-        <Text style = {styles.text}>I think putting something here could be good, Kurtis made his look more similar to the mockups if not</Text>
-        <CustomButton 
+      <Text>
+        <Text style={styles.text}>Welcome </Text>
+        <Text style={styles.name}>{userInfo?.firstname}! </Text>
+      </Text>  
+        <Text style={styles.text}>This is the Rider Dashboard</Text>
+          <CustomButton 
             title='Log out' 
             color={AppStyles.color.mint} 
             textColor={AppStyles.color.white} 
             onPress={logoutHandler}/>
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          horizontal={true}
-          scrollEnabled={isScrollEnabled}
-        />
+          <FlatList
+            data={DATA}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            horizontal={true}
+            scrollEnabled={isScrollEnabled}
+          />
       </SafeAreaView>
     );
   }
@@ -131,12 +155,6 @@ async function checkDB(){
 
 
 const styles = StyleSheet.create({
-    containerMe: {
-      flex: 1,
-      backgroundColor: AppStyles.color.black,
-      alignItems: "center",
-      justifyContent: "center",
-    },
     text: {
       color: AppStyles.color.white,
     },
@@ -157,4 +175,8 @@ const styles = StyleSheet.create({
     title: {
       fontSize: 32,
     },
+    name:{
+      color: AppStyles.color.white,
+      fontWeight:'bold'
+    }
 });

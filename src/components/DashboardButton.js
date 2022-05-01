@@ -1,10 +1,10 @@
 // https://github.com/rcaferati/react-native-really-awesome-button
 import AwesomeButton from "react-native-really-awesome-button"; 
-import { StyleSheet } from "react-native"
+import { Image } from "react-native"
 import { AppStyles } from '../utils/styles';
 
 
-export default function CDashboardButton({ title, color, textColor, onPress }) {
+export default function DashboardButton({ title, color, textColor,icon, onPress }) {
 
     return (
         <AwesomeButton 
@@ -18,8 +18,10 @@ export default function CDashboardButton({ title, color, textColor, onPress }) {
                 springRelease={true}
                 textSize={16}
                 backgroundDarker={AppStyles.color.salmonred}
+                
             >
                 {title}
+         
             </AwesomeButton>
     );
 }
