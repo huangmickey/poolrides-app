@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export const AppStyles = {
   color: {
     black: '#000000',
+    darkgray: '#101010',
     platinum: '#E6E8E6',
     gray: "#A9A9A9",
     mint: '#4ffcba',
@@ -12,7 +13,7 @@ export const AppStyles = {
     errorred: '#ff9494',
   },
   textFontSizes: {
-    sm: 8,
+    sm: 10,
     md: 16,
     lg: 24,
     xl: 32,
@@ -70,6 +71,8 @@ export const AppIcon = {
     // defaultUser: require("../assets/icons/default_user.jpg"),
     // logout: require("../assets/icons/shutdown.png"),
     // menu: require("../assets/icons/menu.png")
+    placeHolder: require("../../assets/imgs/white.png"),
+    profileBackground: require("../../assets/imgs/profile_background.png"),
   }
 };
 

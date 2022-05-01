@@ -1,22 +1,22 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
 import Button from 'react-native-button';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'       //https://github.com/APSL/react-native-keyboard-aware-scroll-view   
-import { FloatingLabelInput } from 'react-native-floating-label-input';                 //https://github.com/Cnilton/react-native-floating-label-input#version-135-or-higher---react-native-reanimated-v2
-import { Agreement } from '../../utils/tos'; 
-import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
-import LoadingOverlay from '../../components/LoadingOverlay';
+import { setGlobalStyles, FloatingLabelInput } from 'react-native-floating-label-input';                 //https://github.com/Cnilton/react-native-floating-label-input#version-135-or-higher---react-native-reanimated-v2
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import validator from 'validator';
-import CustomButton from '../../components/CustomButton';
+                                                                                        // https://www.npmjs.com/package/react-native-next-input
+import { Agreement } from '../../utils/tos'; 
+import LoadingOverlay from '../../components/LoadingOverlay';
+import { AppStyles } from '../../utils/styles';
+
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 import AuthErrorHandler from '../../utils/AuthErrorHandler';
 
-import { AppStyles } from '../../utils/styles';
-
-
-export default function DriverSignUp( {navigation} ) {
+export default function RiderSignUp() {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [date, setDate] = useState('');    
@@ -24,48 +24,46 @@ export default function DriverSignUp( {navigation} ) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
-    const [checked, setChecked] = useState(false);
+    const [tosChecked, setTOSChecked] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [errorMsg, setErrorMsg] = useState(['']);
 
     const keyboardAppearance = 'dark';
-    const maxLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
-    const returnKeyType= 'next';
-    const labelColor = AppStyles.color.gray;   
+    const maxInputLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
+    const passwordMsg = '*Must be at least 8 characters long with at least one number, capital and special character.';
 
     const [dialogVisible, setdialogVisible] = useState(false);
     const showDialog = () => setdialogVisible(true);
     const hideDialog = () => setdialogVisible(false);
 
-    const [isAuthenticating, setIsAuthenticating] = useState(false); // Check if firebase is auth
-    
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
+
     const [snackBarVisisble, setSnackBarVisible] = useState(false);
     const [snackBarText, setSnackBarText] = useState(''); 
     const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
     const onDismissSnackBar = () => setSnackBarVisible(false);
-    
+
     function signUpHandler() {
 
-        if (firstname != "" && lastname != "" && validator.isDate(date, {format: 'MM/DD/YYYY'}) 
-            && phone.length == 14 && validator.isEmail(email) 
-            && confirmpassword == password && checked == true
-            && validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1, returnScore: false, 
-                                                   pointsPerUnique: 1, pointsPerRepeat: 0.5, pointsForContainingLower: 10, pointsForContainingUpper: 10, 
-                                                   pointsForContainingNumber: 10, pointsForContainingSymbol: 10 })) {
-            
+        if (!validationHandler()) {           
+            setIsSubmitted(true);
+        } else {
+            const userData = {
+                dob: date,
+                email: email,
+                firstname: firstname,
+                lastname: lastname,
+                phone: phone,
+                usertype: 'Driver',
+            }
             setIsAuthenticating(true);
             createUserWithEmailAndPassword(authentication, email, password)
             .then((response) => {
+                
                 const userUID = response.user.uid;
-                const userData = {
-                    dob: date,
-                    email: email,
-                    firstname: firstname,
-                    lastname: lastname,
-                    phone: phone,
-                    usertype: 'Driver',
-                }
-                setDoc(doc(db, "users", userUID), userData);
+                setDoc(doc(db, "users", userUID), userData)
+                .catch(error => {
+                    console.log('Database entry error' + error);
+                })
                 console.log(userUID + " : " + response.user.email + " => successfuly signed up")
                 console.log(userData);
                 console.log('User Data went into database successfully');
@@ -74,75 +72,34 @@ export default function DriverSignUp( {navigation} ) {
                 setSnackBarText(AuthErrorHandler(error.code));
                 onToggleSnackBar();
                 setIsAuthenticating(false);
-            })
-            
-        } else {
-            setIsSubmitted(true);
-        } // end of else
-    } // end of signUpHandler()
-
-    if (isAuthenticating) {
-        return <LoadingOverlay message="Creating account..."/>
-    }
-
-
-    function validationHandler(text) {
-        switch(text) {
-            case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-            case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-            case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
-            case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-            case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-            case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
-            case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text) || confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            })            
         }
     }
     
-    
-    // const errorHandler = (e) => {
-    //     const err = errorMsg;
-    //     if (firstname == '') {
-    //         setErrorMsg('First name cannot be empty \n')
-    //     } else {
-    //         setErrorMsg(errorMsg.filter(err => err != 'First name cannot be empty \n'))
-    //     }
-    //     if (lastname == '') {
-    //         setErrorMsg([...err,'Last name cannot be empty \n'])
-    //     } else {
-    //         setErrorMsg(errorMsg.filter(err => err != 'Last name cannot be empty \n'))
-    //     }
-    //     if (date == '' || date != validator.isDate({format: 'MM/DD/YYYY'})) {
-    //         setErrorMsg('Please enter a valid birth date \n')
-    //     } else {
-    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid birth date \n'))
-    //     }
-    //     if (email == '' || email != validator.isEmail) {
-    //         setErrorMsg('Please enter a valid Email \n')
-    //     } else {
-    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid Email \n'))
-    //     }
-    //     if (phone == '' || phone != validator.isMobilePhone) {
-    //         setErrorMsg('Please enter a valid phone number \n')
-    //     } else {
-    //         setErrorMsg(errorMsg.filter(err => err != 'Please enter a valid phone number \n'))
-    //     }
-    //     if (password == '' || phone != validator.isStrongPassword) {
-    //         setErrorMsg('Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n')
-    //     } else {
-    //         setErrorMsg(errorMsg.filter(err => err != 'Your password must contain a total of 8 characters, containing 1 upper case character, 1 lower case character, and 1 symbol  \n'))
-    //     }
-    //     if (confirmpassword == '' || confirmpassword == !validator.isStrongPassword || confirmpassword == !password) {
-    //         setErrorMsg('Please make sure your passwords match. \n')
-    //     } else {
-    //         setErrorMsg(errorMsg.filter(err => err != 'Please make sure your passwords match. \n'))
-    //     }
-    // }
-    
-    
-    
-    const commonHandler = () => {
-        signUpHandler();
-        // errorHandler();
+    function validationHandler(text) {
+        if(text === undefined) {
+            if (firstname == "" || lastname == "" || date == "" || !validator.isDate(date, {format: 'MM/DD/YYYY'}) || 
+                phone == "" || phone == !validator.isMobilePhone || email == "" ||email == !validator.isEmail || 
+                password == "" || password == !validator.isStrongPassword || confirmpassword == "" ||confirmpassword != password || 
+                tosChecked == false) { return false; 
+            } else {
+                return true;
+            }
+        } else {
+            switch(text) {
+                case(firstname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+                case(lastname): if (isSubmitted && text == '') { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+                case(date): if (isSubmitted && text == '' || isSubmitted && !validator.isDate(text, {format: 'MM/DD/YYYY'})){ return AppStyles.color.salmonred} else { return AppStyles.color.white };
+                case(email): if (isSubmitted && text == '' || isSubmitted && !validator.isEmail(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+                case(phone): if (isSubmitted && text == '' || isSubmitted && !validator.isMobilePhone(text)) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+                case(password): if (isSubmitted && text == '' || isSubmitted && !validator.isStrongPassword(text)) { return AppStyles.color.salmonred } else { return AppStyles.color.white };
+                case(confirmpassword): if (isSubmitted && text == '' || isSubmitted && confirmpassword !== password) { return AppStyles.color.salmonred} else { return AppStyles.color.white };
+            }
+        }
+    }
+
+    if (isAuthenticating) {
+        return <LoadingOverlay message="Creating account..."/>
     }
 
     return (
@@ -150,199 +107,138 @@ export default function DriverSignUp( {navigation} ) {
         <View style={styles.container}>
 
         <Text style={[styles.title, styles.leftTitle]}>Create new account</Text>
-        <Text style={[styles.formError]}>{errorMsg}</Text>
         
-        <KeyboardAwareScrollView 
-            contentContainerStyle={styles.scrollviewContainer}
-            enableOnAndroid={true}
-            extraScrollHeight={40}
+        <KeyboardAwareScrollView contentContainerStyle={styles.scrollviewContainer}
+             enableOnAndroid={true} extraScrollHeight={60}
         >
             <View style={[styles.InputContainer, {borderColor: validationHandler(firstname)}]}>
                 <FloatingLabelInput                                    
-                    containerStyles={styles.textContainer}
-                    customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
-                    inputStyles={styles.inputTextStyle}
-
                     value={firstname}
                     label={'First Name:'}
-
                     keyboardAppearance={keyboardAppearance}
-                    maxLength={maxLength}
-                    returnKeyType={returnKeyType}
-
-                    onChangeText={setFirstname}
+                    maxLength={maxInputLength}
 
                     blurOnSubmit={false}
-                    onSubmitEditing={() => this.lastnameInput.focus()}
-                    />
+                    onChangeText={setFirstname}
+                />
             </View>
 
             <View style={[styles.InputContainer, {borderColor: validationHandler(lastname)}]}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
+                <FloatingLabelInput 
+                    value={lastname}
+                    label={'Last Name:'}
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxInputLength}
 
-                value={lastname}
-                label={'Last Name:'}
-
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
-
-                onChangeText={setLastname}
-
-                ref={ref => { this.lastnameInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.dobInput.focus()}
+                    blurOnSubmit={false}
+                    onChangeText={setLastname}
                 />
             </View>
 
             <View style={[styles.InputContainer, {borderColor: validationHandler(date)}]}>
                 <FloatingLabelInput 
-                    containerStyles={styles.textContainer}
-                    customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                    inputStyles={styles.inputTextStyle}
-
                     value={date}
                     label={'Date Of Birth:'}
-
+                    maskType={'date'}
+                    mask={'99/99/9999'}
+                    hint={'01/01/2001'}
+                    hintTextColor={'grey'}  
                     keyboardType='numeric'
                     keyboardAppearance={keyboardAppearance}
                     maxLength={10}
 
-                    maskType={'date'}
-                    mask={'99/99/9999'}
-                    hint={'01/01/2001'}
-                    hintTextColor={'grey'}               
-
-                    onChangeText={setDate}
-
-                    ref={ref => { this.dobInput = ref; }}
                     blurOnSubmit={false}
-                    onSubmitEditing={() => this.emailInput.focus()}
+                    onChangeText={setDate}
                 />
             </View>
 
             <View style={[styles.InputContainer, {borderColor: validationHandler(email)}]}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
-                
-                value={email}
-                label={'E-mail Address:'}
+                <FloatingLabelInput              
+                    value={email}
+                    label={'E-mail Address:'}
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxInputLength}
 
-                keyboardAppearance={keyboardAppearance}
-                maxLength={30}
-                returnKeyType={returnKeyType}
-
-                onChangeText={setEmail}
-
-                ref={ref => { this.emailInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.phoneInput.focus()}
+                    blurOnSubmit={false}
+                    onChangeText={setEmail}
                 />
             </View>
 
             <View style={[styles.InputContainer, {borderColor: validationHandler(phone)}]}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
+                <FloatingLabelInput 
+                    value={phone}
+                    label={'Phone Number:'}
+                    maskType={'phone'}
+                    mask={'(999) 999-9999'}
+                    hint={'(555) 555-5555'}
+                    keyboardType='numeric'
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={14}              
 
-                value={phone}
-                label={'Phone Number:'}
-                
-                keyboardType='numeric'
-                keyboardAppearance={keyboardAppearance}
-                maxLength={14}
-
-                maskType={'phone'}
-                mask={'(999) 999-9999'}
-                hint={'(555) 555-5555'}
-
-                onChangeText={setPhone}
-
-                ref={ref => { this.phoneInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.passwordInput.focus()}
-            />
+                    blurOnSubmit={false}
+                    onChangeText={setPhone}
+                />
             </View>
 
             <View style={[styles.InputContainer, {borderColor: validationHandler(password)}]}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred:labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
+                <FloatingLabelInput 
+                    value={password}
+                    label={'Password:'}
+                    isPassword={true}
+                    customShowPasswordComponent={<Icon name={"eye-off-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
+                    customHidePasswordComponent={<Icon name={"eye-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxInputLength}
 
-                value={password}
-                label={'Password:'}
-
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
-
-                isPassword={true}
-                customShowPasswordComponent={<Text></Text>}
-                customHidePasswordComponent={<Text></Text>}
-                onChangeText={setPassword}
-
-                ref={ref => { this.passwordInput = ref; }}
-                blurOnSubmit={false}
-                onSubmitEditing={() => this.passwordConfInput.focus()}
+                    blurOnSubmit={false}
+                    onChangeText={setPassword}
                 />
-            </View>            
+            </View> 
 
+            <View style={{width: AppStyles.textInputWidth.main}}>
+                <Text style={styles.passwordMsg} >{passwordMsg}</Text>
+            </View>
 
             <View style={[styles.InputContainer, {borderColor: validationHandler(confirmpassword)}]}>
-            <FloatingLabelInput 
-                containerStyles={styles.textContainer}
-                customLabelStyles={{colorBlurred: labelColor, colorFocused:labelColor}}
-                inputStyles={styles.inputTextStyle}
+                <FloatingLabelInput 
+                    value={confirmpassword}
+                    label={'Confirm Password:'}
+                    isPassword={true}
+                    customShowPasswordComponent={<Icon name={"eye-off-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
+                    customHidePasswordComponent={<Icon name={"eye-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
+                    keyboardAppearance={keyboardAppearance}
+                    maxLength={maxInputLength}
 
-                value={confirmpassword}
-                label={'Confirm Password:'}
-                
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxLength}
-                returnKeyType={returnKeyType}
-
-                isPassword={true}
-                customShowPasswordComponent={<Text></Text>}
-                customHidePasswordComponent={<Text></Text>}
-                onChangeText={setConfirmPassword}
-
-                ref={ref => { this.passwordConfInput = ref; }}
-                blurOnSubmit={false}
+                    blurOnSubmit={false}
+                    onChangeText={setConfirmPassword}
                 />
             </View>
 
             <View style={styles.checkBoxContainer}>
                 <Checkbox.Item
                     style={styles.checkBox}
-                    status={checked ? 'checked' : 'unchecked'}
+                    status={tosChecked ? 'checked' : 'unchecked'}
                     uncheckedColor={AppStyles.color.white}
                     color={AppStyles.color.salmonred}
-
+                    position={'leading'}
                     mode={'android'}
                     
-                    onPress={() => {
-                        setChecked(!checked);
-                    }}
+                    onPress={() => { setTOSChecked(!tosChecked); }}
                     />
                     <Text style={styles.checkBoxText}>
-                        I agree to the Terms of Service and the Privacy Policy
-                        <Pressable onPress={showDialog}>
-                        <Text style={styles.tosText}> ?
-                        </Text>
-                        </Pressable>
+                        <Text>I agree to the </Text>
+                        <Text onPress={() => showDialog()} style={styles.tosText}>Terms of Service</Text>
+                        <Text> and the </Text>
+                        <Text onPress={() => showDialog()} style={styles.tosText}>Privacy Policy.</Text>
 
                         <Portal>
                             <Dialog visible={dialogVisible} onDismiss={hideDialog}>
-                                <Dialog.ScrollArea backgroundColor={AppStyles.color.gray} extraScrollHeight={40}>
+                                <Dialog.Actions backgroundColor={AppStyles.color.darkgray} paddingRight={'5%'}>
+                                    <Button onPress={hideDialog}>Done</Button>
+                                </Dialog.Actions>
+                                <Dialog.ScrollArea backgroundColor={AppStyles.color.darkgray} extraScrollHeight={40}>
                                     <ScrollView>
-                                        <Paragraph>{Agreement.tos}</Paragraph>
+                                        <Text style={{color: AppStyles.color.white}}>{Agreement.tos}</Text>
                                     </ScrollView>
                                 </Dialog.ScrollArea>
                             </Dialog>
@@ -354,9 +250,11 @@ export default function DriverSignUp( {navigation} ) {
                 containerStyle={styles.buttonContainer}
                 style={styles.buttonText}
                 title={'Sign Up'}
-                onPress={commonHandler}
+                onPress={signUpHandler}
                 > Sign Up
             </Button>
+
+            <View style={{height: 20}}></View>
 
             </KeyboardAwareScrollView>
         </View>
@@ -374,9 +272,7 @@ export default function DriverSignUp( {navigation} ) {
                 {snackBarText}
             </Snackbar>
         </View>
-        </Provider>
-        
-        
+        </Provider>  
   );
 }
 
@@ -392,27 +288,20 @@ const styles = StyleSheet.create({
     InputContainer: {
         width: AppStyles.textInputWidth.main,
         marginTop: '4%',
-        borderWidth: 1,
+        // borderWidth: 1,
+        borderBottomWidth: 2,
         borderStyle: 'solid',
         borderColor: AppStyles.color.white,
-        borderRadius: AppStyles.borderRadius.main,
-    },
-    textContainer: {
-        height: 48,
-        paddingLeft: '5%',
-        paddingRight: '5%',
-        color: AppStyles.color.text
+        // borderRadius: AppStyles.borderRadius.main,
+        borderRadius: AppStyles.borderRadius.small,
     },
     buttonContainer: {
         width: AppStyles.buttonWidth.main,
         backgroundColor: AppStyles.color.salmonred,
-        borderRadius: AppStyles.borderRadius.main,
+        // borderRadius: AppStyles.borderRadius.main,
+        borderRadius: AppStyles.borderRadius.small,
         padding: '3%',
         marginTop: '7%',
-    },
-    inputTextStyle: {
-        color: AppStyles.color.white,
-        paddingLeft: 5,
     },
     title: {
         fontSize: AppStyles.fontSize.title,
@@ -426,6 +315,11 @@ const styles = StyleSheet.create({
         marginLeft: '5%',
         backgroundColor: AppStyles.color.black,
     },
+    formError: {
+        fontSize: 14,
+        color: AppStyles.color.salmonred,
+        marginLeft: '12%',
+    },
     buttonText: {
         color: AppStyles.color.white,
     },
@@ -436,26 +330,41 @@ const styles = StyleSheet.create({
         width: AppStyles.textInputWidth.main,
     },
     checkBox: {
-        flexShrink: 1,
-        height: 25,
-        paddingRight: "5%",
+        height: 25,       
     },
     checkBoxText: {
         flex: 1,
-        flexWrap: "wrap",
         color: AppStyles.color.white,
         fontSize: AppStyles.fontSize.normal,
     },
     tosText: {
-        fontSize: AppStyles.fontSize.normal,
         color: AppStyles.color.salmonred,
+        fontSize: AppStyles.fontSize.normal,
+        textDecorationLine: 'underline',
     },
-    snackBarContainer: {
-        justifyContent: 'space-between',
-        alignContent: 'center',
-        alignItems: 'center',
-        backgroundColor: AppStyles.color.gray,
-    },
+    passwordMsg: {
+        flex: 1,
+        position: "absolute",
+        color: AppStyles.color.gray,
+        fontSize: AppStyles.textFontSizes.sm,
+      },
 });
 
-// https://www.npmjs.com/package/react-native-next-input
+setGlobalStyles.labelStyles = {
+    color: AppStyles.color.gray,  
+};
+setGlobalStyles.containerStyles = {
+    height: 48,
+    paddingLeft: '5%',
+    paddingRight: '5%',
+    color: AppStyles.color.text,
+};
+setGlobalStyles.customLabelStyles = {
+    colorBlurred: AppStyles.color.gray, 
+    colorFocused: AppStyles.color.gray,
+    
+};
+setGlobalStyles.inputStyles = {
+    color: AppStyles.color.white,
+    paddingLeft: 5,
+};

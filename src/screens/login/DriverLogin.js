@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import LoginForm from "../components/LoginForm";
-import { AppStyles } from "../utils/styles";
-import LoadingOverlay from "../components/LoadingOverlay";
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import LoginForm from "../../components/LoginForm";
+import { AppStyles } from "../../utils/styles";
 import { Snackbar } from "react-native-paper";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
-export default function RiderLogin({navigation}) {
+export default function DriverLogin({ navigation }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [snackBarVisisble, setSnackBarVisible] = useState(false);
   const onToggleSnackBar = () => setSnackBarVisible(!snackBarVisisble);
@@ -15,6 +15,7 @@ export default function RiderLogin({navigation}) {
   function signUpPressHandler() {
     navigation.navigate("Sign up");
   }
+
   function forgotPwordPressHandler(){
     navigation.navigate("Forgot Pword");
   }
@@ -28,21 +29,22 @@ export default function RiderLogin({navigation}) {
       <View style={styles.logoContainer}>
         <Image
           style={styles.logo}
-          source={require("../../assets/splash.png")}
+          source={require("../../../assets/splash.png")}
         />
       </View>
 
       <View style={styles.welcomeContainer}>
-        <Text style={styles.signInText}>Sign in to your account</Text>
+        <Text style={styles.signInText}>Sign In As Driver</Text>
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
       <View style={styles.formContainer}>
-        <LoginForm text="example@email.com" setIsAuthenticating={setIsAuthenticating} setSnackBarText={setSnackBarText} snackBarToggle={onToggleSnackBar}/>
+        <LoginForm text="example@email.com" setIsAuthenticating={setIsAuthenticating} setSnackBarText={setSnackBarText} snackBarToggle={onToggleSnackBar} />
       </View>
 
       <View style={styles.touchables}>
         <TouchableOpacity>
-          <Text style={styles.forgotBtn} onPress = {forgotPwordPressHandler}> Forgot Password?</Text>
+          <Text style={styles.forgotBtn} onPress={forgotPwordPressHandler}
+          >Forgot Password? </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.registerBtn}>
           <Text style={styles.signUpText} onPress={signUpPressHandler}>
@@ -50,6 +52,7 @@ export default function RiderLogin({navigation}) {
           </Text>
         </TouchableOpacity>
       </View>
+
       <View style={styles.snackBarContainer}>
         <Snackbar
           theme={{
@@ -71,6 +74,7 @@ export default function RiderLogin({navigation}) {
           {snackBarText}
         </Snackbar>
       </View>
+
     </View>
   );
 }
@@ -121,13 +125,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: AppStyles.textFontSizes.header,
   },
-  snackBarContainer: {
-    flex: 1,
-    justifyContent: "space-between",
-    alignContent: "center",
-    alignItems: "center",
-    backgroundColor: AppStyles.color.gray,
-  },
   welcomeContainer: {
     marginLeft: -45,
   },
@@ -136,5 +133,12 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     fontWeight: "400",
     fontSize: AppStyles.fontSize.normal,
+  },
+  snackBarContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    backgroundColor: AppStyles.color.gray,
   },
 });

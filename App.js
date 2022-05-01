@@ -15,13 +15,17 @@ import IDVerification from './src/screens/IDVerification/IDVerification'
 import EnterEmail from './src/screens/ForgotPassword/EnterEmail';
 import NewPasswordPage from './src/screens/ForgotPassword/NewPasswordPage';
 import VerifyAccount from './src/screens/interests/VerifyAccount';
-import { doc, getDoc } from 'firebase/firestore/lite';
+import ForgotPWordEmail from './src/screens/ForgotPassword/ForgotPWordEmail';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore/lite';
+import { onAuthStateChanged } from "firebase/auth";
 import { authentication, db } from './src/firebase/firebase-config';
 import { AppStyles } from './src/utils/styles';
 import { onIdTokenChanged } from 'firebase/auth';
 import { LogBox } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
 
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
+
+import RiderProfile from './src/screens/profile/RiderProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,7 +42,7 @@ function App() {
         setIsLoggedIn(true);
         setIsEmailVerified(user.emailVerified);
         checkDatabase(user.uid);
-        
+
       } else {
         setIsLoggedIn(false);
         setIsGeneralFilled(false);
@@ -47,7 +51,7 @@ function App() {
     });
     return unsubscribe;
   }, [authentication]);
-  
+
   async function checkDatabase(userUID) {
     const docRef = doc(db, "users", userUID);
     const docSnap = await getDoc(docRef);
@@ -55,20 +59,20 @@ function App() {
 
     if (userData === undefined) {
       // first time signup so user data is set into database but delayed
-      
+
       console.log('first time user signup', userType);
       setUserType(undefined);
       setIsGeneralFilled(false);
       setIsMusicFilled(false);
     } else {
-      console.log('OnAuthStateChanged => Here is the information', 
+      console.log('OnAuthStateChanged => Here is the information',
         userData.usertype,
-        userData.generalinterests, 
+        userData.generalinterests,
         userData.musicinterests
       );
       setUserType(userData.usertype);
       setIsGeneralFilled(userData.generalinterests ? true : false);
-      setIsMusicFilled(userData.musicinterests? true : false);
+      setIsMusicFilled(userData.musicinterests ? true : false);
     }
   }
 
@@ -76,14 +80,17 @@ function App() {
     return (
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Startup" component={Startup} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Sign up" component={Signup} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Rider Sign up" component={RiderSignUp} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Driver Sign up" component={DriverSignUp} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Login" component={Login} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Enter Email" component={EnterEmail} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="New Password Page" component={NewPasswordPage} />
-        <Stack.Screen options={{ title: '', headerStyle: {backgroundColor: 'black'}}} name="Verify Account" component={VerifyAccount} />
-      </Stack.Navigator>
+        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Sign up" component={Signup} />
+        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Rider Sign up" component={RiderSignUp} />
+        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Driver Sign up" component={DriverSignUp} />
+        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Driver Login" component={DriverLogin} />
+        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Rider Login" component={RiderLogin} />
+        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Forgot Pword" component={ForgotPWordEmail} />
+
+
+
+        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Verify Account" component={VerifyAccount} />
+      </Stack.Navigator >
     )
   }
 
@@ -92,7 +99,7 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="General Interests" component={GeneralInterests} />
         <Stack.Screen options={{ headerShown: false }} name="Music Interests" component={MusicInterests} />
-        <Stack.Screen options={{ headerShown: false }} name="Verify Account" component={VerifyAccount}/>
+        <Stack.Screen options={{ headerShown: false }} name="Verify Account" component={VerifyAccount} />
       </Stack.Navigator>
     )
   }
@@ -116,20 +123,19 @@ function App() {
   function VerifyAccountStack() {
     return (
       <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false}} name="Verify Account" component={VerifyAccount}/>
+        <Stack.Screen options={{ headerShown: false }} name="Verify Account" component={VerifyAccount} />
       </Stack.Navigator>
     )
   }
 
   return (
     <>
-      <NavigationContainer style={{backgroundColor: AppStyles.color.black}}>
-        <IDVerification></IDVerification>
-        {/* {!isLoggedIn && <AuthStack/>} */}
-        {/* {isLoggedIn && !(isGeneralFilled && isMusicFilled) && !isEmailVerified && <AuthInterestsStack/>}
-        {isLoggedIn && isGeneralFilled && isMusicFilled && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack/>}
-        {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Rider' && isEmailVerified && <AuthRiderStack/>}
-        {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Driver' && isEmailVerified && <AuthDriverStack/>} */}
+      <NavigationContainer style={{ backgroundColor: AppStyles.color.black }}>
+        {!isLoggedIn && <AuthStack />}
+        {isLoggedIn && !(isGeneralFilled && isMusicFilled) && !isEmailVerified && <AuthInterestsStack />}
+        {isLoggedIn && isGeneralFilled && isMusicFilled && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack />}
+        {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Rider' && isEmailVerified && <AuthRiderStack />}
+        {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Driver' && isEmailVerified && <AuthDriverStack />}
       </NavigationContainer>
     </>
   )

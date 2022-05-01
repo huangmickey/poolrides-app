@@ -18,6 +18,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
     email: "",
     password: "",
   });
+
   const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState({});
   const keyboardAppearance = "dark";
@@ -56,6 +57,8 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
         });
     }
   };
+  
+
 
   const handleOnChange = (text, input) => {
     setInputs((prevState) => ({ ...prevState, [input]: text }));
@@ -64,6 +67,8 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
   const handleError = (errorMessage, input) => {
     setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
   };
+
+  
 
   return (
     <View style={styles.inputField}>
