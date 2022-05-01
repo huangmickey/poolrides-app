@@ -10,17 +10,15 @@ import GeneralInterests from './src/screens/Interests/GeneralInterests';
 import MusicInterests from './src/screens/Interests/MusicInterests';
 import RiderDashboard from './src/screens/Dashboard/RiderDashboard';
 import DriverDashboard from './src/screens/Dashboard/DriverDashboard';
-import IDVerification from './src/screens/IDVerification/IDVerification'
 import VerifyAccount from './src/screens/Interests/VerifyAccount';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from './src/firebase/firebase-config';
-import { AppStyles } from './src/utils/styles';
 import { onIdTokenChanged } from 'firebase/auth';
-import RiderProfile from './src/screens/Profile/RiderProfile';
 import { LogBox } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
 import Login from './src/screens/Login'
 import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
-
+import DriverProfile from './src/screens/Profile/DriverProfile'
+import RiderProfile from './src/screens/Profile/RiderProfile';
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
 const Stack = createNativeStackNavigator();
@@ -108,6 +106,7 @@ function App() {
     return (
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Driver Dashboard" component={DriverDashboard} />
+        <Stack.Screen name="Driver Profile" component={DriverProfile} />
       </Stack.Navigator>
     )
   }
@@ -116,6 +115,7 @@ function App() {
     return (
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Rider Dashboard" component={RiderDashboard} />
+        <Stack.Screen name="Rider Profile" component={RiderProfile} />
       </Stack.Navigator>
     )
   }
@@ -133,7 +133,6 @@ function App() {
     <>
       <NavigationContainer>
         <StatusBar style='light' />
-        {/* <AuthDriverStack /> */}
         {!isLoggedIn && <AuthStack />}
         {isLoggedIn && !(isGeneralFilled && isMusicFilled) && !isEmailVerified && <AuthInterestsStack />}
         {isLoggedIn && isGeneralFilled && isMusicFilled && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack />}

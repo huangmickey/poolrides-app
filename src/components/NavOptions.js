@@ -7,62 +7,63 @@ import {
   StyleSheet,
 } from "react-native";
 import React from "react";
-import carPic from "../../assets/caricon.png";
-import friendsPic from "../../assets/friendsicon.png";
-import historyPic from "../../assets/ridehistoryicon.png";
-import profilePic from "../../assets/profileicon.png";
 import { AppStyles } from "../utils/styles";
 import { Icon } from "react-native-elements";
+import { useNavigation } from '@react-navigation/native'
 
-const CAR_IMG = Image.resolveAssetSource(carPic).uri;
-const FRIENDS_IMG = Image.resolveAssetSource(friendsPic).uri;
-const HISTORY_IMG = Image.resolveAssetSource(historyPic).uri;
-const PROFILE_IMG = Image.resolveAssetSource(profilePic).uri;
-
-const data = [
+let data = [
   {
     id: "123",
     title: "Go Online",
-    image: CAR_IMG,
-    screen: "MapScreen",
+    ridertitle: 'Get Ride',
+    riderscreen: 'Rider Map Screen',
+    driverscreen: 'Driver Map Screen',
     url: "https://img.icons8.com/ios-filled/100/000000/car.png",
   },
   {
     id: "456",
     title: "View Profile",
-    image: PROFILE_IMG,
-    screen: "ProfileScreen",
+    riderscreen: 'Profile Screen',
+    driverscreen: 'Profile Screen',
     url: "https://img.icons8.com/material/100/000000/user-male-circle--v1.png",
   },
   {
     id: "678",
     title: "View Friends",
-    image: FRIENDS_IMG,
-    screen: "FriendsScreen",
+    riderscreen: 'Friends Screen',
+    driverscreen: 'Friends Screen',
     url: "https://img.icons8.com/ios-glyphs/100/000000/friends.png",
   },
   {
     id: "890",
     title: "Ride History",
-    image: HISTORY_IMG,
-    screen: "RideScreen",
+    riderscreen: 'Ride History Screen',
+    driverscreen: 'Ride History Screen',
     url: "https://img.icons8.com/ios-glyphs/100/000000/order-history.png",
   },
 ];
 
-const NavOptions = () => {
+
+
+function NavOptions({ userType }) {
+  const navigation = useNavigation();
+  data[0].title = userType === 'Rider' ? 'Get Ride' : 'Go Online';
+
   return (
     <FlatList
       data={data}
       keyExtractor={(item) => item.id}
       numColumns={2}
       renderItem={({ item }) => (
-        <TouchableOpacity style={styles.touchable}>
+        <TouchableOpacity
+          style={styles.touchable}
+          onPress={() => navigation.navigate(userType == 'Rider' ? item.riderscreen : item.driverscreen)}
+        >
           <View>
             <Image
               style={{
                 width: 100,
-                height: 100,
+                height: 130,
                 resizeMode: "contain",
               }}
               source={{ uri: item.url }}

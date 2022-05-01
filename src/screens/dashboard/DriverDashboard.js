@@ -1,15 +1,13 @@
 import { StyleSheet, Text, View, SafeAreaView, Image, Button } from "react-native";
 import React, { useState, useEffect } from "react";
 import { AppStyles } from "../../utils/styles";
-import CustomButton from "../../components/CustomButton";
 import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 
-export default function DriverDashboard({ navigation }) {
+export default function DriverDashboard() {
   const [userInfo, setUserInfo] = useState();
   const [isDriverVerified, setIsDriverVerified] = useState();
   useEffect(() => {
@@ -47,11 +45,7 @@ export default function DriverDashboard({ navigation }) {
               }}
               source={require("../../../assets/splash.png")}
             />
-            <View style={
-              {
-                justifyContent: 'center',
-              }
-            }>
+            <View style={{ justifyContent: 'center', }}>
               <Button
                 title='Log out'
                 color={AppStyles.color.salmonred}
@@ -60,18 +54,20 @@ export default function DriverDashboard({ navigation }) {
               </Button>
             </View>
           </View>
+
           <View style={styles.welcomeContainer}>
             <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
             <Text style={styles.welcomeText}>What would you like to do?</Text>
           </View>
+
           <View style={styles.navContainer}>
             <NavOptions />
           </View>
 
-
         </SafeAreaView>
 
         :
+
         <SafeAreaView style={styles.container}>
           <IDVerification driverVerification={setIsDriverVerified} />
         </SafeAreaView>

@@ -9,13 +9,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStyles } from "../../utils/styles";
 import { EvilIcons, AntDesign, Fontisto } from '@expo/vector-icons';
-import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
+import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
-import { getAuth } from 'firebase/auth';
 
-
-
-export default function DriverProfile({ navigation }) {
+export default function DriverProfile() {
 
 
     const [userInfo, setUserInfo] = useState();

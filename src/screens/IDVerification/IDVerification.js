@@ -5,10 +5,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
-
+import { useNavigation } from '@react-navigation/native';
 
 export default function IDVerification({ driverVerification }) {
-
+    const navigation = useNavigation();
     const userUID = authentication.currentUser.uid;
     const userDocRef = doc(db, "users", userUID);
 
@@ -37,10 +37,10 @@ export default function IDVerification({ driverVerification }) {
                         updateDoc(userDocRef, { DriverID: downloadURL });
                         Alert.alert(
                             'Upload to Server Successful!',
-                            'Welcome to your dashboard!',
+                            'Return to your dashboard',
                             {
                                 text: "Ok",
-                                onPress: driverVerification(true),
+                                onPress: navigation.navigate('Driver Dashboard'),
 
                             },
                         );
