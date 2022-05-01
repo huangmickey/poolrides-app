@@ -8,9 +8,23 @@ import { db, authentication } from '../../firebase/firebase-config';
 
 export default function GeneralInterests( { navigation } ) {
     const [musicInterests] = useState({
-      music1: false,
-      music2: false,
-      music3: false,
+      'Classical': false,
+      'Country': false,
+      'EDM': false,
+      'Folk': false,
+      'Funk': false,
+      'Hip Hop': false,
+      'Jazz': false,
+      'K-Pop': false,
+      'Latin': false,
+      'Lofi': false,
+      'Metal': false,
+      'Pop': false,
+      'Rap': false,
+      'Reggae': false,
+      'Rock': false,
+      'R&B': false,
+      'Soul': false,
     });
     
     return (
