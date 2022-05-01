@@ -1,14 +1,34 @@
 import { StyleSheet, TextInput, View } from "react-native";
 import React, { useState } from "react";
 import { AppStyles } from '../utils/styles';
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+
+import CustomButton from "./CustomButton";
 
 
-function VerifyCodeField({text}){
-    const[code, setCode] = useState("");
 
+function EnterEmailforPwordReset({text}){
+    const[email, setCode] = useState("");
+    const auth = getAuth();
     const keyboardAppearance = 'dark';
-    const maxLength = 6;
     const returnKeyType = 'Enter';
+    const maxLength = 60;
+
+    sendPasswordResetEmail(auth, email)
+    .then(() => {
+      // Password reset email sent!
+      console.log('Password reset email sent!');
+      // ..
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode);
+      console.log(errorMessage);
+      // ..
+    });
+
+    
 
     return (
         <View style={verifyStyle.inputView}>
@@ -21,8 +41,10 @@ function VerifyCodeField({text}){
                 maxLength={maxLength}
                 returnKeyType={returnKeyType}
 
-                onChangeText={(code) => setCode(code)}
+                onChangeText={(email) => setCode(email)}
             />
+
+            
         </View>
     );
 }
@@ -36,7 +58,11 @@ const verifyStyle = StyleSheet.create({
         height: 45,
         alignItems: "flex-start",
     },
-
+    buttonBox: {
+        width: AppStyles.textInputWidth.button,
+        justifyContent: 'center',
+        marginBottom: '25%',
+    },
     textInput: {
         flex: 1,
         color: AppStyles.color.white,
@@ -45,4 +71,4 @@ const verifyStyle = StyleSheet.create({
         marginLeft: 2,
       },
 });
-export default VerifyCodeField;
+export default EnterEmailforPwordReset;
