@@ -116,3 +116,21 @@ export const ListStyle = StyleSheet.create({
     width: 80
   }
 });
+
+export const IDStyle = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    color: AppStyles.color.mint,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+  },
+  subTitle: {
+    paddingTop: '1%',
+    fontSize: 14,
+    color: AppStyles.color.salmonred,
+    justifyContent: 'center',
+    paddingBottom: '5%',
+    
+  }
+
+})

@@ -11,7 +11,9 @@ import GeneralInterests from './src/screens/interests/GeneralInterests';
 import MusicInterests from './src/screens/interests/MusicInterests';
 import RiderDashboard from './src/screens/dashboard/RiderDashboard';
 import DriverDashboard from './src/screens/dashboard/DriverDashboard';
-
+import IDVerification from './src/screens/IDVerification/IDVerification'
+import EnterEmail from './src/screens/ForgotPassword/EnterEmail';
+import NewPasswordPage from './src/screens/ForgotPassword/NewPasswordPage';
 import VerifyAccount from './src/screens/interests/VerifyAccount';
 import ForgotPWordEmail from './src/screens/ForgotPassword/ForgotPWordEmail';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore/lite';
@@ -19,6 +21,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import { authentication, db } from './src/firebase/firebase-config';
 import { AppStyles } from './src/utils/styles';
 import { onIdTokenChanged } from 'firebase/auth';
+import { LogBox } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
+
+LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
 import RiderProfile from './src/screens/profile/RiderProfile';
 
