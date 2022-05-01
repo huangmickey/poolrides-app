@@ -1,11 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import LoginForm from "../../components/LoginForm";
-import { AppStyles } from "../../utils/styles";
-import LoadingOverlay from "../../components/LoadingOverlay";
+import LoginForm from "../components/LoginForm";
+import { AppStyles } from "../utils/styles";
+import LoadingOverlay from "../components/LoadingOverlay";
 import { Snackbar } from "react-native-paper";
-import { authentication } from "../../firebase/firebase-config";
-
 
 export default function RiderLogin({navigation}) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -17,6 +15,9 @@ export default function RiderLogin({navigation}) {
   function signUpPressHandler() {
     navigation.navigate("Sign up");
   }
+  function forgotPwordPressHandler(){
+    navigation.navigate("Forgot Pword");
+  }
 
   if (isAuthenticating) {
     return <LoadingOverlay message="Logging you in..." />;
@@ -27,12 +28,12 @@ export default function RiderLogin({navigation}) {
       <View style={styles.logoContainer}>
         <Image
           style={styles.logo}
-          source={require("../../../assets/splash.png")}
+          source={require("../../assets/splash.png")}
         />
       </View>
 
       <View style={styles.welcomeContainer}>
-        <Text style={styles.signInText}>Sign In As Rider</Text>
+        <Text style={styles.signInText}>Sign in to your account</Text>
         <Text style={styles.welcomeText}>Hi there! Nice to see you again.</Text>
       </View>
       <View style={styles.formContainer}>
@@ -41,7 +42,7 @@ export default function RiderLogin({navigation}) {
 
       <View style={styles.touchables}>
         <TouchableOpacity>
-          <Text style={styles.forgotBtn}>Forgot Password?</Text>
+          <Text style={styles.forgotBtn} onPress = {forgotPwordPressHandler}> Forgot Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.registerBtn}>
           <Text style={styles.signUpText} onPress={signUpPressHandler}>

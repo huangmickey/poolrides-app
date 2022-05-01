@@ -27,8 +27,6 @@ export default function EnterEmail({navigation}){
              <View style={styles.buttonBox}>
                 <CustomButton title={"Send Code"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={enterEmailPressHandler}/>  
             </View>
-
-
         </View>    
     );
 }

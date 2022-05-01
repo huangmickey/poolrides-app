@@ -4,16 +4,16 @@ import CustomButton from "../components/CustomButton";
 import { AppStyles } from '../utils/styles';
 
 export default function Startup({ navigation }) {
-    function driverLoginPressHandler() {
-        navigation.navigate("Driver Login");
-    }
-
-    function riderLoginPressHandler() {
-        navigation.navigate("Rider Login");
+    function loginPressHandler() {
+        navigation.navigate("Login");
     }
 
     function signUpPressHandler() {
         navigation.navigate("Sign up");
+    }
+
+    function forgotCredentialsHandler() {
+        navigation.navigate("Enter Email");
     }
 
     return (
@@ -26,16 +26,19 @@ export default function Startup({ navigation }) {
             </View>
                                           
             <View style={styles.buttonBox}>
-                <CustomButton title={"Driver Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverLoginPressHandler}/>
+                <CustomButton title={"Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={loginPressHandler}/>
             </View>
             
             <View style={styles.buttonBox}>
-                <CustomButton title={"Rider Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderLoginPressHandler}/>  
+                <CustomButton title={"Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={signUpPressHandler}/>  
             </View>
             
             <View style={styles.signUpContainer}>
-                <Text style={styles.text}>New to PoolRides?</Text>
-                <Text onPress={() => signUpPressHandler()} style={styles.signUpButtonText}> Sign Up</Text>
+            <Text style={styles.text}>Forgot account?</Text>
+                <Pressable onPress={forgotCredentialsHandler}>
+                    <Text style={styles.signUpButtonText}> Recover
+                    </Text>
+                </Pressable>
             </View>
         </View>
         
