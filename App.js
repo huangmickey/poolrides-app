@@ -6,26 +6,22 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Signup from './src/screens/Signup';
 import RiderSignUp from './src/screens/signup/RiderSignUp';
 import DriverSignUp from './src/screens/signup/DriverSignUp';
-import Login from './src/screens/Login';
 import GeneralInterests from './src/screens/interests/GeneralInterests';
 import MusicInterests from './src/screens/interests/MusicInterests';
 import RiderDashboard from './src/screens/dashboard/RiderDashboard';
 import DriverDashboard from './src/screens/dashboard/DriverDashboard';
 import IDVerification from './src/screens/IDVerification/IDVerification'
-import EnterEmail from './src/screens/ForgotPassword/EnterEmail';
-import NewPasswordPage from './src/screens/ForgotPassword/NewPasswordPage';
 import VerifyAccount from './src/screens/interests/VerifyAccount';
-import ForgotPWordEmail from './src/screens/ForgotPassword/ForgotPWordEmail';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore/lite';
-import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from './src/firebase/firebase-config';
 import { AppStyles } from './src/utils/styles';
 import { onIdTokenChanged } from 'firebase/auth';
+import RiderProfile from './src/screens/profile/RiderProfile';
 import { LogBox } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
+import Login from './src/screens/Login'
+import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
 
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
-
-import RiderProfile from './src/screens/profile/RiderProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -78,19 +74,22 @@ function App() {
 
   function AuthStack() {
     return (
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          title: '',
+          headerStyle: {
+            backgroundColor: 'black'
+          },
+          headerBackVisible: false,
+        }}
+      >
         <Stack.Screen options={{ headerShown: false }} name="Startup" component={Startup} />
-        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Sign up" component={Signup} />
-        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Rider Sign up" component={RiderSignUp} />
-        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Driver Sign up" component={DriverSignUp} />
-        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Driver Login" component={DriverLogin} />
-        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Rider Login" component={RiderLogin} />
-        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Forgot Pword" component={ForgotPWordEmail} />
-
-
-
-        <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: 'black' } }} name="Verify Account" component={VerifyAccount} />
-      </Stack.Navigator >
+        <Stack.Screen name="Sign up" component={Signup} />
+        <Stack.Screen name="Rider Sign up" component={RiderSignUp} />
+        <Stack.Screen name="Driver Sign up" component={DriverSignUp} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Recover" component={RecoverPassword} />
+      </Stack.Navigator>
     )
   }
 
@@ -123,6 +122,7 @@ function App() {
   function VerifyAccountStack() {
     return (
       <Stack.Navigator>
+
         <Stack.Screen options={{ headerShown: false }} name="Verify Account" component={VerifyAccount} />
       </Stack.Navigator>
     )
@@ -130,7 +130,8 @@ function App() {
 
   return (
     <>
-      <NavigationContainer style={{ backgroundColor: AppStyles.color.black }}>
+      <NavigationContainer>
+        <StatusBar style='light' />
         {!isLoggedIn && <AuthStack />}
         {isLoggedIn && !(isGeneralFilled && isMusicFilled) && !isEmailVerified && <AuthInterestsStack />}
         {isLoggedIn && isGeneralFilled && isMusicFilled && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack />}

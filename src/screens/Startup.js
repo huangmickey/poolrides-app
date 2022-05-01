@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, Pressable } from "react-native";
 import CustomButton from "../components/CustomButton";
 import { AppStyles } from '../utils/styles';
 
@@ -13,35 +13,36 @@ export default function Startup({ navigation }) {
     }
 
     function forgotCredentialsHandler() {
-        navigation.navigate("Enter Email");
+        navigation.navigate("Recover");
     }
 
     return (
 
         <View style={styles.container}>
+
             <View style={styles.logoContainer}>
-            <Image
-              style={styles.logo} source={require("../../assets/splash.png")}
-            />
+                <Image
+                    style={styles.logo} source={require("../../assets/splash.png")}
+                />
             </View>
-                                          
+
             <View style={styles.buttonBox}>
-                <CustomButton title={"Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={loginPressHandler}/>
+                <CustomButton title={"Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={loginPressHandler} />
             </View>
-            
+
             <View style={styles.buttonBox}>
-                <CustomButton title={"Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={signUpPressHandler}/>  
+                <CustomButton title={"Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={signUpPressHandler} />
             </View>
-            
+
             <View style={styles.signUpContainer}>
-            <Text style={styles.text}>Forgot account?</Text>
+                <Text style={styles.text}>Forgot account?</Text>
                 <Pressable onPress={forgotCredentialsHandler}>
                     <Text style={styles.signUpButtonText}> Recover
                     </Text>
                 </Pressable>
             </View>
         </View>
-        
+
     );
 }
 
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: AppStyles.color.black,
-        alignItems : 'center',
+        alignItems: 'center',
     },
     logoContainer: {
         flex: 1,

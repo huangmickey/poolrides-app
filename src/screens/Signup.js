@@ -19,18 +19,18 @@ export default function Signup({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
-            <Image
-              style={styles.logo} source={require("../../assets/splash.png")}
-            />
-            <Text style={styles.text}>Hello, welcome to PoolRides!</Text>
+                <Image
+                    style={styles.logo} source={require("../../assets/splash.png")}
+                />
+                <Text style={styles.text}>Hello there, welcome to PoolRides!</Text>
             </View>
-            
+
             <View style={styles.buttonBox}>
-                <CustomButton title={"Driver Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverSignUpHandler}/>
+                <CustomButton title={"Driver Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverSignUpHandler} />
             </View>
-            
+
             <View style={styles.buttonBox}>
-                <CustomButton title={"Rider Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderSignUpHandler}/>  
+                <CustomButton title={"Rider Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderSignUpHandler} />
             </View>
 
 
@@ -38,8 +38,8 @@ export default function Signup({ navigation }) {
                 <Text style={styles.text}>Have an Account?</Text>
                 <Text onPress={() => signInHandler()} style={styles.signInButtonText}> Sign In</Text>
             </View>
-                
-       </View>
+
+        </View>
     );
 }
 
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: AppStyles.color.black,
-        alignItems : 'center',
+        alignItems: 'center',
     },
     logoContainer: {
         flex: 1,
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
         width: '60%',
         height: '60%',
         resizeMode: "contain",
-        
     },
     buttonBox: {
         width: AppStyles.textInputWidth.button,
@@ -69,7 +68,9 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: AppStyles.fontSize.normal,
-        color: "white",
+        color: AppStyles.color.platinum,
+        fontWeight: 'bold',
+
         textAlignVertical: "top",
         backgroundColor: AppStyles.color.black
     },
