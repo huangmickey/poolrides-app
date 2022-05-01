@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import CustomButton from "../components/CustomButton";
 import { AppStyles } from '../utils/styles';
 
@@ -34,11 +34,8 @@ export default function Startup({ navigation }) {
             </View>
             
             <View style={styles.signUpContainer}>
-            < Text style={styles.text}>New to PoolRides?</Text>
-                <Pressable onPress={signUpPressHandler}>
-                    <Text style={styles.signUpButtonText}> Sign Up
-                    </Text>
-                </Pressable>
+                <Text style={styles.text}>New to PoolRides?</Text>
+                <Text onPress={() => signUpPressHandler()} style={styles.signUpButtonText}> Sign Up</Text>
             </View>
         </View>
         

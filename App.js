@@ -21,6 +21,8 @@ import { authentication, db } from './src/firebase/firebase-config';
 import { AppStyles } from './src/utils/styles';
 import { onIdTokenChanged } from 'firebase/auth';
 
+import RiderProfile from './src/screens/profile/RiderProfile';
+
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -124,6 +126,7 @@ function App() {
   return (
     <>
       <NavigationContainer style={{backgroundColor: AppStyles.color.black}}>
+        {/* <RiderProfile/> */}
         {!isLoggedIn && <AuthStack/>}
         {isLoggedIn && !(isGeneralFilled && isMusicFilled) && !isEmailVerified && <AuthInterestsStack/>}
         {isLoggedIn && isGeneralFilled && isMusicFilled && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack/>}
