@@ -29,8 +29,6 @@
 - [Feedback](#feedback)
 - [Contributors](#contributors)
 - [Build Process](#build-process)
-<!-- - [Backers](#backers-)
-- [Sponsors](#sponsors-) -->
 - [Acknowledgments](#acknowledgments)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -65,17 +63,15 @@ A few of the things you can do with PoolRides Mobile App:
 
 ## Feedback
 
-Feel free to send us feedback on [Twitter](https://twitter.com/gitpointapp) or [file an issue](https://github.com/gitpoint/git-point/issues/new). Feature requests are always welcome. If you wish to contribute, please take a quick look at the [guidelines](./CONTRIBUTING.md)!
-
-If there's anything you'd like to chat about, please feel free to join our [Gitter chat](https://gitter.im/git-point)!
+If there's anything you'd like to chat about, please feel free to join our [Discord Server](https://discord.gg/uUM38wXR8T)!
 
 ## Contributors
 
-This project follows the [all-contributors] specification and is brought to you by these [awesome contributors](./CONTRIBUTORS.md).
+This project is developed by [Mickey Huang](github.com/huangmickey), [Enrique Alvarez](https://github.com/EnriqueAlv1332), [Steven Aguirre](https://github.com/AguirreSteven), [Jonathan Jakab](https://github.com/SomeOrdinaryGamer), [Mariya Cherednichenko](https://github.com/MariyaCS), and [Kurtis Tran](https://github.com/trankt)
 
 ## Build Process
 
-- Follow the [React Native Guide](https://facebook.github.io/react-native/docs/getting-started.html) for getting started building a project with native code.
+- Follow the guide from [Expo Docs](https://docs.expo.dev)
 - Clone or download the repo
 - install expo, yarn, node
 - `yarn` to install dependencies
