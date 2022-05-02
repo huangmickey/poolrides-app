@@ -2,17 +2,13 @@
 import { initializeApp } from "firebase/app";
 import { initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore/lite";
-import {getStorage} from 'firebase/storage';
+import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getReactNativePersistence } from "firebase/auth/react-native";
+import { FIREBASE_APIKEY } from "@env";
 
-// Import API config
-import { config } from '../../config';
-import { NavigationContainer } from '@react-navigation/native';
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: config.apiKey,
+  apiKey: FIREBASE_APIKEY,
   authDomain: "pool-rides-db.firebaseapp.com",
   databaseURL: "https://pool-rides-db-default-rtdb.firebaseio.com",
   projectId: "pool-rides-db",

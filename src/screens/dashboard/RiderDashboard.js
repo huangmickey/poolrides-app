@@ -5,11 +5,12 @@ import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import { useNavigation } from "@react-navigation/native";
+import FromAddressSearchBar from "../../components/FromAddressSearch";
 
 export default function RiderDashboard() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState();
-  const [isDriverVerified, setIsDriverVerified] = useState();
+
   useEffect(() => {
     // Update the document title using Firebase SDK
     const userUID = authentication.currentUser.uid; // Coming from auth when logged in
@@ -18,7 +19,6 @@ export default function RiderDashboard() {
       const userDocReference = doc(db, "users", userUID);
       const userDocSnapshot = await getDoc(userDocReference);
       setUserInfo(userDocSnapshot.data());
-      setIsDriverVerified(userDocSnapshot.data().isVerified);
     };
 
     getUserData();
@@ -81,7 +81,9 @@ export default function RiderDashboard() {
         <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
         <Text style={styles.welcomeText}>What would you like to do?</Text>
       </View>
-
+      <View style={styles.searchAddressBar}>
+        <FromAddressSearchBar />
+      </View>
       <View style={styles.navContainer}>
         <NavOptions userType={userInfo?.usertype} />
       </View>
@@ -125,4 +127,8 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     fontSize: AppStyles.fontSize.normal,
   },
+  searchAddressBar: {
+    alignItems: 'center',
+    paddingBottom: '5%',
+  }
 });

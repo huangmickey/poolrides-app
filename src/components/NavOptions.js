@@ -10,36 +10,42 @@ import React from "react";
 import { AppStyles } from "../utils/styles";
 import { Icon } from "react-native-elements";
 import { useNavigation } from '@react-navigation/native'
+import { selectOrigin } from "../../slices/navSlice";
+import { useSelector } from 'react-redux';
 
 let data = [
   {
     id: "123",
     title: "Go Online",
     ridertitle: 'Get Ride',
-    riderscreen: 'Rider Map',
-    driverscreen: 'Driver Map',
+    screen: '',
     url: "https://img.icons8.com/ios-filled/100/000000/car.png",
+    origin: true,
+    opacity: 1.0,
   },
   {
     id: "456",
     title: "View Profile",
-    riderscreen: 'Rider Profile',
-    driverscreen: 'Driver Profile',
+    screen: '',
     url: "https://img.icons8.com/material/100/000000/user-male-circle--v1.png",
+    origin: true,
+    opacity: 1.0,
   },
   {
     id: "678",
     title: "View Friends",
-    riderscreen: 'Friends Screen',
-    driverscreen: 'Friends Screen',
+    screen: 'Friends Screen',
     url: "https://img.icons8.com/ios-glyphs/100/000000/friends.png",
+    origin: true,
+    opacity: 1.0,
   },
   {
     id: "890",
     title: "Ride History",
-    riderscreen: 'Ride History Screen',
-    driverscreen: 'Ride History Screen',
+    screen: 'Ride History Screen',
     url: "https://img.icons8.com/ios-glyphs/100/000000/order-history.png",
+    origin: true,
+    opacity: 1.0,
   },
 ];
 
@@ -47,7 +53,28 @@ let data = [
 
 function NavOptions({ userType }) {
   const navigation = useNavigation();
-  data[0].title = userType === 'Rider' ? 'Get Ride' : 'Go Online';
+  const origin = useSelector(selectOrigin);
+  // console.log(userType.usertype);
+  // console.log(userType);
+  if (userType === 'Rider') {
+    data[0].title = "Get Ride";
+    data[0].screen = "Rider Map";
+    data[1].screen = "Rider Profile"
+    if (origin) {
+      data[0].origin = true;
+      data[0].opacity = 1.0;
+    } else {
+      data[0].origin = false;
+      data[0].opacity = 0.1;
+    }
+  }
+  if (userType === 'Driver') {
+    data[0].screen = "Driver Map";
+    data[0].title = "Go Online";
+    data[0].origin = false;
+    data[0].opacity = 0.2;
+    data[1].screen = "Driver Profile"
+  }
 
   return (
     <FlatList
@@ -57,9 +84,12 @@ function NavOptions({ userType }) {
       renderItem={({ item }) => (
         <TouchableOpacity
           style={styles.touchable}
-          onPress={() => navigation.navigate(userType == 'Rider' ? item.riderscreen : item.driverscreen)}
+          onPress={() => navigation.navigate(item.screen)}
+          disabled={!item.origin}
         >
-          <View>
+          <View style={{
+            opacity: item.opacity,
+          }}>
             <Image
               style={{
                 width: 100,

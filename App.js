@@ -20,6 +20,9 @@ import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
 import DriverProfile from './src/screens/Profile/DriverProfile'
 import RiderProfile from './src/screens/Profile/RiderProfile';
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
+import { Provider } from "react-redux";
+import { store } from './store';
+import RiderMapView from './src/RiderMapView';
 
 const Stack = createNativeStackNavigator();
 
@@ -59,11 +62,6 @@ function App() {
       setIsGeneralFilled(false);
       setIsMusicFilled(false);
     } else {
-      console.log('OnAuthStateChanged => Here is the information',
-        userData.usertype,
-        userData.generalinterests,
-        userData.musicinterests
-      );
       setUserType(userData.usertype);
       setIsGeneralFilled(userData.generalinterests ? true : false);
       setIsMusicFilled(userData.musicinterests ? true : false);
@@ -116,6 +114,7 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Rider Dashboard" component={RiderDashboard} />
         <Stack.Screen options={{ headerShown: false }} name="Rider Profile" component={RiderProfile} />
+        <Stack.Screen options={{ headerShown: false }} name="Rider Map" component={RiderMapView} />
       </Stack.Navigator>
     )
   }
@@ -130,7 +129,7 @@ function App() {
   }
 
   return (
-    <>
+    <Provider store={store}>
       <NavigationContainer>
         <StatusBar style='light' />
         {!isLoggedIn && <AuthStack />}
@@ -139,7 +138,7 @@ function App() {
         {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Rider' && isEmailVerified && <AuthRiderStack />}
         {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Driver' && isEmailVerified && <AuthDriverStack />}
       </NavigationContainer>
-    </>
+    </Provider>
   )
 }
 

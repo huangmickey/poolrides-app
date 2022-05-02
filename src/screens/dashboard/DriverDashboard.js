@@ -22,7 +22,7 @@ export default function DriverDashboard() {
     };
 
     getUserData();
-  }, []);
+  }, [isDriverVerified]);
 
   function logoutHandler() {
     console.log("User Logged Out");
@@ -61,7 +61,7 @@ export default function DriverDashboard() {
           </View>
 
           <View style={styles.navContainer}>
-            <NavOptions />
+            <NavOptions userType={userInfo?.usertype} />
           </View>
 
         </SafeAreaView>
