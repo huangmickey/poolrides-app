@@ -47,16 +47,8 @@ export default function IDVerification({ driverVerification }) {
                     .then(downloadURL => {
                         console.log('Download URL: ', downloadURL);
                         updateDoc(userDocRef, { DriverID: downloadURL });
-                        Alert.alert(
-                            'Upload finished!',
-                            'Upload to server is successful',
-                            {
-                                text: "Ok",
-                            },
-                        );
                         updateDoc(userDocRef, { isVerified: true });
                         setIsUploaded(true);
-
                     })
 
             } catch (e) {
@@ -80,7 +72,6 @@ export default function IDVerification({ driverVerification }) {
                         color={AppStyles.color.mint}
                         textColor='black'
                         onPress={continueHandler}
-                    // stretch={true}
                     />
                 </View>
 
