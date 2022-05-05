@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Button } from 'react-native';
 import { AppStyles } from '../utils/styles';
-import { GOOGLE_PLACES_APIKEY } from "@env";
+import { config } from "../../config";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useDispatch } from "react-redux"
 import { setDestination } from '../../slices/navSlice';
@@ -24,7 +24,7 @@ export default function RiderNavigateCard() {
                         fetchDetails={true}
                         nearbyPlacesAPI="GooglePlacesSearch"
                         query={{
-                            key: GOOGLE_PLACES_APIKEY,
+                            key: config.GOOGLE_PLACES_APIKEY,
                             language: 'en',
                         }}
                         returnKeyType={"default"}

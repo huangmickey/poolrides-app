@@ -3,7 +3,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDestination, selectOrigin, setTravelTimeInformation } from '../../slices/navSlice';
 import MapViewDirections from 'react-native-maps-directions';
-import { GOOGLE_DIRECTIONS_APIKEY, GOOGLE_DISTANCEMATRIX_APIKEY } from "@env";
+import { config } from "../../config";
 
 const Map = () => {
     const origin = useSelector(selectOrigin);
@@ -42,7 +42,7 @@ const Map = () => {
         const getTravelTime = async () => {
             fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=
             ${origin.description}&destinations=${destination.description}
-            &key=${GOOGLE_DISTANCEMATRIX_APIKEY}`
+            &key=${config.GOOGLE_DISTANCEMATRIX_APIKEY}`
             ).then((res) => res.json())
                 .then(data => {
                     console.log(data.rows[0].elements[0]);
@@ -51,7 +51,7 @@ const Map = () => {
         };
 
         getTravelTime();
-    }, [origin, destination, GOOGLE_DISTANCEMATRIX_APIKEY])
+    }, [origin, destination])
 
     return (
 
@@ -73,7 +73,7 @@ const Map = () => {
                 <MapViewDirections
                     origin={origin.description}
                     destination={destination.description}
-                    apikey={GOOGLE_DIRECTIONS_APIKEY}
+                    apikey={config.GOOGLE_DIRECTIONS_APIKEY}
                     strokeWidth={3}
                     strokeColor='black'
                 />

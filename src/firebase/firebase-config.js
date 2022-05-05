@@ -5,10 +5,10 @@ import { getFirestore } from "firebase/firestore/lite";
 import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getReactNativePersistence } from "firebase/auth/react-native";
-import { FIREBASE_APIKEY } from "@env";
+import { config } from "../../config";
 
 const firebaseConfig = {
-  apiKey: FIREBASE_APIKEY,
+  apiKey: config.FIREBASE_APIKEY,
   authDomain: "pool-rides-db.firebaseapp.com",
   databaseURL: "https://pool-rides-db-default-rtdb.firebaseio.com",
   projectId: "pool-rides-db",

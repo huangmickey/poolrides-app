@@ -1,6 +1,6 @@
 import React from 'react';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { GOOGLE_PLACES_APIKEY } from "@env";
+import { config } from "../../config";
 import { useDispatch } from "react-redux";
 import { setDestination, setOrigin } from '../../slices/navSlice';
 import { AppStyles } from '../utils/styles';
@@ -35,7 +35,7 @@ export default function FromAddressSearchBar() {
             nearbyPlacesAPI="GooglePlacesSearch"
             debounce={400}
             query={{
-                key: GOOGLE_PLACES_APIKEY,
+                key: config.GOOGLE_PLACES_APIKEY,
                 language: "en",
             }}
             onPress={(data, details = null) => {
