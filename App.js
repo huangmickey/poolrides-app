@@ -4,21 +4,21 @@ import { NavigationContainer } from '@react-navigation/native';
 import Startup from './src/screens/Startup';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Signup from './src/screens/Signup';
-import RiderSignUp from './src/screens/Signup/RiderSignUp';
-import DriverSignUp from './src/screens/Signup/DriverSignUp';
-import GeneralInterests from './src/screens/Interests/GeneralInterests';
-import MusicInterests from './src/screens/Interests/MusicInterests';
-import RiderDashboard from './src/screens/Dashboard/RiderDashboard';
-import DriverDashboard from './src/screens/Dashboard/DriverDashboard';
-import VerifyAccount from './src/screens/Interests/VerifyAccount';
+import RiderSignUp from './src/screens/signup/RiderSignUp'
+import DriverSignUp from './src/screens/signup/DriverSignUp';
+import GeneralInterests from './src/screens/interests/GeneralInterests';
+import MusicInterests from './src/screens/interests/MusicInterests';
+import RiderDashboard from './src/screens/dashboard/RiderDashboard';
+import DriverDashboard from './src/screens/dashboard/DriverDashboard';
+import VerifyAccount from './src/screens/interests/VerifyAccount';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from './src/firebase/firebase-config';
 import { onIdTokenChanged } from 'firebase/auth';
 import { LogBox } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
 import Login from './src/screens/Login'
 import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
-import DriverProfile from './src/screens/Profile/DriverProfile'
-import RiderProfile from './src/screens/Profile/RiderProfile';
+import DriverProfile from './src/screens/profile/DriverProfile'
+import RiderProfile from './src/screens/profile/RiderProfile';
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 import { Provider } from "react-redux";
 import { store } from './store';

@@ -10,12 +10,6 @@ module.exports = function (api) {
           path: ".env",
         },
       ],
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ]
       ['react-native-reanimated/plugin'],
     ]
 
