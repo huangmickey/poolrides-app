@@ -35,9 +35,9 @@
 
 ## Introduction
 
-WIP
+Pool Rides is a ride sharing application similar to that of Uber and Lyft. The business model for Pool Rides differs from the aforementioned application as Pool Rides draw is its personalized ride experience for every user. Utilizing user preferences, interests, and hobbies, the service matches users with drivers of similar interests. Through this model, the users of Pool Rides will no longer need to worry about ride sharing with complete strangers. Effectively eliminating the “Dont talk to me” environment so common amongst Uber and Lyft rides.
 
-**Soon Available for both iOS and Android.**
+<p align = 'center'> <b> **Avaliable soon on both the App Store and Google Play Store** </b> </p>
 
 <p align="center">
   <img src = "https://i.imgur.com/f5uO0Qx.png" width=350>
@@ -45,13 +45,20 @@ WIP
 
 ## Features
 
-A few of the things you can do with PoolRides Mobile App:
+<p align="center"> <b> A few of the things you can do with PoolRides Mobile App </b> </p>
 
-* Create driver or rider accounts
-* Pick your favorite interests and music genres to get best matched
-* Choose pickup and destination addresses with a map view
-* Edit your profile (interests, email, password, profile picture)
-* Get a cost estimate and get matched with a driver to get a ride
+<p align="center"> ***Create driver or rider accounts*** </p>
+<p align="center"> <img src = "https://i.imgur.com/GGL9Dn7.png" width=350> </p>
+
+<p align="center"> ***Pick your favorite interests and music genres to get best matched*** </p>
+<p align="center"> <img src = "https://i.imgur.com/zcqH5wG.png" width=350> <img src = "https://i.imgur.com/VP4qHKU.png" width=350> </p>
+
+<p align="center"> ***Choose pickup and destination addresses with a map view and get cost estimates*** </p>
+<p align="center"> <img src = "https://i.imgur.com/mdoC1SR.png" width=350> </p>
+
+<p align="center"> ***Edit your profile (interests, email, password, profile picture)*** </p>
+<p align="center"> <img src = "https://i.imgur.com/qPdsaCK.jpeg" width=350> </p>
+
 
 <!-- <p align="center">
   <img src = "http://i.imgur.com/IkSnFRL.png" width=700>
@@ -106,6 +113,7 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 
 ## Acknowledgments
 
+Special Thanks to our sponsor: Isaiah Cole, CEO of PoolRides and California State University, Sacramento
 
 
 
