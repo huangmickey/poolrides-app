@@ -27,6 +27,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Feedback](#feedback)
+- [Jira](#jira)
 - [Contributors](#contributors)
 - [Build Process](#build-process)
 - [Acknowledgments](#acknowledgments)
@@ -68,6 +69,19 @@ Pool Rides is a ride sharing application similar to that of Uber and Lyft. The b
   <img src = "http://i.imgur.com/0iorG20.png" width=700>
 </p> -->
 
+
+## Jira
+<p align = 'center'> <b> Future plans for our Application include </b> </p>
+- Paypal and Stripe Integration for handling Fiat and Crypto currency <br>
+- Friends List
+
+<img src = "https://i.imgur.com/srYFD0b.png" width=700>
+
+Two week sprints have been planned from August to December
+<img src = "https://i.imgur.com/AHhTreD.png" width=700>
+
+
+
 ## Feedback
 
 If there's anything you'd like to chat about, please feel free to join our [Discord Server](https://discord.gg/uUM38wXR8T)!
@@ -90,30 +104,9 @@ This project is developed by [Mickey Huang](github.com/huangmickey), [Enrique Al
 
 **Development Keys**: The `FIREBASE_SDK_APIKEY` and `GOOGLE_MAPS_APIKEY` in `.env` are for development purposes and do not represent the actual application keys.
 
-<!-- ## Backers [![Backers on Open Collective](https://opencollective.com/git-point/backers/badge.svg)](#backers)
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/git-point#backer)] -->
-
-<!-- <a href="https://opencollective.com/git-point#backers" target="_blank"><img src="https://opencollective.com/git-point/backers.svg?width=890"></a>
-
-## Sponsors [![Sponsors on Open Collective](https://opencollective.com/git-point/sponsors/badge.svg)](#sponsors)
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/git-point#sponsor)]
-
-<a href="https://opencollective.com/git-point/sponsor/0/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/1/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/2/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/3/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/4/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/5/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/6/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/7/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/8/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/git-point/sponsor/9/website" target="_blank"><img src="https://opencollective.com/git-point/sponsor/9/avatar.svg"></a> -->
-
 ## Acknowledgments
 
-Special Thanks to our sponsor: Isaiah Cole, CEO of PoolRides and California State University, Sacramento
+Special Thanks to our sponsor: Isaiah Cole, CEO of PoolRides and Kenneth Elliot for advising our team in CSC 190
 
 
 
