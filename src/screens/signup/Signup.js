@@ -1,7 +1,7 @@
-import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import CustomButton from "../components/CustomButton";
-import { AppStyles } from '../utils/styles';
+import React from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import CustomButton from '../../components/CustomButton';
+import { AppStyles } from '../../utils/styles';
 
 export default function Signup({ navigation }) {
     function driverSignUpHandler() {
@@ -20,7 +20,7 @@ export default function Signup({ navigation }) {
         <View style={styles.container}>
             <View style={styles.logoContainer}>
                 <Image
-                    style={styles.logo} source={require("../../assets/splash.png")}
+                    style={styles.logo} source={require("../../../assets/splash.png")}
                 />
                 <Text style={styles.text}>Hello there, welcome to PoolRides!</Text>
             </View>

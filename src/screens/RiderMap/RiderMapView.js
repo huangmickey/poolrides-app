@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RiderNavigateCard from './components/RiderNavigateCard';
-import RideOptionsCard from './components/RideOptionsCard';
-import Map from './components/Map';
+import RiderNavigateCard from '../../components/RiderNavigateCard';
+import RideOptionsCard from '../../components/RideOptionsCard';
+import Map from '../../components/Map';
 import { StatusBar } from 'expo-status-bar';
 
 export default function RiderMapView() {
