@@ -44,7 +44,7 @@ export default function RiderProfile() {
                             <View style={styles.align} >
                                 <Text
                                     style={{
-                                    fontWeight: '900',
+                                    fontWeight: "bold",
                                     fontSize: 26,
                                     color: AppStyles.color.white,
                                     }}
@@ -102,7 +102,7 @@ export default function RiderProfile() {
         </View>
 
         <View style={styles.buttonContainer}>
-            <CustomButton title={"Edit Profile"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={showModal}/>  
+            <CustomButton title={"Edit Profile"} stretch={true} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={showModal}/>  
         </View>
 
         <View style={{flex: 0.4, justifyContent: 'center'}}>
@@ -132,9 +132,6 @@ export default function RiderProfile() {
 
             </View>
         </View>
-
-
-
     </View> 
   );
 }

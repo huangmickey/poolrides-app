@@ -60,6 +60,7 @@ function NavOptions({ userType }) {
     data[0].title = "Get Ride";
     data[0].screen = "Rider Map";
     data[1].screen = "Rider Profile"
+    data[2].screen = "Friends List"
     if (origin) {
       data[0].origin = true;
       data[0].opacity = 1.0;

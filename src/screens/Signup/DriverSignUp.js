@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { Checkbox, Paragraph, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
+import { Checkbox, Dialog, Portal, Provider, Snackbar } from 'react-native-paper';
 import Button from 'react-native-button';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'       //https://github.com/APSL/react-native-keyboard-aware-scroll-view   
-import { setGlobalStyles, FloatingLabelInput } from 'react-native-floating-label-input';                 //https://github.com/Cnilton/react-native-floating-label-input#version-135-or-higher---react-native-reanimated-v2
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { setGlobalStyles, FloatingLabelInput } from 'react-native-floating-label-input';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import validator from 'validator';
-// https://www.npmjs.com/package/react-native-next-input
+
 import { Agreement } from '../../utils/tos';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { AppStyles } from '../../utils/styles';
@@ -109,6 +109,7 @@ export default function RiderSignUp() {
             <View style={styles.container}>
 
                 <Text style={[styles.title, styles.leftTitle]}>Create new account</Text>
+                {/* <Text style={[styles.title, styles.leftTitle]}>New Driver Account</Text> */}
 
                 <KeyboardAwareScrollView contentContainerStyle={styles.scrollviewContainer}
                     enableOnAndroid={true} extraScrollHeight={60}
@@ -264,9 +265,10 @@ export default function RiderSignUp() {
                 <Snackbar
                     theme={{ colors: { onSurface: AppStyles.color.gray, surface: AppStyles.color.white, accent: AppStyles.color.salmonred }, }}
                     visible={snackBarVisisble}
+                    duration={3500}
                     onDismiss={onDismissSnackBar}
                     action={{
-                        label: 'Dismiss',
+                        label: '',
                         onPress: () => {
                             onDismissSnackBar();
                         },
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderColor: AppStyles.color.white,
         // borderRadius: AppStyles.borderRadius.main,
-        borderRadius: AppStyles.borderRadius.small,
+        // borderRadius: AppStyles.borderRadius.small,  Rounds the bottom of the lines. Do not use
     },
     buttonContainer: {
         width: AppStyles.buttonWidth.main,

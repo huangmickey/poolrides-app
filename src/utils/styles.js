@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export const AppStyles = {
   color: {
     black: '#000000',
-    darkgray: '#101010',
+    darkgray: '#202020',
     platinum: '#E6E8E6',
     gray: "#A9A9A9",
     mint: '#4ffcba',
@@ -16,6 +16,7 @@ export const AppStyles = {
     sm: 10,
     md: 16,
     lg: 24,
+    lgg: 28,
     xl: 32,
     xxl: 40,
     xxxl: 80,

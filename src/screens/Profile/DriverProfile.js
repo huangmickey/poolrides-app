@@ -33,11 +33,10 @@ export default function DriverProfile() {
 
 
     return (
-
         <SafeAreaView style={styles.container}>
             <Image
                 style={styles.logo}
-                source={require("../../../assets/splash.png")}
+                source={require("../../../assets/logo.png")}
             />
 
             <View>

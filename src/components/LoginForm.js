@@ -1,12 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Keyboard,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard, } from "react-native";
+
 import { AppStyles } from "../utils/styles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { authentication } from '../firebase/firebase-config';
@@ -27,7 +21,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
 
   function validate() {
     Keyboard.dismiss();
-    let valid = true;
+    let valid = false;
     if (!inputs.email) {
       handleError("*Please input email", "email");
       valid = false;
@@ -35,7 +29,6 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
       handleError("*Please input valid email", "email");
       valid = false;
     }
-
     if (!inputs.password) {
       handleError("*Please input password", "password");
       valid = false;
@@ -43,7 +36,8 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
       handleError("*Please input valid password", "password");
       valid = false;
     }
-
+    
+    valid = true;
     if (valid) {
       setIsAuthenticating(true);
       signInWithEmailAndPassword(authentication, inputs.email, inputs.password)
@@ -57,8 +51,6 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
         });
     }
   };
-  
-
 
   const handleOnChange = (text, input) => {
     setInputs((prevState) => ({ ...prevState, [input]: text }));
@@ -67,8 +59,6 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
   const handleError = (errorMessage, input) => {
     setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
   };
-
-  
 
   return (
     <View style={styles.inputField}>
@@ -117,7 +107,6 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
             maxLength={maxLength}
             returnKeyType={returnKeyType}
             onChangeText={(text) => handleOnChange(text, "password")}
-            textAlign={"center"}
             onFocus={() => {
               handleError(null, "password");
             }}
@@ -143,7 +132,8 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
+    // position: "absolute",
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -186,13 +176,7 @@ const styles = StyleSheet.create({
     fontSize: AppStyles.fontSize.normal,
     color: AppStyles.color.salmonred,
     marginLeft: 5,
-    marginTop: 10,
-  },
-  btnContainer: {
-    position: "relative",
-    alignItems: "stretch",
-    paddingTop: "10%",
-    paddingBottom: "5%",
+    marginTop: "3%",
   },
   signInContainer: {
     alignItems: "stretch",
@@ -201,7 +185,7 @@ const styles = StyleSheet.create({
   inputField: {
     backgroundColor: AppStyles.color.black,
     width: "75%",
-    marginTop: 20,
+    marginTop: "5%",
   },
   errorMsg: {
     color: "red",

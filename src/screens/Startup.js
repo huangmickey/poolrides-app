@@ -17,12 +17,10 @@ export default function Startup({ navigation }) {
     }
 
     return (
-
         <View style={styles.container}>
-
             <View style={styles.logoContainer}>
                 <Image
-                    style={styles.logo} source={require("../../assets/splash.png")}
+                    style={styles.logo} source={require("../../assets/logo.png")}
                 />
             </View>
 
@@ -36,13 +34,9 @@ export default function Startup({ navigation }) {
 
             <View style={styles.signUpContainer}>
                 <Text style={styles.text}>Forgot account?</Text>
-                <Pressable onPress={forgotCredentialsHandler}>
-                    <Text style={styles.signUpButtonText}> Recover
-                    </Text>
-                </Pressable>
+                <Text onPress={forgotCredentialsHandler} style={styles.signUpButtonText}> Recover</Text>
             </View>
         </View>
-
     );
 }
 
@@ -72,8 +66,9 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: AppStyles.fontSize.normal,
-        color: "white",
+        color: AppStyles.color.platinum,
         textAlignVertical: "top",
+        fontWeight: 'bold'
     },
     signUpContainer: {
         flexDirection: "row",

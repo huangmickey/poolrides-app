@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoginForm from "../components/LoginForm";
 import { AppStyles } from "../utils/styles";
 import LoadingOverlay from "../components/LoadingOverlay";
@@ -16,21 +17,23 @@ export default function RiderLogin({navigation}) {
     navigation.navigate("Sign up");
   }
   function forgotPwordPressHandler(){
-    navigation.navigate("Forgot Pword");
+    navigation.navigate("Recover");
   }
 
   if (isAuthenticating) {
-    return <LoadingOverlay message="Logging you in..." />;
+    return <LoadingOverlay message="Logging you in..."  />;
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          style={styles.logo}
-          source={require("../../assets/splash.png")}
-        />
-      </View>
+      <KeyboardAwareScrollView contentContainerStyle={styles.scrollviewContainer} 
+      enableOnAndroid={true} extraScrollHeight={60}>
+        <View style={styles.logoContainer}>
+          <Image
+            style={styles.logo}
+            source={require("../../assets/logo.png")}
+          />
+        </View>
 
       <View style={styles.welcomeContainer}>
         <Text style={styles.signInText}>Sign in to your account</Text>
@@ -41,36 +44,31 @@ export default function RiderLogin({navigation}) {
       </View>
 
       <View style={styles.touchables}>
-        <TouchableOpacity>
-          <Text style={styles.forgotBtn} onPress = {forgotPwordPressHandler}> Forgot Password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.registerBtn}>
-          <Text style={styles.signUpText} onPress={signUpPressHandler}>
-            Sign Up
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.snackBarContainer}>
-        <Snackbar
-          theme={{
-            colors: {
-              onSurface: AppStyles.color.gray,
-              surface: AppStyles.color.white,
-              accent: AppStyles.color.salmonred,
-            },
-          }}
-          visible={snackBarVisisble}
-          onDismiss={onDismissSnackBar}
-          action={{
-            label: "Dismiss",
-            onPress: () => {
-              onDismissSnackBar();
-            },
-          }}
-        >
-          {snackBarText}
-        </Snackbar>
-      </View>
+        <Text style={styles.forgotBtn} onPress = {forgotPwordPressHandler}>Forgot Password?</Text>
+        <Text style={styles.signUpText} onPress={signUpPressHandler}>Sign Up</Text>
+        </View>
+        <View style={styles.snackBarContainer}>
+          <Snackbar
+            theme={{
+              colors: {
+                onSurface: AppStyles.color.gray,
+                surface: AppStyles.color.white,
+                accent: AppStyles.color.salmonred,
+              },
+            }}
+            visible={snackBarVisisble}
+            onDismiss={onDismissSnackBar}
+            action={{
+              label: "Dismiss",
+              onPress: () => {
+                onDismissSnackBar();
+              },
+            }}
+          >
+            {snackBarText}
+          </Snackbar>
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 }
@@ -79,34 +77,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: AppStyles.color.black,
-    alignItems: "center",
   },
-  formContainer: {
-    paddingBottom: "3%",
+  scrollviewContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
   },
   logoContainer: {
-    flex: 1,
-    flexGrow: 3,
-    justifyContent: "center",
     alignItems: "center",
     alignSelf: "stretch",
-    marginBottom: "15%",
+    justifyContent: 'center',
+    marginTop: "7%",
+    marginBottom: "3%",
+    height: "15%",
   },
   logo: {
     width: "60%",
-    height: "60%",
     resizeMode: "contain",
+  },
+  formContainer: {
+    paddingBottom: "3%",
   },
   touchables: {
     flexDirection: "row",
     paddingBottom: "30%",
   },
-  registerBtn: {
-    height: "50%",
-    marginLeft: "30%",
-  },
   forgotBtn: {
-    marginBottom: 30,
+    marginBottom: "10%",
     color: AppStyles.color.platinum,
     alignSelf: "flex-start",
     fontSize: 15,
@@ -115,9 +111,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     color: AppStyles.color.salmonred,
+    marginLeft: "30%",
   },
   signInText: {
-    color: AppStyles.color.gray,
+    color: AppStyles.color.platinum,
     fontWeight: "bold",
     fontSize: AppStyles.textFontSizes.header,
   },
@@ -132,7 +129,7 @@ const styles = StyleSheet.create({
     marginLeft: -45,
   },
   welcomeText: {
-    color: AppStyles.color.gray,
+    color: AppStyles.color.platinum,
     lineHeight: 25,
     fontWeight: "400",
     fontSize: AppStyles.fontSize.normal,

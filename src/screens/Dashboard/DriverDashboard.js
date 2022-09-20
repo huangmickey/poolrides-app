@@ -29,11 +29,8 @@ export default function DriverDashboard() {
         authentication.signOut();
     }
 
-
-
     return (
         <>
-
             {isDriverVerified ?
                 <SafeAreaView style={styles.container}>
                     <View style={styles.header}>
@@ -43,7 +40,7 @@ export default function DriverDashboard() {
                                 height: 100,
                                 resizeMode: "contain",
                             }}
-                            source={require("../../../assets/splash.png")}
+                            source={require("../../../assets/logo.png")}
                         />
                         <View style={{ justifyContent: 'center', }}>
                             <Button
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
         marginBottom: 100,
     },
     signInText: {
-        color: AppStyles.color.gray,
+        color: AppStyles.color.platinum,
         fontWeight: "bold",
         fontSize: AppStyles.textFontSizes.header,
     },
@@ -110,7 +107,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     welcomeText: {
-        color: AppStyles.color.gray,
+        color: AppStyles.color.platinum,
         lineHeight: 25,
         fontWeight: "400",
         paddingBottom: 40,

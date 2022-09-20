@@ -20,7 +20,7 @@ export default function Signup({ navigation }) {
         <View style={styles.container}>
             <View style={styles.logoContainer}>
                 <Image
-                    style={styles.logo} source={require("../../../assets/splash.png")}
+                    style={styles.logo} source={require("../../../assets/logo.png")}
                 />
                 <Text style={styles.text}>Hello there, welcome to PoolRides!</Text>
             </View>
@@ -33,12 +33,10 @@ export default function Signup({ navigation }) {
                 <CustomButton stretch={true} title={"Rider Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderSignUpHandler} />
             </View>
 
-
             <View style={styles.signInContainer}>
                 <Text style={styles.text}>Have an Account?</Text>
                 <Text onPress={() => signInHandler()} style={styles.signInButtonText}> Sign In</Text>
             </View>
-
         </View>
     );
 }
@@ -54,6 +52,8 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: '15%',
+        // marginTop: '7%',     Only use if header is removed.
         alignSelf: 'stretch',
     },
     logo: {
@@ -69,10 +69,8 @@ const styles = StyleSheet.create({
     text: {
         fontSize: AppStyles.fontSize.normal,
         color: AppStyles.color.platinum,
-        fontWeight: 'bold',
-
         textAlignVertical: "top",
-        backgroundColor: AppStyles.color.black
+        fontWeight: 'bold',
     },
     signInContainer: {
         flexDirection: "row",
