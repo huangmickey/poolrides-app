@@ -32,8 +32,7 @@ import { authentication, db } from './src/firebase/firebase-config'
 import { doc, getDoc } from 'firebase/firestore/lite'
 import { getAuth, onIdTokenChanged } from 'firebase/auth'
 import { AppStyles } from './src/utils/styles';
-
-
+import RideHistory from './src/screens/History/RideHistory';
 
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
@@ -41,17 +40,16 @@ const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
 
 function App() {
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isEmailVerified, setIsEmailVerified] = useState(null);
-  const [userType, setUserType] = useState(null);
-  const [isGeneralFilled, setIsGeneralFilled] = useState(null);
-  const [isMusicFilled, setIsMusicFilled] = useState(null);
+  const [isEmailVerified, setIsEmailVerified] = useState();
+  const [userType, setUserType] = useState();
+  const [isGeneralFilled, setIsGeneralFilled] = useState();
+  const [isMusicFilled, setIsMusicFilled] = useState();
 
   const [appIsReady, setAppIsReady] = useState(false);
-  const [appFirstRender, setAppFirstRender] = useState(true);
 
   /**************Prepares application before rendering any pages)***************/
-
   //While in this state, Application will display a splash screen of the Pool Logo.
   useEffect(() => {
     async function prepare() {
@@ -63,9 +61,8 @@ function App() {
         var result = await authenticate();
         console.log("Authentication was: " + result);
 
-      //  console.log("Loading Images");
-      //  result = await loadImages();
-      //  console.log(result);
+        // let result = authenticate();
+        // await new Promise(result => setTimeout(result, 3000));
 
         // console.log("Loading Fonts");
         // result = await Font.loadAsync(Entypo.font);
@@ -77,11 +74,13 @@ function App() {
         console.warn(e);
       } finally {
         console.log("App is ready to Load")
-        setAppIsReady(true)
-      }
+        setAppIsReady(true);
+
+        // authentication.signOut();
     }
+  }
       prepare();
-  }, []);
+  }, []); 
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -89,52 +88,39 @@ function App() {
     }
   }, [appIsReady]);
 
-
   function authenticate() {
-     onIdTokenChanged(authentication, (user) => {
+    checkUser();     
+    return new Promise(resolve => {setTimeout(() => {resolve('resolved'); }, 2000);});
+  }
+
+  function checkUser(){
+    onIdTokenChanged(authentication, (user) => {
       if (user) {
         setIsLoggedIn(true);
         setIsEmailVerified(user.emailVerified);
-        checkDatabase(user.uid)
-
-      } else {
+        checkDatabase(user.uid);
+      } else { 
         setIsLoggedIn(false);
-        setIsGeneralFilled(false);
-        setIsMusicFilled(false);
+        setIsEmailVerified(null);
+        setUserType(null);
+        setIsGeneralFilled(null);
+        setIsMusicFilled(null);
       }
+
     });
-    return new Promise(resolve => {setTimeout(() => {resolve('resolved'); }, 1000);});
   }
 
-//   function loadImages() {
-    
-//    return new Promise(resolve => {setTimeout(() => {resolve('resolved'); }, 1000);});
-//  }
-
-  /**************Deals with Authentication(Signing in and out)***************/
-
   useEffect(() => {
-    const auth = getAuth();
-    
-    if(appFirstRender){
-      console.log("Changing render state");
-      setAppFirstRender(false);
-    } else { 
-      console.log("checking user athhenticate");
-      const unsubscribe = onIdTokenChanged(authentication, (user) => {
-        if (user) {
-          setIsLoggedIn(true);
-          setIsEmailVerified(user.emailVerified);
-          checkDatabase(user.uid);
-
-        } else {
-          setIsLoggedIn(false);
-          setIsGeneralFilled(false);
-          setIsMusicFilled(false);
-        }
-      });
-      return unsubscribe;
+    async function checkUser() {
+      try {
+        console.log("Running User Authentication");
+        var result = await authenticate();
+        console.log("Authentication was: " + result);
+      } catch (e) {
+        console.warn(e);
+      }
     }
+    checkUser();
   }, [authentication]);
 
   async function checkDatabase(userUID) {
@@ -145,13 +131,13 @@ function App() {
     if (userData === undefined) {
       // first time signup so user data is set into database but delayed
       console.log('first time user signup', userType);
-      setUserType(undefined);
-      setIsGeneralFilled(false);
-      setIsMusicFilled(false);
+      setUserType(null);
+      setIsGeneralFilled(null);
+      setIsMusicFilled(null);
     } else {
       setUserType(userData.usertype);
-      setIsGeneralFilled(userData.generalinterests ? true : false);
-      setIsMusicFilled(userData.musicinterests ? true : false);
+      setIsGeneralFilled(userData.generalinterests ? true : null);
+      setIsMusicFilled(userData.musicinterests ? true : null); 
     }
   }
 
@@ -184,7 +170,6 @@ function App() {
       </Stack.Navigator>
     )
   }
-
   function AuthInterestsStack() {
     return (
       <Stack.Navigator
@@ -198,7 +183,7 @@ function App() {
           animation: 'slide_from_right',
         }}
         >
-        <Stack.Screen name="General Interests" component={GeneralInterests} />
+        <Stack.Screen name="General Interests" initialParams={{ returnPage: null, generalInterest: null, musicInterest: null }} component={GeneralInterests} />
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Verify Account" component={VerifyAccount} />
       </Stack.Navigator>
@@ -222,10 +207,12 @@ function App() {
         }}>
         <Stack.Screen options={{ headerShown: false }} name="Driver Dashboard" component={DriverDashboard} />
         <Stack.Screen options={{ headerShown: false }} name="Driver Profile" component={DriverProfile} />
-        
-        <Stack.Screen options={{ headerBackTitle: "Friends List" }} name="Friends List" component={FriendsList} />
-        <Stack.Screen options={{ headerBackTitle: "Messages" }} name="Messages" component={Messages} />
-        <Stack.Screen options={{ headerBackTitle: "" }} name="DMS" component={DMS} />
+        <Stack.Screen options={{ headerTitle: "Friends List" }} name="Friends List" component={FriendsList} />
+        <Stack.Screen options={{ headerTitle: "Messages" }} name="Messages" component={Messages} />
+        <Stack.Screen options={{ headerTitle: "DM's" }} name="DMS" component={DMS} />
+        <Stack.Screen name="General Interests" component={GeneralInterests} />
+        <Stack.Screen name="Music Interests" component={MusicInterests} />
+        <Stack.Screen name="Ride History" component={RideHistory} />
       </Stack.Navigator>
     )
   }
@@ -248,11 +235,13 @@ function App() {
         <Stack.Screen options={{ headerShown: false }} name="Rider Dashboard" component={RiderDashboard} />
         <Stack.Screen options={{ headerShown: false }} name="Rider Profile" component={RiderProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Rider Map" component={RiderMapView} />
-        <Stack.Screen options={{ headerBackTitle: "Friends List" }} name="Friends List" component={FriendsList} />
-        <Stack.Screen options={{ headerBackTitle: "Messages" }} name="Messages" component={Messages} />
-        <Stack.Screen options={{ headerBackTitle: "" }} name="DMS" component={DMS} />
-        
-      </Stack.Navigator>
+        <Stack.Screen options={{ headerTitle: "Friends List" }} name="Friends List" component={FriendsList} />
+        <Stack.Screen options={{ headerTitle: "Messages" }} name="Messages" component={Messages} />
+        <Stack.Screen options={{ headerTitle: "DM's" }} name="DMS" component={DMS} />
+        <Stack.Screen name="General Interests" component={GeneralInterests} />
+        <Stack.Screen name="Music Interests" component={MusicInterests} />
+        <Stack.Screen name="Ride History" component={RideHistory} />
+      </Stack.Navigator> 
     )
   }
 
@@ -265,7 +254,6 @@ function App() {
   }
 
   /**************Primary Stack Navigator.***************/
-
   return (
     <View
     style={{ flex: 1, width: '100%', height: '100%', backgroundColor: AppStyles.color.black }}
@@ -273,11 +261,11 @@ function App() {
       <Provider store={store}>
         <NavigationContainer>
           <StatusBar style='light' />
+          {!isLoggedIn && <AuthStack />}
+          {isLoggedIn && isGeneralFilled == null && isMusicFilled == null && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <AuthInterestsStack />}
+          {isLoggedIn && isGeneralFilled == true && isMusicFilled == true && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack />}
           {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Rider' && isEmailVerified && <AuthRiderStack />}
           {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Driver' && isEmailVerified && <AuthDriverStack />}
-          {isLoggedIn && isGeneralFilled && isMusicFilled && !isEmailVerified && <VerifyAccountStack />}
-          {isLoggedIn && isGeneralFilled==null && isMusicFilled==null && <AuthInterestsStack />}
-          {!isLoggedIn && <AuthStack />}
         </NavigationContainer>
       </Provider>
     </View>

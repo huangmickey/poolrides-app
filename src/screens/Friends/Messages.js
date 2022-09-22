@@ -10,7 +10,7 @@ export default function Messages({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-        <Text>This is the Messages's Page</Text>
+            <Text style={{backgroundColor: white}}>This is the Messages's Page</Text>
         </SafeAreaView>
     );
 };
@@ -20,7 +20,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'space-between',
         backgroundColor: AppStyles.color.black,
     },
 });
+
+
+// https://github.com/FaridSafi/react-native-gifted-chat#readme

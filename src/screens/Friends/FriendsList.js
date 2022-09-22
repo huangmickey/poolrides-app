@@ -1,86 +1,102 @@
-import React, { useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";                                                               
 import { AppStyles, AppIcon } from '../../utils/styles';
 
-import { doc, updateDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 import { browserLocalPersistence } from 'firebase/auth';
 
-const DATA = [
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    name: "Steve1",
-    username: "stevey1",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    name: "Steve2",
-    username: "stevey2",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    name: "Steve3",
-    username: "stevey3",
-  },
-  {
-  id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bb",
-  name: "Steve4",
-  username: "stevey4",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f64",
-    name: "Steve5",
-    username: "stevey5",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d73",
-    name: "Steve6",
-    username: "stevey6",
-  },
-  {
-  id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bs",
-  name: "Steve1",
-  username: "stevey1",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97fqw",
-    name: "Steve2",
-    username: "stevey2",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29dfd",
-    name: "Steve3",
-    username: "stevey3",
-  },
-  {
-  id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bbdf",
-  name: "Steve4",
-  username: "stevey4",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97ffg",
-    name: "Steve5",
-    username: "stevey5",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29dtr",
-    name: "Steve6",
-    username: "stevey6",
-},
-];
-
 const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5); 
-const profilePicture = AppIcon.images.placeHolder;
-
-
-
+const defaultPicture = AppIcon.images.placeHolder;
 
 
 export default function FriendsList({ navigation }) {
 
   const [selectedId, setSelectedId] = useState(null);
+  const [userInfo, setUserInfo] = useState();
+  const [refreshFlatlist, setRefreshFlatList] = useState(false);
 
+  const [DATA, setDATA] = useState([
+    {
+      id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
+      name: "Steve1",
+      profilePicture: "",
+      username: "stevey1",
+    },
+    {
+      id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
+      name: "Steve2",
+      profilePicture: "",
+      username: "stevey2",
+    },
+    {
+      id: "58694a0f-3da1-471f-bd96-145571e29d72",
+      name: "Steve3",
+      profilePicture: "",
+      username: "stevey3",
+    },
+    {
+    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bb",
+    name: "Steve4",
+    profilePicture: "",
+    username: "stevey4",
+    },
+    {
+      id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f64",
+      name: "Steve5",
+      profilePicture: "",
+      username: "stevey5",
+    },
+  ]);
+
+  useEffect(() => {
+    const userUID = authentication.currentUser.uid; 
+
+    const getUserData = async () => {
+      const userDocReference = doc(db, "users", userUID);
+      const userDocSnapshot = await getDoc(userDocReference);
+      setUserInfo(userDocSnapshot.data());
+      console.log(userInfo);
+    };
+
+    getUserData();
+  }, []);
+
+
+
+
+  function profilePic(user){
+    if(user.profilePicture == null || user.profilePicture == "") {
+      return defaultPicture;
+    } else {
+      return user.profilePicture;
+    }
+  }
+
+
+
+  function viewProfileHandler(user) {
+    console.log("View friend profile button was pressed on user: " + user.id)
+
+    // navigation.navigate("Dashboard", {userID: id});
+    //Send a call to the database to fetch data about this user and present it to the page.
+    //Note, the profile page can be made universal. All you need to do is pass it the UID and it can retrieve it live.
+  }
+
+  function messageHandler(user) {
+    console.log("Message friend button was pressed on user: " + user.id)
+    navigation.navigate("DMS");
+    // navigation.navigate("DMS", {userID: id});
+    //Send a call to the database retrieve conversation stored between these two users
+  }
+
+  function deleteFriendHandler(user) {
+    console.log("Delete friend button was pressed on user: " + user.id)
+    let remainingArr = DATA.filter(data => data != user);
+    setDATA(remainingArr);
+    //Send a call to the database to remove this UID from your list. But leave yours in the otehr UID
+  }
 
 
   const renderItem = ({ item }) => {
@@ -98,38 +114,24 @@ export default function FriendsList({ navigation }) {
   };
 
   const Item = ({ item, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={() => viewProfileHandler(item.id)} style={[styles.item, backgroundColor]}>
+    <TouchableOpacity onPress={() => viewProfileHandler(item)} style={[styles.item, backgroundColor]}>
       <View style={styles.infoGroup}>
-        <Image source={profilePicture} style={styles.bottomIcons} /> 
+        <Image source={profilePic(item)} style={styles.bottomIcons} /> 
         <Text style={[styles.title, textColor]}>{item.name}</Text>
       </View>
       <View style={styles.infoGroup}>
-        <TouchableOpacity onPress={() => messageHandler(item.id)} >
-            <Image source={profilePicture} style={styles.infoIcons}/> 
+        <TouchableOpacity onPress={() => messageHandler(item)} >
+            <Image source={defaultPicture} style={styles.infoIcons}/> 
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => deleteFriendHandler(item.id)}>
-            <Image source={profilePicture} style={styles.infoIcons} /> 
+        <TouchableOpacity onPress={() => deleteFriendHandler(item)}>
+            <Image source={defaultPicture} style={styles.infoIcons} /> 
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 
 
-  function viewProfileHandler(id) {
-    console.log("View friend profile button was pressed on user: " + id)
-    //Send a call to the database to fetch data about this user and present it to the page.
-    //Note, the profile page can be made universal. All you need to do is pass it the UID and it can retrieve it live.
-  }
-  
-  function messageHandler(id) {
-    console.log("Message friend button was pressed on user: " + id)
-    //Send a call to the database retrieve conversation stored between these two users
-  }
-  
-  function deleteFriendHandler(id) {
-    console.log("Delete friend button was pressed on user: " + id)
-    //Send a call to the database to remove this UID from your list. But leave yours in the otehr UID
-  }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -138,13 +140,22 @@ export default function FriendsList({ navigation }) {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         extraData={selectedId}
+        refreshing={!refreshFlatlist}
       />
     </SafeAreaView>
   );
 };
 
+
+
+
+
+
+
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'column',
     backgroundColor: AppStyles.color.black,
   },

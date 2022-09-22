@@ -25,9 +25,8 @@ export default function RiderDashboard() {
   }, []);
 
   function logoutHandler() {
-    console.log("User Logged Out");
-    authentication.signOut();
-  }
+    authentication.signOut().then(() => console.log("User Logged Out"));
+  } 
 
   function PressHandlerDashboard(title) {
     switch (title) {
@@ -78,14 +77,14 @@ export default function RiderDashboard() {
       </View>
 
       <View style={styles.welcomeContainer}>
-        <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
+        <Text style={styles.signInText}>Hello {userInfo?.firstname.toUpperCase()}!</Text>
         <Text style={styles.welcomeText}>What would you like to do?</Text>
       </View>
       <View style={styles.searchAddressBar}>
         <FromAddressSearchBar />
       </View>
       <View style={styles.navContainer}>
-        <NavOptions userType={userInfo?.usertype} />
+        <NavOptions userType={userInfo?.usertype} userInfo={userInfo} />
       </View>
     </SafeAreaView>
   );

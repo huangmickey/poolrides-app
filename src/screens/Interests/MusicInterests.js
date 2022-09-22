@@ -6,9 +6,24 @@ import CustomButton from '../../components/CustomButton';
 import { doc, updateDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 
-export default function GeneralInterests({ navigation }) {
+export default function MusicInterests({ navigation, route }) {
   
-  const [musicInterests] = useState({
+  const [returnPage, setReturnPage] = useState();
+  const [userInterests, setUserInterest] = useState();
+  const [isDefault, setIsDefault] = useState(true);
+
+  useEffect(() => {
+    if(route.params.returnPage != null) { 
+      setReturnPage(route.params.returnPage); 
+    } 
+  
+    if(route.params.musicInterest != null) { 
+      setUserInterest(route.params.musicInterest); 
+      setIsDefault(false);
+    } 
+  }, []);
+
+  const [defaultInterests] = useState({
     'Classical': false,
     'Country': false,
     'EDM': false,
@@ -32,11 +47,21 @@ export default function GeneralInterests({ navigation }) {
     const uid = authentication.currentUser.uid;
     const userDocRef = doc(db, "users", uid);
 
-    await updateDoc(userDocRef, {
-      musicinterests: musicInterests,
-    });
+    console.log("Return Page: " + returnPage);
+    console.log("User:  " + userInterests);
+    console.log("isDefault: " + isDefault);
 
-    navigation.navigate('Verify Account');
+    if(isDefault) {
+      await updateDoc(userDocRef, {
+        musicinterests: defaultInterests,
+      });
+      navigation.navigate('Verify Account');
+    } else {
+      await updateDoc(userDocRef, {
+        musicinterests: userInterests,
+      });
+      navigation.navigate(returnPage);
+    }
   }
 
   return (
@@ -47,10 +72,20 @@ export default function GeneralInterests({ navigation }) {
 
         <ScrollView persistentScrollbar={true} style={styles.scrollView}>
           <View style={styles.chipContainer}>
-            {Array.from(Object.entries(musicInterests)).map((entry) => {
-              const [key] = entry;
-              return (<CustomChip key={key} interest={key} interestsObj={musicInterests} />);
-            })}
+          {isDefault ? 
+              Array.from(Object.entries(defaultInterests).sort()).map((entry) => {
+                const [key] = entry;
+                return (<CustomChip key={key} interest={key} interestsObj={defaultInterests} />);
+              })
+            : 
+              Array.from(Object.entries(userInterests).sort()).map((entry) => {
+                const [key] = entry;
+                return (<CustomChip key={key} interest={key} interestsObj={userInterests} />);
+              })
+          }
+
+
+
           </View>
         </ScrollView>
       </View>
@@ -111,14 +146,3 @@ const styles = StyleSheet.create({
     marginTop: '10%',
   },
 });
-
-
-
-
-
-
-
-
-
-
-

@@ -9,7 +9,7 @@ import IDVerification from "../IDVerification/IDVerification";
 
 export default function DriverDashboard() {
     const [userInfo, setUserInfo] = useState();
-    const [isDriverVerified, setIsDriverVerified] = useState();
+    const [isDriverVerified, setIsDriverVerified] = useState(null);
     useEffect(() => {
         // Update the document title using Firebase SDK
         const userUID = authentication.currentUser.uid; // Coming from auth when logged in
@@ -31,7 +31,7 @@ export default function DriverDashboard() {
 
     return (
         <>
-            {isDriverVerified ?
+            {isDriverVerified == true ?
                 <SafeAreaView style={styles.container}>
                     <View style={styles.header}>
                         <Image
@@ -60,16 +60,15 @@ export default function DriverDashboard() {
                     <View style={styles.navContainer}>
                         <NavOptions userType={userInfo?.usertype} />
                     </View>
-
                 </SafeAreaView>
-
+                
                 :
 
-                <SafeAreaView style={styles.container}>
+                isDriverVerified == false ? <SafeAreaView style={styles.container}>
                     <IDVerification driverVerification={setIsDriverVerified} />
-                </SafeAreaView>
-
-
+                </SafeAreaView>             
+                :
+                <View style={styles.container}/>
             }
 
         </>

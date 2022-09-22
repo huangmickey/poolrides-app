@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View, Text } from 'react-native';
 import CustomChip from '../../components/Chip';
 import { AppStyles } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
-
 import { doc, updateDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 
-
 export default function GeneralInterests({ navigation, route }) {
 
-  const [generalInterests] = useState({
+  const [returnPage, setReturnPage] = useState();
+  const [userInterests, setUserInterest] = useState();
+  const [musicInterest, setMusicInterest] = useState();
+  const [isDefault, setIsDefault] = useState(true);
+
+  
+
+useEffect(() => {
+  if(route.params.returnPage != null) { 
+    setReturnPage(route.params.returnPage); 
+  } 
+
+  if(route.params.generalInterest != null) { 
+    setUserInterest(route.params.generalInterest); 
+    setIsDefault(false);
+  } 
+  if(route.params.musicInterest != null) { 
+    setMusicInterest(route.params.musicInterest);
+  }
+}, []);
+
+  const [defaultInterests] = useState({
     Anime: false,
     Art: false,
     Cars: false,
@@ -41,11 +60,22 @@ export default function GeneralInterests({ navigation, route }) {
     const uid = authentication.currentUser.uid;
     const userDocRef = doc(db, "users", uid);
 
-    await updateDoc(userDocRef, {
-      generalinterests: generalInterests,
-    });
+    console.log("Return Page: " + returnPage);
+    console.log("General:  " + userInterests);
+    console.log("Music:  " + musicInterest);
+    console.log("isDefault: " + isDefault);
 
-    navigation.navigate('Music Interests');
+    if(isDefault) {
+      await updateDoc(userDocRef, {
+        generalinterests: defaultInterests,
+      });
+      navigation.navigate({name:'Music Interests', params:{returnPage: null, musicInterest: null}});
+    } else {
+      await updateDoc(userDocRef, {
+        generalinterests: userInterests,
+      });
+      navigation.navigate({name:'Music Interests', params:{returnPage: returnPage, musicInterest: musicInterest}});
+    }
   }
 
   return (
@@ -56,10 +86,17 @@ export default function GeneralInterests({ navigation, route }) {
         
         <ScrollView persistentScrollbar={true} style={styles.scrollView}>
           <View style={styles.chipContainer}>
-            {Array.from(Object.entries(generalInterests)).map((entry) => {
-              const [key] = entry;
-              return (<CustomChip key={key} interest={key} interestsObj={generalInterests} />);
-            })}
+            {isDefault ? 
+              Array.from(Object.entries(defaultInterests).sort()).map((entry) => {
+                const [key] = entry;
+                return (<CustomChip key={key} interest={key} interestsObj={defaultInterests} />);
+              })
+            : 
+              Array.from(Object.entries(userInterests).sort()).map((entry) => {
+                const [key] = entry;
+                return (<CustomChip key={key} interest={key} interestsObj={userInterests} />);
+              })
+            }
           </View>
         </ScrollView>
       </View>

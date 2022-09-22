@@ -4,38 +4,35 @@ import { AppStyles } from '../utils/styles';
 import { Chip } from 'react-native-paper'; 
 
 export default function CustomChip({interest, interestsObj}) {
-    const [isSelected, setIsSelected] = useState(false);
-    const [chipBackgroundColor, setChipBackgroundColor] = useState(AppStyles.color.salmonred);
-    const [chipTextColor, setChipTextColor] = useState(AppStyles.color.white);
+    const [isSelected, setIsSelected] = useState(interestsObj[interest]);           //I for the life of me dont know why you cant comment this out without breaking everything
     
     function changeMap() {
         interestsObj[interest] = !interestsObj[interest];
+        setIsSelected(!isSelected);                                                 //I for the life of me dont know why you cant comment this out without breaking everything
         console.log("Result of selecting chip: " + interest + " : " + interestsObj[interest]);
     }
 
-    function changeChipBackgroundColor() {
-        if (chipBackgroundColor === AppStyles.color.salmonred) {
-            setChipBackgroundColor(AppStyles.color.mint);
-        } else {
-            setChipBackgroundColor(AppStyles.color.salmonred);
+    function checkTextColor() {
+        if(interestsObj[interest]){
+            return AppStyles.color.gray;
         }
+        return AppStyles.color.white;
     }
 
-    function changeChipTextColor() {
-        if (chipTextColor === AppStyles.color.white) {
-            setChipTextColor(AppStyles.color.gray);
-        } else {
-            setChipTextColor(AppStyles.color.white);
+    function checkChipColor() {
+        if(interestsObj[interest]){
+            return AppStyles.color.mint;
         }
+        return AppStyles.color.salmonred;
     }
     
     return (
         
         <Chip 
-            selected={isSelected}
-            onPress={()=> { setIsSelected(!isSelected), changeMap(), changeChipBackgroundColor(), changeChipTextColor() }} 
-            textStyle={{fontWeight: 'bold', color: chipTextColor}}
-            style={[styles.chipContainer, {backgroundColor: chipBackgroundColor}]}
+            selected={interestsObj[interest]}
+            onPress={()=> { changeMap() }} 
+            textStyle={{fontWeight: 'bold', color: checkTextColor()}}
+            style={[styles.chipContainer, {backgroundColor: checkChipColor()}]}
             >{interest}</Chip>
     );
 }
