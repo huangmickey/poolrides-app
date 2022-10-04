@@ -75,7 +75,7 @@ function App() {
         // console.log(result);
 
         console.log("Pre-Load Complete");
-        
+
       } catch (e) {
         console.warn(e);
       } finally {
@@ -83,10 +83,10 @@ function App() {
         setAppIsReady(true);
 
         // authentication.signOut();
+      }
     }
-  }
-      prepare();
-  }, []); 
+    prepare();
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -95,17 +95,17 @@ function App() {
   }, [appIsReady]);
 
   function authenticate() {
-    checkUser();     
-    return new Promise(resolve => {setTimeout(() => {resolve('resolved'); }, 2000);});
+    checkUser();
+    return new Promise(resolve => { setTimeout(() => { resolve('resolved'); }, 2000); });
   }
 
-  function checkUser(){
+  function checkUser() {
     onIdTokenChanged(authentication, (user) => {
       if (user) {
         setIsLoggedIn(true);
         setIsEmailVerified(user.emailVerified);
         checkDatabase(user.uid);
-      } else { 
+      } else {
         setIsLoggedIn(false);
         setIsEmailVerified(null);
         setUserType(null);
@@ -143,7 +143,7 @@ function App() {
     } else {
       setUserType(userData.usertype);
       setIsGeneralFilled(userData.generalinterests ? true : null);
-      setIsMusicFilled(userData.musicinterests ? true : null); 
+      setIsMusicFilled(userData.musicinterests ? true : null);
     }
   }
 
@@ -152,7 +152,7 @@ function App() {
   if (!appIsReady) {
     return null;
   }
-  
+
   /**************Renderers.***************/
 
   function AuthStack() {
@@ -167,7 +167,7 @@ function App() {
           headerBackVisible: false,
           animation: 'slide_from_right',
         }}>
-        <Stack.Screen  name="Startup" component={Startup} />
+        <Stack.Screen name="Startup" component={Startup} />
         <Stack.Screen name="Sign up" component={Signup} />
         <Stack.Screen name="Rider Sign up" component={RiderSignUp} />
         <Stack.Screen name="Driver Sign up" component={DriverSignUp} />
@@ -188,7 +188,7 @@ function App() {
           headerBackVisible: false,
           animation: 'slide_from_right',
         }}
-        >
+      >
         <Stack.Screen name="General Interests" initialParams={{ returnPage: null, generalInterest: null, musicInterest: null }} component={GeneralInterests} />
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Verify Account" component={VerifyAccount} />
@@ -200,13 +200,13 @@ function App() {
     return (
       <Stack.Navigator
         screenOptions={{
-          headerStyle: { 
+          headerStyle: {
             backgroundColor: AppStyles.color.black,
           },
           headerTitleStyle: {
             color: AppStyles.color.platinum,
           },
-          headerTitleAlign: 'center',          
+          headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerBackVisible: false,
           animation: 'slide_from_right',
@@ -228,13 +228,13 @@ function App() {
     return (
       <Stack.Navigator
         screenOptions={{
-          headerStyle: { 
+          headerStyle: {
             backgroundColor: AppStyles.color.black,
           },
           headerTitleStyle: {
             color: AppStyles.color.platinum,
           },
-          headerTitleAlign: 'center',          
+          headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerBackVisible: false,
           animation: 'slide_from_right',
@@ -248,13 +248,13 @@ function App() {
         <Stack.Screen name="General Interests" component={GeneralInterests} />
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Ride History" component={RideHistory} />
-        <Stack.Screen name="Settings" component={Settings}/>
-        <Stack.Screen name="Account Settings" component={AccountSettings}/>
-        <Stack.Screen name="Change Email" component={ChangeEmail}/>
-        <Stack.Screen name="Change Password" component={ChangePassword}/>
-        <Stack.Screen name="Change Phone" component={ChangePhone}/>
-        <Stack.Screen name="Change Username" component={ChangeUsername}/>
-      </Stack.Navigator> 
+        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Account Settings" component={AccountSettings} />
+        <Stack.Screen name="Change Email" component={ChangeEmail} />
+        <Stack.Screen name="Change Password" component={ChangePassword} />
+        <Stack.Screen name="Change Phone" component={ChangePhone} />
+        <Stack.Screen name="Change Username" component={ChangeUsername} />
+      </Stack.Navigator>
     )
   }
 
@@ -269,14 +269,14 @@ function App() {
   /**************Primary Stack Navigator.***************/
   return (
     <View
-    style={{ flex: 1, width: '100%', height: '100%', backgroundColor: AppStyles.color.black }}
+      style={{ flex: 1, width: '100%', height: '100%', backgroundColor: AppStyles.color.black }}
       onLayout={onLayoutRootView}>
       <Provider store={store}>
         <NavigationContainer>
           <StatusBar style='light' />
           {!isLoggedIn && <AuthStack />}
-          {isLoggedIn && isGeneralFilled == null && isMusicFilled == null && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <AuthInterestsStack />}
-          {isLoggedIn && isGeneralFilled == true && isMusicFilled == true && (userType === 'Rider' || userType === 'Driver') && !isEmailVerified && <VerifyAccountStack />}
+          {isLoggedIn && isGeneralFilled == null && isMusicFilled == null && !isEmailVerified && <AuthInterestsStack />}
+          {isLoggedIn && isGeneralFilled == true && isMusicFilled == true && !isEmailVerified && <VerifyAccountStack />}
           {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Rider' && isEmailVerified && <AuthRiderStack />}
           {isLoggedIn && isGeneralFilled && isMusicFilled && userType === 'Driver' && isEmailVerified && <AuthDriverStack />}
         </NavigationContainer>
