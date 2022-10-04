@@ -33,6 +33,12 @@ import { doc, getDoc } from 'firebase/firestore/lite'
 import { getAuth, onIdTokenChanged } from 'firebase/auth'
 import { AppStyles } from './src/utils/styles';
 import RideHistory from './src/screens/History/RideHistory';
+import Settings from './src/screens/Settings/Settings';
+import AccountSettings from './src/screens/Settings/AccountSettings';
+import ChangePassword from './src/screens/Settings/ChangePassword';
+import ChangePhone from './src/screens/Settings/ChangePhone';
+import ChangeEmail from './src/screens/Settings/ChangeEmail';
+import ChangeUsername from './src/screens/Settings/ChangeUsername';
 
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
@@ -213,6 +219,7 @@ function App() {
         <Stack.Screen name="General Interests" component={GeneralInterests} />
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Ride History" component={RideHistory} />
+        <Stack.Screen name="Settings" component={Settings} />
       </Stack.Navigator>
     )
   }
@@ -241,6 +248,12 @@ function App() {
         <Stack.Screen name="General Interests" component={GeneralInterests} />
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Ride History" component={RideHistory} />
+        <Stack.Screen name="Settings" component={Settings}/>
+        <Stack.Screen name="Account Settings" component={AccountSettings}/>
+        <Stack.Screen name="Change Email" component={ChangeEmail}/>
+        <Stack.Screen name="Change Password" component={ChangePassword}/>
+        <Stack.Screen name="Change Phone" component={ChangePhone}/>
+        <Stack.Screen name="Change Username" component={ChangeUsername}/>
       </Stack.Navigator> 
     )
   }

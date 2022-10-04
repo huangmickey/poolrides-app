@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, ImageBackground, StyleSheet, Text, View, TouchableOpacity  } from 'react-native';       
-import { Avatar } from 'react-native-paper';                                                                   
+import { Avatar } from 'react-native-paper';   
+import { EvilIcons ,Feather , MaterialIcons, Octicons } from '@expo/vector-icons';                                                                  
 import { AppStyles, AppIcon } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
 
@@ -13,9 +14,9 @@ const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5); 
 
 const profilePicture = AppIcon.images.placeHolder;
-const userFriends = '16'
-const userMilesTraveled = '412'
-const userRating = '5.0/5.0'
+const userFriends = 'N/A'
+const userMilesTraveled = 'N/A'
+const userRating = 'N/A'
 
 const fieldOne = 'Friends';
 const fieldTwo = 'Miles Traveled';
@@ -40,6 +41,11 @@ export default function RiderProfile({ navigation }) {
         getUserData();
     }, []);
 
+    function editProfileHandler() {
+
+        navigation.navigate("Account Settings");
+    }
+
     function paymentHandler() {
         
         // navigation.navigate("Payment");
@@ -52,7 +58,7 @@ export default function RiderProfile({ navigation }) {
 
     function settingsHandler() {
 
-        // navigation.navigate("Settings");
+        navigation.navigate("Settings");
     }
 
     return (
@@ -66,7 +72,12 @@ export default function RiderProfile({ navigation }) {
                 <View style={{paddingTop: 50}}>
                     <View style={styles.profileContent}>
                         <View style={[styles.align, { paddingTop: height * 0.1 }]}>
-                            {userInfo?.profilePicture != null ? <Image source={userInfo?.profilePicture} style={styles.avatar}/> : <Image source={profilePicture} style={styles.avatar}/>}
+                            {userInfo?.profilePicture == null || item.profilePicture == "" 
+                            ?
+                            <EvilIcons name="user" size={150} color="white" />
+                            :
+                            <Image source={userInfo?.profilePicture} style={styles.bottomIcons} /> 
+                            }
                         </View>
 
                         <View style={{ paddingTop: height * 0.05 }}>
@@ -112,7 +123,7 @@ export default function RiderProfile({ navigation }) {
                                     </View>
 
                                     <View style={styles.align}>
-                                        {userInfo?.userRating != null ? <Text style={ styles.statsText }>{userInfo?.userRating}</Text> : <Text style={ styles.statsText }>{userRating}</Text>}
+                                        {userInfo?.userRating != null ? <Text style={ styles.statsText }>{userInfo?.userRating}/5.0</Text> : <Text style={ styles.statsText }>{userRating}/5.0</Text>}
                                         <Text style={ styles.statsTitle }>
                                             {fieldThree}
                                         </Text>
@@ -126,28 +137,28 @@ export default function RiderProfile({ navigation }) {
         </View>
 
         <View style={styles.buttonContainer}>
-            <CustomButton title={"Edit Profile"} stretch={true} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={showModal}/>  
+            <CustomButton title={"Edit Profile"} stretch={true} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={editProfileHandler}/>  
         </View>
 
         <View style={{flex: 0.4, justifyContent: 'center'}}>
             <View style={{flexDirection: 'row', justifyContent: 'space-evenly' }} >
 
             <TouchableOpacity  style={styles.align} onPress={paymentHandler}>
-                <Image source={profilePicture} style={styles.bottomIcons} />
+                <MaterialIcons name="payment" size={50} color="white" />
                     <Text style={ styles.bottomText }>
                         {'Add/Remove\nPayment'}
                     </Text>
                 </TouchableOpacity >
 
                 <TouchableOpacity  style={styles.align} onPress={interestHandler}>
-                <Image source={profilePicture} style={styles.bottomIcons} />
+                <Octicons name="tasklist" size={50} color="white" />
                     <Text style={ styles.bottomText }>
-                        {'Update\nInterests'}
+                        {'Update Interests'}
                     </Text>
                 </TouchableOpacity >
 
                 <TouchableOpacity  style={styles.align} onPress={settingsHandler}>
-                <Image source={profilePicture} style={styles.bottomIcons} />
+                <Feather name="settings" size={50} color="white" />
                     <Text style={ styles.bottomText }>
                         {'Settings'}
                     </Text>
@@ -216,7 +227,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
       },
     bottomText: { 
-        paddingTop: 5, 
+        paddingTop: 15, 
         fontSize: 12,
         textAlign: 'center',
         color: AppStyles.color.white,

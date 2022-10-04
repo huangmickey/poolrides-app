@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";                                                               
+import { Dimensions, FlatList, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";   
+import { EvilIcons } from '@expo/vector-icons';                                                              
 import { AppStyles, AppIcon } from '../../utils/styles';
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
@@ -141,7 +142,12 @@ export default function RideHistory({ navigation }) {
     <TouchableOpacity style={[styles.item, backgroundColor]}>
 
       <View style={styles.leftContent}>
-        <Image source={profilePic(item)} style={styles.profileIcon} /> 
+        {item.profilePicture == null || item.profilePicture == "" 
+        ?
+        <EvilIcons name="user" size={70} color="white" />
+        :
+        <Image source={item.profilePicture} style={styles.bottomIcons} /> 
+        }
         
         <View style={styles.rightContent}>
         <Text style={[styles.nameText, textColor]}>{item.name}</Text>

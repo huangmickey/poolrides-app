@@ -3,6 +3,8 @@ import { Image, View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList
 import { AppStyles } from '../utils/styles';
 import { Icon } from 'react-native-elements';
 import tw from "tailwind-react-native-classnames";
+import 'intl';
+import 'intl/locale-data/jsonp/en'; // or any other locale you need
 
 import BASIC_IMG from '../../assets/basiccar.png'
 import XL_IMG from "../../assets/xlcar.png";
@@ -65,7 +67,7 @@ export default function RideOptionsCard() {
                             <Text style={styles.time}>{travelTimeInformation?.duration.text} travel time</Text>
                         </View>
                         <Text style={styles.cost}>
-                            {new Intl.NumberFormat('en', {
+                            {new Intl.NumberFormat('en-IN', {
                                 style: 'currency',
                                 currency: 'USD',
                                 compactDisplay: 'short',

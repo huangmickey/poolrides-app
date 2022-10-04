@@ -44,11 +44,9 @@ export default function DriverDashboard() {
                         />
                         <View style={{ justifyContent: 'center', }}>
                             <Button
-                                title='Log out'
-                                color={AppStyles.color.salmonred}
+                                style={styles.logOutBTN}
                                 onPress={logoutHandler}
-                            >
-                            </Button>
+                            >Log Out</Button>
                         </View>
                     </View>
 
@@ -89,6 +87,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    logOutBTN:{
+        color: AppStyles.color.salmonred,
+        fontSize: 20,
+      },
     navContainer: {
         backgroundColor: AppStyles.color.black,
         alignItems: "center",

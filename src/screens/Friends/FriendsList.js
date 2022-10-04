@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";                                                               
+import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"; 
+import { EvilIcons , AntDesign, Feather } from '@expo/vector-icons';  
+import SearchBar from "../../components/SearchBar";                                                        
 import { AppStyles, AppIcon } from '../../utils/styles';
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
@@ -14,41 +16,47 @@ const defaultPicture = AppIcon.images.placeHolder;
 export default function FriendsList({ navigation }) {
 
   const [selectedId, setSelectedId] = useState(null);
-  const [userInfo, setUserInfo] = useState();
-  const [refreshFlatlist, setRefreshFlatList] = useState(false);
+  const [userInfo, setUserInfo] = useState(false);
 
+  const [searchPhrase, setSearchPhrase] = useState("");
+  const [isClicked, setIsClicked] = useState(false);
+
+
+  //////////////////////////////////////////////TEMP MOCK DATA/////////////////////////////////////////////////////////
   const [DATA, setDATA] = useState([
     {
       id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-      name: "Steve1",
+      name: "Steve Jobsasasasasasa",
       profilePicture: "",
-      username: "stevey1",
+      username: "steve1",
     },
     {
       id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-      name: "Steve2",
+      name: "Steve Wazniak",
       profilePicture: "",
-      username: "stevey2",
+      username: "steve2",
     },
     {
       id: "58694a0f-3da1-471f-bd96-145571e29d72",
-      name: "Steve3",
+      name: "Steven Universe",
       profilePicture: "",
-      username: "stevey3",
+      username: "steve3",
     },
     {
     id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bb",
-    name: "Steve4",
+    name: "Steve Minecraft",
     profilePicture: "",
-    username: "stevey4",
+    username: "steve4",
     },
     {
       id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f64",
-      name: "Steve5",
+      name: "Steve",
       profilePicture: "",
-      username: "stevey5",
+      username: "steve5",
     },
   ]);
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     const userUID = authentication.currentUser.uid; 
@@ -62,19 +70,6 @@ export default function FriendsList({ navigation }) {
 
     getUserData();
   }, []);
-
-
-
-
-  function profilePic(user){
-    if(user.profilePicture == null || user.profilePicture == "") {
-      return defaultPicture;
-    } else {
-      return user.profilePicture;
-    }
-  }
-
-
 
   function viewProfileHandler(user) {
     console.log("View friend profile button was pressed on user: " + user.id)
@@ -98,66 +93,94 @@ export default function FriendsList({ navigation }) {
     //Send a call to the database to remove this UID from your list. But leave yours in the otehr UID
   }
 
-
   const renderItem = ({ item }) => {
-    const backgroundColor = AppStyles.color.black
-    const color = AppStyles.color.platinum;
-
-    return (
-      <Item
+ 
+    if (searchPhrase == "") {
+      return (<Item
         item={item}
         onPress={() => viewProfileHandler(item.id)}
-        backgroundColor={{ backgroundColor }}
-        textColor={{ color }}
-      />
-    );
+      />);
+    } 
+    // filter of the name
+    if (item.name.toString().toUpperCase().includes(searchPhrase.toUpperCase().trim())) {
+      return (<Item
+        item={item}
+        onPress={() => viewProfileHandler(item.id)}
+      />);
+    } 
+    // filter of the description
+    if (item.username.toUpperCase().includes(searchPhrase.toUpperCase().trim())) {
+      return (<Item
+        item={item}
+        onPress={() => viewProfileHandler(item.id)}
+      />);
+    }
   };
 
-  const Item = ({ item, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={() => viewProfileHandler(item)} style={[styles.item, backgroundColor]}>
+  const Item = ({ item }) => (
+    <TouchableOpacity onPress={() => viewProfileHandler(item)} style={styles.item}>
       <View style={styles.infoGroup}>
-        <Image source={profilePic(item)} style={styles.bottomIcons} /> 
-        <Text style={[styles.title, textColor]}>{item.name}</Text>
+        {item.profilePicture == null || item.profilePicture == "" 
+        ?
+        <EvilIcons name="user" size={70} color="white" />
+        :
+        <Image source={item.profilePicture} style={styles.bottomIcons} /> 
+        }
+        <View style={styles.leftContent}>
+          <Text style={styles.name}>
+            {item.name.length < 16
+            ?
+            item.name
+            :
+            item.name.substring(0,16) + '...'
+            }
+          </Text>
+          <Text style={styles.username}>@{item.username}</Text>
+        </View>
       </View>
       <View style={styles.infoGroup}>
         <TouchableOpacity onPress={() => messageHandler(item)} >
-            <Image source={defaultPicture} style={styles.infoIcons}/> 
+          <Feather name="message-square" size={30} color='white' style={styles.infoIcons} /> 
         </TouchableOpacity>
         <TouchableOpacity onPress={() => deleteFriendHandler(item)}>
-            <Image source={defaultPicture} style={styles.infoIcons} /> 
+          <AntDesign name="delete" size={30} color='white' style={styles.infoIcons}/> 
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 
-
-
-
   return (
     <SafeAreaView style={styles.container}>
+
+      <View style={styles.searchBar}>
+        <SearchBar
+          isClicked={isClicked}
+          searchPhrase={searchPhrase}
+          setSearchPhrase={setSearchPhrase}
+          setIsClicked={setIsClicked}
+        />
+      </View>
+
       <FlatList
         data={DATA}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         extraData={selectedId}
-        refreshing={!refreshFlatlist}
       />
+        
     </SafeAreaView>
   );
+
 };
-
-
-
-
-
-
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
     backgroundColor: AppStyles.color.black,
+  },
+  searchBar: {
+    alignSelf: 'center'
   },
   item: {
     justifyContent: 'space-between',
@@ -168,13 +191,24 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     marginHorizontal: 5,
 
+    backgroundColor: AppStyles.color.black,
     borderColor: AppStyles.color.darkgray,
     borderRadius: 20,
     borderWidth: 1,
   },
-  title: {
+  leftContent: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  name: {
+    color: AppStyles.color.platinum,
     justifyContent: 'flex-start',
-    fontSize: 24,
+    fontSize: 20,
+  },
+  username: {
+    color: AppStyles.color.platinum,
+    justifyContent: 'flex-start',
+    fontSize: 16,
   },
   bottomIcons: {
     justifyContent: 'flex-start',
@@ -185,13 +219,19 @@ const styles = StyleSheet.create({
   },
   infoGroup: {
     flexDirection: 'row',
-    alignItems: 'center'
   },
   infoIcons: {
     justifyContent: 'flex-end',
-    width: thumbMeasure/3,
-    height: thumbMeasure/3,
-    marginRight: 10,
-    borderRadius: 1000,
+
+    marginRight: 15,
+
   },
 });
+
+
+
+
+
+
+ 
+
