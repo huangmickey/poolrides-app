@@ -1,11 +1,15 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, Button } from "react-native";
 import React, { useState, useEffect } from "react";
+import { Dimensions, StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
+import Button from 'react-native-button';
 import { AppStyles } from "../../utils/styles";
 import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import { useNavigation } from "@react-navigation/native";
 import FromAddressSearchBar from "../../components/FromAddressSearch";
+
+const { width, height } = Dimensions.get('screen');
+const thumbMeasure = ((width - 48 - 32) / 2.5); 
 
 export default function RiderDashboard() {
   const navigation = useNavigation();
@@ -24,10 +28,9 @@ export default function RiderDashboard() {
     getUserData();
   }, []);
 
-  function logoutHandler() {
-    console.log("User Logged Out");
-    authentication.signOut();
-  }
+  // function logoutHandler() {
+  //   authentication.signOut().then(() => console.log("User Logged Out"));
+  // } 
 
   function PressHandlerDashboard(title) {
     switch (title) {
@@ -58,34 +61,32 @@ export default function RiderDashboard() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={{
-            width: 100,
-            height: 100,
-            resizeMode: "contain",
-          }}
-          source={require("../../../assets/splash.png")}
-        />
-        <View style={{ justifyContent: 'center', }}>
-          <Button
-            title='Log out'
-            color={AppStyles.color.salmonred}
-            onPress={logoutHandler}
-          >
-          </Button>
+      <View style={{zIndex: 99, height: height * 0.38}}>
+        <View style={styles.header}>  
+          <Image
+            style={styles.logo}
+            source={require("../../../assets/logo.png")}
+          />
+
+          {/* <View style={{justifyContent: 'center'}}>
+            <Button
+              style={styles.logOutBTN}
+              onPress={logoutHandler}
+            >Log Out</Button>
+          </View> */}
+        </View>
+
+        <View style={styles.welcomeContainer}>
+          <Text style={styles.signInText}>Hello {userInfo?.firstname.toUpperCase()}!</Text>
+          <Text style={styles.welcomeText}>What would you like to do?</Text>
+        </View>
+        <View style={styles.searchAddressBar}>
+          <FromAddressSearchBar/>
         </View>
       </View>
 
-      <View style={styles.welcomeContainer}>
-        <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
-        <Text style={styles.welcomeText}>What would you like to do?</Text>
-      </View>
-      <View style={styles.searchAddressBar}>
-        <FromAddressSearchBar />
-      </View>
       <View style={styles.navContainer}>
-        <NavOptions userType={userInfo?.usertype} />
+        <NavOptions userType={userInfo?.usertype} userInfo={userInfo}/>
       </View>
     </SafeAreaView>
   );
@@ -96,39 +97,47 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: AppStyles.color.black,
   },
-  text: {
-    color: AppStyles.color.white,
-  },
   header: {
-    paddingLeft: 10,
+    marginTop: height * 0.05,
+    height: height * 0.08,
+    paddingLeft: 15,
+    paddingRight: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  navContainer: {
-    backgroundColor: AppStyles.color.black,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 100,
+  logo: {
+    height: '100%',
+    width: "35%",
+    resizeMode: "contain",
+  },
+  logOutBTN:{
+    color: AppStyles.color.salmonred,
+    fontSize: 20,
+  },
+  welcomeContainer: {
+    padding: 10,
+    paddingTop: 20,
   },
   signInText: {
-    color: AppStyles.color.gray,
+    color: AppStyles.color.platinum,
     fontWeight: "bold",
     fontSize: AppStyles.textFontSizes.header,
   },
-  welcomeContainer: {
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    padding: 10,
-  },
   welcomeText: {
-    color: AppStyles.color.gray,
+    color: AppStyles.color.platinum,
     lineHeight: 25,
-    fontWeight: "400",
-    paddingBottom: 40,
+    paddingBottom: "7%",
     fontSize: AppStyles.fontSize.normal,
   },
   searchAddressBar: {
     alignItems: 'center',
-    paddingBottom: '5%',
-  }
+    justifyContent: 'center',
+
+  },
+  navContainer: {  
+    backgroundColor: AppStyles.color.black,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 0,
+  },
 });

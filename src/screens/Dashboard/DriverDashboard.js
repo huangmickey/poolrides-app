@@ -9,7 +9,7 @@ import IDVerification from "../IDVerification/IDVerification";
 
 export default function DriverDashboard() {
     const [userInfo, setUserInfo] = useState();
-    const [isDriverVerified, setIsDriverVerified] = useState();
+    const [isDriverVerified, setIsDriverVerified] = useState(null);
     useEffect(() => {
         // Update the document title using Firebase SDK
         const userUID = authentication.currentUser.uid; // Coming from auth when logged in
@@ -29,12 +29,9 @@ export default function DriverDashboard() {
         authentication.signOut();
     }
 
-
-
     return (
         <>
-
-            {isDriverVerified ?
+            {isDriverVerified == true ?
                 <SafeAreaView style={styles.container}>
                     <View style={styles.header}>
                         <Image
@@ -43,15 +40,13 @@ export default function DriverDashboard() {
                                 height: 100,
                                 resizeMode: "contain",
                             }}
-                            source={require("../../../assets/splash.png")}
+                            source={require("../../../assets/logo.png")}
                         />
                         <View style={{ justifyContent: 'center', }}>
                             <Button
-                                title='Log out'
-                                color={AppStyles.color.salmonred}
+                                style={styles.logOutBTN}
                                 onPress={logoutHandler}
-                            >
-                            </Button>
+                            >Log Out</Button>
                         </View>
                     </View>
 
@@ -63,16 +58,15 @@ export default function DriverDashboard() {
                     <View style={styles.navContainer}>
                         <NavOptions userType={userInfo?.usertype} />
                     </View>
-
                 </SafeAreaView>
-
+                
                 :
 
-                <SafeAreaView style={styles.container}>
+                isDriverVerified == false ? <SafeAreaView style={styles.container}>
                     <IDVerification driverVerification={setIsDriverVerified} />
-                </SafeAreaView>
-
-
+                </SafeAreaView>             
+                :
+                <View style={styles.container}/>
             }
 
         </>
@@ -93,6 +87,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    logOutBTN:{
+        color: AppStyles.color.salmonred,
+        fontSize: 20,
+      },
     navContainer: {
         backgroundColor: AppStyles.color.black,
         alignItems: "center",
@@ -100,7 +98,7 @@ const styles = StyleSheet.create({
         marginBottom: 100,
     },
     signInText: {
-        color: AppStyles.color.gray,
+        color: AppStyles.color.platinum,
         fontWeight: "bold",
         fontSize: AppStyles.textFontSizes.header,
     },
@@ -110,7 +108,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     welcomeText: {
-        color: AppStyles.color.gray,
+        color: AppStyles.color.platinum,
         lineHeight: 25,
         fontWeight: "400",
         paddingBottom: 40,

@@ -10,6 +10,7 @@ const Map = () => {
     const destination = useSelector(selectDestination);
     const mapRef = useRef(null);
     const dispatch = useDispatch();
+    
     useEffect(() => {
         if (!origin || !destination) {
             console.log('return');

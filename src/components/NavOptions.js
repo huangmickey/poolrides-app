@@ -34,7 +34,7 @@ let data = [
   {
     id: "678",
     title: "View Friends",
-    screen: 'Friends Screen',
+    screen: 'Friends List',
     url: "https://img.icons8.com/ios-glyphs/100/000000/friends.png",
     origin: true,
     opacity: 1.0,
@@ -42,20 +42,16 @@ let data = [
   {
     id: "890",
     title: "Ride History",
-    screen: 'Ride History Screen',
+    screen: 'Ride History',
     url: "https://img.icons8.com/ios-glyphs/100/000000/order-history.png",
     origin: true,
     opacity: 1.0,
   },
 ];
 
-
-
-function NavOptions({ userType }) {
+function NavOptions({ userType, userInfo }) {
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
-  // console.log(userType.usertype);
-  // console.log(userType);
   if (userType === 'Rider') {
     data[0].title = "Get Ride";
     data[0].screen = "Rider Map";

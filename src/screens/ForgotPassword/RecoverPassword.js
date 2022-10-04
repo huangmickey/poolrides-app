@@ -44,7 +44,7 @@ export default function RecoverPassword({ navigation }) {
                     <View style={styles.inputView}>
                         <TextInput
                             style={styles.textInput}
-                            placeholder="email"
+                            placeholder="example@email.com"
                             placeholderTextColor={AppStyles.color.gray}
 
                             keyboardAppearance={keyboardAppearance}
@@ -103,7 +103,6 @@ export default function RecoverPassword({ navigation }) {
                     </View>
 
                 </View>
-
             }
         </View>
     );
@@ -122,7 +121,7 @@ const styles = StyleSheet.create({
         borderBottomColor: AppStyles.color.white,
         borderBottomWidth: 2,
         height: 45,
-        width: '50%',
+        width: '80%',
         alignSelf: 'center',
     },
     buttonBox: {
@@ -136,6 +135,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     textType: {
+        width: '70%',
         alignSelf: 'center',
         fontWeight: "bold",
         marginRight: 50,

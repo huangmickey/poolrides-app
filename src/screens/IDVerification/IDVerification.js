@@ -62,6 +62,8 @@ export default function IDVerification({ driverVerification }) {
     return (
         <View style={{ flex: 1, backgroundColor: '#000000', justifyContent: 'center', alignItems: 'center' }}>
             <Text style={IDStyle.title}>Driver Verification</Text>
+            {/* <Text style={IDStyle.subTitle}>In order for you to begin driving with Pool Rides,</Text>
+            <Text style={IDStyle.subTitle}>You must first upload a photo of a valid drivers liscense.</Text> */}
             <Text style={IDStyle.subTitle}>Please upload the front of your Driver's License</Text>
             <Button title='Choose Photo' onPress={pickImage} />
             {isUploaded && <Image source={{ uri: image.uri }} style={{ width: 400, height: 400, resizeMode: 'contain' }} />}
