@@ -8,31 +8,26 @@ import {
     Modal,
     Button,
     Alert,
-    TextInput
 } from 'react-native';
 import CustomButton from "../../components/CustomButton";
-import { FloatingLabelInput } from 'react-native-floating-label-input'; 
+import { FloatingLabelInput } from 'react-native-floating-label-input';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStyles } from "../../utils/styles";
 import { EvilIcons, AntDesign, Fontisto, MaterialIcons } from '@expo/vector-icons';
 import validator from 'validator';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
 import {
-    getAuth, 
-    updatePassword, 
-    updateEmail, 
-    reauthenticateWithCredential, 
-    firebase,
+    getAuth,
+    updatePassword,
+    updateEmail,
+    reauthenticateWithCredential,
     EmailAuthProvider,
     deleteUser
 } from "firebase/auth"
-import { Dialog } from 'react-native-paper';
-import App from '../../../App';
 
 export default function DriverProfile() {
- 
+
     const [userInfo, setUserInfo] = useState();
     const [modalOpen, setModalOpen] = useState(false);
     const [newPassword, setNewPassword] = useState('');
@@ -46,7 +41,7 @@ export default function DriverProfile() {
     const [deleteModalOpen, setDeleteModalOpen] = useState('false');
     const [newEmail, setNewEmail] = useState('');
     const [newPhone, setNewPhone] = useState('');
-    
+
 
     useEffect(() => {
         const userUID = authentication.currentUser.uid;
@@ -61,7 +56,7 @@ export default function DriverProfile() {
 
     }, []);
 
-    const reauthenticate = () =>{
+    const reauthenticate = () => {
         const auth = getAuth();
         const user = auth.currentUser;
         const cred = EmailAuthProvider.credential(user.email, currentPassword);
@@ -69,42 +64,42 @@ export default function DriverProfile() {
     }
 
     const changePassword = () => {
-        if(newPassword == 0 || confirmPassword == 0){
+        if (newPassword == 0 || confirmPassword == 0) {
             Alert.alert("Please enter password");
         }
-        else if(!validator.isStrongPassword(newPassword)){
+        else if (!validator.isStrongPassword(newPassword)) {
             Alert.alert("Password must be at least 8 characters long with at least one number, capital and special character.");
-            
-        }
-        else if(newPassword === confirmPassword){
-            reauthenticate().then(()=> {
-                    const auth = getAuth();
-                    const user = auth.currentUser;
-                    updatePassword(user, newPassword).then(() => {
-                        Alert.alert("Password has been successfully changed");
-                        setPasswordModalOpen(false);
-                        setNewPassword("");
-                        setConfirmPassword("");
 
-                    }).catch((error) => {
-                        Alert.alert(error.message);
-                        setPasswordModalOpen(false);
-                        setNewPassword("");
-                        setConfirmPassword("");
-                    });
+        }
+        else if (newPassword === confirmPassword) {
+            reauthenticate().then(() => {
+                const auth = getAuth();
+                const user = auth.currentUser;
+                updatePassword(user, newPassword).then(() => {
+                    Alert.alert("Password has been successfully changed");
+                    setPasswordModalOpen(false);
+                    setNewPassword("");
+                    setConfirmPassword("");
+
+                }).catch((error) => {
+                    Alert.alert(error.message);
+                    setPasswordModalOpen(false);
+                    setNewPassword("");
+                    setConfirmPassword("");
+                });
             }).catch((error) => {
                 Alert.alert(error.message);
             })
-        
-        }else{
+
+        } else {
             Alert.alert("New and confirmed passwords do not match");
-        }   
+        }
     }
     const changeEmail = () => {
         const auth = getAuth();
         const user = auth.currentUser;
-        if(validator.isEmail(newEmail)){
-            reauthenticate().then(()=> {
+        if (validator.isEmail(newEmail)) {
+            reauthenticate().then(() => {
                 updateEmail(auth.currentUser, newEmail).then(() => {
                     Alert.alert("Email has been successfully changed");
                 }).catch((error) => {
@@ -116,12 +111,12 @@ export default function DriverProfile() {
         } else {
             Alert.alert('Please enter valid email.')
         }
-        setNewEmail("");        
+        setNewEmail("");
     }
     const deleteAccount = () => {
         const auth = getAuth();
         const user = auth.currentUser;
-        reauthenticate().then(()=> {
+        reauthenticate().then(() => {
             deleteUser(user).then(() => {
                 Alert.alert("Your account has been deleted")
             }).catch((error) => {
@@ -133,27 +128,27 @@ export default function DriverProfile() {
         setCurrentPassword("");
     }
 
-    function openPasswordChange(){
+    function openPasswordChange() {
         setModalOpen(false);
         setPasswordModalOpen(true);
     }
-    function openEmailChange(){
+    function openEmailChange() {
         setModalOpen(false);
         setEmailModalOpen(true);
     }
-    function openPhoneChange(){
+    function openPhoneChange() {
         setModalOpen(false);
         setPhoneModalOpen(true);
     }
-    function openInterestsChange(){
+    function openInterestsChange() {
         setModalOpen(false);
         setInterestsModalOpen(true);
     }
-    function openUploadModal(){
+    function openUploadModal() {
         setModalOpen(false);
         setUploadModalOpen(true);
     }
-    function openDeleteModal(){
+    function openDeleteModal() {
         setModalOpen(false);
         setDeleteModalOpen(true);
     }
@@ -162,35 +157,35 @@ export default function DriverProfile() {
 
         <SafeAreaView style={styles.container}>
             <Modal visible={modalOpen}
-                    animationType="slide"
-                    transparent={false}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <MaterialIcons style={styles.closeBtn}
-                                name='close'
-                                size={24}
-                                onPress={() => setModalOpen(false)}
-                            ></MaterialIcons>
-                            <TouchableOpacity onPress={openPasswordChange} style={{borderTopWidth: 1, borderTopColor: "white", borderBottomWidth: 1, borderBottomColor: "white", padding: 20, width: '100%', marginTop: 30}}>
-                                <Text style={{color: "white", textAlign:'center'}}>Change Password</Text> 
-                            </TouchableOpacity> 
-                            <TouchableOpacity onPress={openEmailChange} style={styles.modalField}>
-                                <Text style={{ color: "white", textAlign: "center"}}>Change Email</Text>
-                            </TouchableOpacity>  
-                            <TouchableOpacity onPress={openPhoneChange} style={styles.modalField}>
-                                <Text style={{ color: "white", textAlign: "center"}}>Change Phone Number</Text>
-                            </TouchableOpacity> 
-                            <TouchableOpacity onPress={openInterestsChange} style={styles.modalField}>
-                                <Text style={{ color: "white", textAlign: "center"}}>Edit Interests</Text>
-                            </TouchableOpacity> 
-                            <TouchableOpacity onPress={openUploadModal} style={styles.modalField}>
-                                <Text style={{ color: "white", textAlign: "center"}}>Upload Picture</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={openDeleteModal} style={styles.modalField}>
-                                <Text style={{ color: AppStyles.color.errorred, textAlign: "center"}}>Delete account</Text>
-                            </TouchableOpacity>
-                        </View>
+                animationType="slide"
+                transparent={false}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <MaterialIcons style={styles.closeBtn}
+                            name='close'
+                            size={24}
+                            onPress={() => setModalOpen(false)}
+                        ></MaterialIcons>
+                        <TouchableOpacity onPress={openPasswordChange} style={{ borderTopWidth: 1, borderTopColor: "white", borderBottomWidth: 1, borderBottomColor: "white", padding: 20, width: '100%', marginTop: 30 }}>
+                            <Text style={{ color: "white", textAlign: 'center' }}>Change Password</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openEmailChange} style={styles.modalField}>
+                            <Text style={{ color: "white", textAlign: "center" }}>Change Email</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openPhoneChange} style={styles.modalField}>
+                            <Text style={{ color: "white", textAlign: "center" }}>Change Phone Number</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openInterestsChange} style={styles.modalField}>
+                            <Text style={{ color: "white", textAlign: "center" }}>Edit Interests</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openUploadModal} style={styles.modalField}>
+                            <Text style={{ color: "white", textAlign: "center" }}>Upload Picture</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openDeleteModal} style={styles.modalField}>
+                            <Text style={{ color: AppStyles.color.errorred, textAlign: "center" }}>Delete account</Text>
+                        </TouchableOpacity>
                     </View>
+                </View>
             </Modal>
 
             <Modal visible={passwordModalOpen}
@@ -212,7 +207,7 @@ export default function DriverProfile() {
                             />
                         </View>
                         <View style={styles.inputView}>
-                             <FloatingLabelInput
+                            <FloatingLabelInput
                                 value={confirmPassword}
                                 label={'Confirm new password:'}
                                 onChangeText={setConfirmPassword}
@@ -226,15 +221,15 @@ export default function DriverProfile() {
                                 onChangeText={setCurrentPassword}
                                 secureTextEntry={true}
                             />
-                        </View>  
-                    
+                        </View>
+
                         <CustomButton
                             stretch={true}
                             title={"Change Password"}
                             color={AppStyles.color.mint}
                             textColor={AppStyles.color.black}
                             onPress={changePassword}
-                        /> 
+                        />
                     </View>
                 </View>
             </Modal>
@@ -250,27 +245,27 @@ export default function DriverProfile() {
                             onPress={() => setEmailModalOpen(false)}
                         ></MaterialIcons>
                         <View style={styles.inputView}>
-                             <FloatingLabelInput
+                            <FloatingLabelInput
                                 value={newEmail}
                                 label={'New email:'}
                                 onChangeText={setNewEmail}
                             />
                         </View>
                         <View style={styles.inputView}>
-                             <FloatingLabelInput
+                            <FloatingLabelInput
                                 value={currentPassword}
                                 secureTextEntry={true}
                                 label={'Current password:'}
                                 onChangeText={setCurrentPassword}
                             />
-                        </View> 
+                        </View>
                         <CustomButton
                             stretch={true}
                             title={"Change Email"}
                             color={AppStyles.color.mint}
                             textColor={AppStyles.color.black}
                             onPress={changeEmail}
-                        /> 
+                        />
                     </View>
                 </View>
             </Modal>
@@ -298,14 +293,14 @@ export default function DriverProfile() {
                                 label={'Current password:'}
                             // onChangeText={setCurrentPassword}
                             />
-                        </View> 
+                        </View>
                         <CustomButton
                             stretch={true}
                             title={"Change Phone"}
                             color={AppStyles.color.mint}
                             textColor={AppStyles.color.black}
-                            // onPress={changePhone}
-                        />    
+                        // onPress={changePhone}
+                        />
                     </View>
                 </View>
             </Modal>
@@ -326,7 +321,7 @@ export default function DriverProfile() {
                             color={AppStyles.color.mint}
                             textColor={AppStyles.color.black}
                         // onPress={addInterests}
-                        />  
+                        />
                     </View>
                 </View>
             </Modal>
@@ -341,13 +336,13 @@ export default function DriverProfile() {
                             size={24}
                             onPress={() => setUploadModalOpen(false)}
                         ></MaterialIcons>
-                          <CustomButton
+                        <CustomButton
                             stretch={true}
                             title={"Upload picture"}
                             color={AppStyles.color.mint}
                             textColor={AppStyles.color.black}
                         // onPress={uploadPicture}
-                        />  
+                        />
                     </View>
                 </View>
             </Modal>
@@ -362,22 +357,22 @@ export default function DriverProfile() {
                             size={24}
                             onPress={() => setDeleteModalOpen(false)}
                         ></MaterialIcons>
-                          <Text style={{color: AppStyles.color.white, marginBottom: 30}}>Are you sure you want to delete your account?</Text>
-                          <View style={styles.inputView}>
+                        <Text style={{ color: AppStyles.color.white, marginBottom: 30 }}>Are you sure you want to delete your account?</Text>
+                        <View style={styles.inputView}>
                             <FloatingLabelInput
                                 value={currentPassword}
                                 secureTextEntry={true}
                                 label={'Current password:'}
-                                 onChangeText={setCurrentPassword}
+                                onChangeText={setCurrentPassword}
                             />
-                        </View> 
-                          <Button
+                        </View>
+                        <Button
                             stretch={true}
                             title={"Delete account"}
                             color={AppStyles.color.salmonred}
                             textColor={AppStyles.color.black}
-                        onPress={deleteAccount}
-                        />  
+                            onPress={deleteAccount}
+                        />
                     </View>
                 </View>
             </Modal>
@@ -395,16 +390,16 @@ export default function DriverProfile() {
                     >
                     </Button> */}
                     <TouchableOpacity
-                         onPress={()=> setModalOpen(true)}
+                        onPress={() => setModalOpen(true)}
                     >
                         <View>
-                            <Text style={{color: AppStyles.color.salmonred, paddingRight: 10, fontSize: 18}}>Edit</Text>
+                            <Text style={{ color: AppStyles.color.salmonred, paddingRight: 10, fontSize: 18 }}>Edit</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
 
             </View>
-           
+
 
             <View style={styles.topField}>
 
@@ -445,7 +440,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: '90%',
         marginBottom: 20,
-         alignSelf: 'flex-start',
+        alignSelf: 'flex-start',
     },
     logo: {
         width: 100,
@@ -544,15 +539,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     closeBtn: {
-        alignSelf:'flex-end', 
+        alignSelf: 'flex-end',
         color: "white",
         marginBottom: 20,
     },
     modalField: {
         borderBottomWidth: 1,
-         borderBottomColor: "white", 
-         padding: 20, width: '100%', 
-         marginBottom: 10
+        borderBottomColor: "white",
+        padding: 20, width: '100%',
+        marginBottom: 10
     }
 
 })
