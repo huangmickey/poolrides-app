@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, Button } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import { AppStyles } from "../../utils/styles";
 import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
-
+import Button from 'react-native-button';
 
 export default function DriverDashboard() {
     const [userInfo, setUserInfo] = useState();
@@ -59,14 +59,14 @@ export default function DriverDashboard() {
                         <NavOptions userType={userInfo?.usertype} />
                     </View>
                 </SafeAreaView>
-                
+
                 :
 
                 isDriverVerified == false ? <SafeAreaView style={styles.container}>
                     <IDVerification driverVerification={setIsDriverVerified} />
-                </SafeAreaView>             
-                :
-                <View style={styles.container}/>
+                </SafeAreaView>
+                    :
+                    <View style={styles.container} />
             }
 
         </>
@@ -87,10 +87,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    logOutBTN:{
+    logOutBTN: {
         color: AppStyles.color.salmonred,
         fontSize: 20,
-      },
+    },
     navContainer: {
         backgroundColor: AppStyles.color.black,
         alignItems: "center",
