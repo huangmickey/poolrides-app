@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { LogBox, View } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
+import { LogBox, View } from 'react-native'; 
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,6 +25,7 @@ import Signup from './src/screens/Signup/Signup'
 import RiderSignUp from './src/screens/Signup/RiderSignUp'
 import DriverSignUp from './src/screens/Signup/DriverSignUp'
 import Startup from './src/screens/Startup'
+import DriverMapView from './src/screens/DriverMapView'
 
 import { store } from './store';
 
@@ -40,7 +41,7 @@ import ChangePhone from './src/screens/Settings/ChangePhone';
 import ChangeEmail from './src/screens/Settings/ChangeEmail';
 import ChangeUsername from './src/screens/Settings/ChangeUsername';
 
-LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
+
 
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
