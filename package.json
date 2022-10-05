@@ -37,7 +37,7 @@
     "react-native-button": "^3.0.1",
     "react-native-elements": "^3.4.2",
     "react-native-flash-message": "^0.3.1",
-    "react-native-floating-label-input": "github:SomeOrdinaryGamer/react-native-floating-label-input",
+    "react-native-floating-label-input": "https://github.com/SomeOrdinaryGamer/react-native-floating-label-input.git",
     "react-native-gesture-handler": "~2.1.0",
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-image-crop-picker": "^0.37.3",
