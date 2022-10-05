@@ -55,6 +55,7 @@ export default function RiderSignUp() {
                 phone: phone,
                 usertype: 'Driver',
                 isVerified: false,
+                isOnline: false,
             }
             setIsAuthenticating(true);
             createUserWithEmailAndPassword(authentication, email, password)

@@ -40,7 +40,7 @@
     "react-native-image-crop-picker": "^0.37.3",
     "react-native-image-picker": "^4.8.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
-    "react-native-maps": "^1.0.0",
+    "react-native-maps": "0.29.4",
     "react-native-maps-directions": "^1.9.0",
     "react-native-paper": "^4.12.0",
     "react-native-progress": "^5.0.0",

@@ -11,10 +11,11 @@ import MusicInterests from './src/screens/Interests/MusicInterests'
 import RiderDashboard from './src/screens/Dashboard/RiderDashboard'
 import DriverDashboard from './src/screens/Dashboard/DriverDashboard'
 import VerifyAccount from './src/screens/Interests/VerifyAccount'
+import DriverMapView from './src/screens/DriverMapView'
 import { doc, getDoc } from 'firebase/firestore/lite'
 import { authentication, db } from './src/firebase/firebase-config'
 import { onIdTokenChanged } from 'firebase/auth'
-import { LogBox } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
+import { LogBox } from 'react-native';
 import Login from './src/screens/Login'
 import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
 import DriverProfile from './src/screens/Profile/DriverProfile'
@@ -105,6 +106,7 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Driver Dashboard" component={DriverDashboard} />
         <Stack.Screen options={{ headerShown: false }} name="Driver Profile" component={DriverProfile} />
+        <Stack.Screen options={{ headerShown: false }} name="Driver Map" component={DriverMapView} />
       </Stack.Navigator>
     )
   }

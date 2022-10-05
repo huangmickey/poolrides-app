@@ -1,28 +1,33 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, Button } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image, Button, Alert } from "react-native";
 import React, { useState, useEffect } from "react";
 import { AppStyles } from "../../utils/styles";
 import { authentication, db } from "../../firebase/firebase-config";
-import { doc, getDoc } from "firebase/firestore/lite";
+import { doc, getDoc, updateDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function DriverDashboard() {
     const [userInfo, setUserInfo] = useState();
     const [isDriverVerified, setIsDriverVerified] = useState();
-    useEffect(() => {
+    const [isOnline, setIsOnline] = useState();
+
+    useFocusEffect(
+        React.useCallback(() => {
         // Update the document title using Firebase SDK
         const userUID = authentication.currentUser.uid; // Coming from auth when logged in
-
         const getUserData = async () => {
             const userDocReference = doc(db, "users", userUID);
             const userDocSnapshot = await getDoc(userDocReference);
             setUserInfo(userDocSnapshot.data());
             setIsDriverVerified(userDocSnapshot.data().isVerified);
+            await updateDoc(userDocReference, {isDriverOnline: false});
+            setIsOnline(userDocSnapshot.data().isDriverOnline);
         };
-
         getUserData();
-    }, [isDriverVerified]);
+        //console.log(isOnline);
+    },[isOnline]));
 
     function logoutHandler() {
         console.log("User Logged Out");
