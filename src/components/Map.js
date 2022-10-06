@@ -57,6 +57,7 @@ const Map = () => {
     return (
 
         <MapView
+            provider= {PROVIDER_GOOGLE}
             ref={mapRef}
             style={{ flex: 1 }}
             pitchEnabled={false}

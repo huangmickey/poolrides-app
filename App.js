@@ -20,7 +20,8 @@ import VerifyAccount from './src/screens/Interests/VerifyAccount'
 import Login from './src/screens/Login'
 import DriverProfile from './src/screens/Profile/DriverProfile'
 import RiderProfile from './src/screens/Profile/RiderProfile';
-import RiderMapView from './src/screens/RiderMap/RiderMapView';
+import DriverMapView from './src/screens/MapView/DriverMapView';
+import RiderMapView from './src/screens/MapView/RiderMapView';
 import Signup from './src/screens/Signup/Signup'
 import RiderSignUp from './src/screens/Signup/RiderSignUp'
 import DriverSignUp from './src/screens/Signup/DriverSignUp'
@@ -40,7 +41,6 @@ import ChangePhone from './src/screens/Settings/ChangePhone';
 import ChangeEmail from './src/screens/Settings/ChangeEmail';
 import ChangeUsername from './src/screens/Settings/ChangeUsername';
 
-LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
@@ -213,6 +213,7 @@ function App() {
         }}>
         <Stack.Screen options={{ headerShown: false }} name="Driver Dashboard" component={DriverDashboard} />
         <Stack.Screen options={{ headerShown: false }} name="Driver Profile" component={DriverProfile} />
+        <Stack.Screen options={{ headerShown: false }} name="Driver Map" component={DriverMapView} />
         <Stack.Screen options={{ headerTitle: "Friends List" }} name="Friends List" component={FriendsList} />
         <Stack.Screen options={{ headerTitle: "Messages" }} name="Messages" component={Messages} />
         <Stack.Screen options={{ headerTitle: "DM's" }} name="DMS" component={DMS} />

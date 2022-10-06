@@ -25,13 +25,21 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    },
+        "supportsTablet": true,
+        "config" : {
+          "googleMapsApiKey": "/config.js/GOOGLE_MAPS_APIKEY"
+        }
+      },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
+      },
+      "config": {
+        "googleMaps" : {
+          "apiKey": "/config.js/GOOGLE_MAPS_APIKEY"
       }
+    }
     },
     "web": {
       "favicon": "./assets/icon.png"

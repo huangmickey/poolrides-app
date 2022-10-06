@@ -77,7 +77,7 @@ export default function RiderDashboard() {
         </View>
 
         <View style={styles.welcomeContainer}>
-          <Text style={styles.signInText}>Hello {userInfo?.firstname.toUpperCase()}!</Text>
+          <Text style={styles.signInText}>Hello {userInfo?.firstname}!</Text>
           <Text style={styles.welcomeText}>What would you like to do?</Text>
         </View>
         <View style={styles.searchAddressBar}>
