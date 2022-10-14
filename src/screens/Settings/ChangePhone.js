@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";                                                              
 import { AppStyles, AppIcon } from '../../utils/styles';
+import { FloatingLabelInput } from 'react-native-floating-label-input';
+import CustomButton from "../../components/CustomButton";
+import validator from 'validator';
+import {
+  getAuth,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+} from "firebase/auth"
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 import { browserLocalPersistence } from 'firebase/auth';
+import { Alert } from 'react-native';
 
 const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5); 
@@ -13,6 +22,8 @@ const defaultPicture = AppIcon.images.placeHolder;
 export default function ChangePhone({ navigation }) {
 
   const [userInfo, setUserInfo] = useState();
+  const [newPhone, setNewPhone] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
 
   useEffect(() => {
     const userUID = authentication.currentUser.uid;
@@ -24,14 +35,74 @@ export default function ChangePhone({ navigation }) {
     getUserData();
   }, []);
 
+  const reauthenticate = () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const cred = EmailAuthProvider.credential(user.email, currentPassword);
+    return reauthenticateWithCredential(user, cred);
+  }
+
+  const changePhone =()=>{
+    const uid = authentication.currentUser.uid;
+    const userDocRef = doc(db, "users", uid);
+    if(newPhone == "" || newPhone == !validator.isMobilePhone){
+      Alert.alert("Please, enter valid phone number");
+    }
+    else{
+        reauthenticate().then(() => {
+        updateDoc(userDocRef, {
+          phone: newPhone,
+          });
+          Alert.alert("Phone number has been successfully changed");
+          setNewPhone('');
+          setCurrentPassword('');
+          navigation.navigate("Account Settings");
+      }).catch((error) => {
+        Alert.alert(error.message);
+      })
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      {userInfo 
+      {/* {userInfo 
       ?
       <Text style={{color: 'white'}}>The current phone number is {userInfo?.phone}</Text>
       :
       <Text style={{color: 'white'}}>The current phone number is Missing</Text>
-      }
+      } */}
+       <View style={{marginTop: '35%'}}>
+        <View style={styles.inputView}>
+          <FloatingLabelInput
+             value={newPhone}
+             label={'New phone Number:'}
+             maskType={'phone'}
+             mask={'(999) 999-9999'}
+             hint={'(555) 555-5555'}
+             keyboardType='numeric'
+             maxLength={14}
+             blurOnSubmit={false}
+             onChangeText={setNewPhone} 
+          />
+        </View>
+        <View style={styles.inputView}>
+          <FloatingLabelInput
+            value={currentPassword}
+            label={'Current password:'}
+            onChangeText={setCurrentPassword}
+            secureTextEntry={true}
+          />
+        </View>
+      </View>
+      <View style={{alignSelf:'center', marginBottom: '75%', width: '75%', paddingTop: '2%'}}>
+         <CustomButton
+          stretch={true}
+          title={"Submit"}
+          color={AppStyles.color.mint}
+          textColor={AppStyles.color.black}
+          onPress={changePhone}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -43,5 +114,14 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-between',
         backgroundColor: AppStyles.color.black,
+    },
+    inputView: {
+      backgroundColor: AppStyles.color.black,
+      borderBottomColor: AppStyles.color.white,
+      borderBottomWidth: 1,
+      paddingTop: 20,
+      height: 64,
+      width: '75%',
+      alignSelf: 'center',
     },
 });

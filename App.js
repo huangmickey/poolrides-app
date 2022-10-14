@@ -39,6 +39,8 @@ import ChangePassword from './src/screens/Settings/ChangePassword';
 import ChangePhone from './src/screens/Settings/ChangePhone';
 import ChangeEmail from './src/screens/Settings/ChangeEmail';
 import ChangeUsername from './src/screens/Settings/ChangeUsername';
+import DeleteAccount from './src/screens/Settings/DeleteAccount';
+import UploadPicture from './src/screens/Settings/UploadPicture';
 
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
@@ -220,6 +222,13 @@ function App() {
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Ride History" component={RideHistory} />
         <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Account Settings" component={AccountSettings} />
+        <Stack.Screen name="Change Email" component={ChangeEmail} />
+        <Stack.Screen name="Change Password" component={ChangePassword} />
+        <Stack.Screen name="Change Phone" component={ChangePhone} />
+        <Stack.Screen name="Change Username" component={ChangeUsername} />
+        <Stack.Screen name="Delete Account" component={DeleteAccount} />
+        <Stack.Screen name="Upload Picture" component={UploadPicture} />
       </Stack.Navigator>
     )
   }
@@ -254,6 +263,8 @@ function App() {
         <Stack.Screen name="Change Password" component={ChangePassword} />
         <Stack.Screen name="Change Phone" component={ChangePhone} />
         <Stack.Screen name="Change Username" component={ChangeUsername} />
+        <Stack.Screen name="Delete Account" component={DeleteAccount} />
+        <Stack.Screen name="Upload Picture" component={UploadPicture} />
       </Stack.Navigator>
     )
   }

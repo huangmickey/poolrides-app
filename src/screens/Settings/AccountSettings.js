@@ -35,6 +35,22 @@ export default function AccountSettings({ navigation }) {
       pageName: "Change Phone",
       pageNavigation: "Change Phone",
     },
+    // {
+    //   id: 5,
+    //   pageName: "Change Interests",
+    //   pageNavigation: "General Interests",
+    // },
+    {
+      id: 6,
+      pageName: "Upload Picture",
+      pageNavigation: "Upload Picture", 
+    },
+    {
+      id: 7,
+      pageName: "Delete Account",
+      pageNavigation: "Delete Account", 
+    },
+    
 
   ]);
 
