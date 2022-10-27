@@ -30,13 +30,14 @@ export default function RiderNavigateCard() {
                         returnKeyType={"default"}
                         minLength={2}
                         onPress={
+
                             (data, details = null) => {
                                 dispatch(
                                     setDestination({
                                         location: details.geometry.location,
                                         description: data.description,
+                                        destinationAddress: details.formatted_address,
                                     }))
-
                                 navigation.navigate("RideOptionsCard");
                             }}
 

@@ -1,10 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    // initial values of a rider selecting origin/destination
     origin: null,
     destination: null,
-    // information regarding distance from origin to destination
     travelTimeInformation: null,
 };
 

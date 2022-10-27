@@ -39,11 +39,10 @@ export default function FromAddressSearchBar() {
                 language: "en",
             }}
             onPress={(data, details = null) => {
-                // console.log(data, 'DATA')
-                // console.log(detail, 'DETAIL')
                 dispatch(setOrigin({
                     location: details.geometry.location,
-                    description: data.description
+                    description: data.description,
+                    originAddress: details.formatted_address,
                 }))
 
                 dispatch(setDestination(null))

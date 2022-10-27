@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LogBox, View } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -30,7 +30,7 @@ import { store } from './store';
 
 import { authentication, db } from './src/firebase/firebase-config'
 import { doc, getDoc } from 'firebase/firestore/lite'
-import { getAuth, onIdTokenChanged } from 'firebase/auth'
+import { onIdTokenChanged } from 'firebase/auth'
 import { AppStyles } from './src/utils/styles';
 import RideHistory from './src/screens/History/RideHistory';
 import Settings from './src/screens/Settings/Settings';
@@ -39,6 +39,8 @@ import ChangePassword from './src/screens/Settings/ChangePassword';
 import ChangePhone from './src/screens/Settings/ChangePhone';
 import ChangeEmail from './src/screens/Settings/ChangeEmail';
 import ChangeUsername from './src/screens/Settings/ChangeUsername';
+import * as Notifications from 'expo-notifications'
+import { useNotifications } from './src/hooks/useNotifications';
 
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
@@ -86,6 +88,31 @@ function App() {
       }
     }
     prepare();
+  }, []);
+
+  /***********************************************/
+  /**************PUSH NOTIFICATIONS***************/
+  /***********************************************/
+  const { registerForPushNotificationsAsync, handleNotificationResponse } =
+    useNotifications();
+  useEffect(() => {
+    registerForPushNotificationsAsync()
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: true,
+      }),
+    });
+
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener(
+        handleNotificationResponse
+      )
+    return () => {
+      if (responseListener)
+        Notifications.removeNotificationSubscription(responseListener)
+    }
   }, []);
 
   const onLayoutRootView = useCallback(async () => {

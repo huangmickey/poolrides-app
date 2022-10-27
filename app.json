@@ -5,16 +5,30 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "com.poolrides",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
+    },
+    "notification": {
+      "icon": "./assets/icon.png",
+      "androidMode": "default",
+      "androidCollapsedTitle": "",
+      "iosDisplayInForeground": true
     },
     "plugins": [
       [
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff"
         }
       ]
     ],
@@ -28,6 +42,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.poolrides",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
