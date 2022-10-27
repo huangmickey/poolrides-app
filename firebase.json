@@ -5,5 +5,22 @@
   },
   "storage": {
     "rules": "storage.rules"
+  },
+  "emulators": {
+    "functions": {
+      "host": "192.168.1.19",
+      "port": 5001
+    },
+    "firestore": {
+      "host": "192.168.1.19",
+      "port": 8080
+    },
+    "database": {
+      "host": "192.168.1.19",
+      "port": 9000
+    },
+    "hosting": {
+      "port": 5000
+    }
   }
 }

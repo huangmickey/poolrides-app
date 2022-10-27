@@ -27,7 +27,8 @@ export default function RiderLogin({navigation}) {
   return (
     <View style={styles.container}>
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollviewContainer} 
-      enableOnAndroid={true} extraScrollHeight={60}>
+      enableOnAndroid={true} extraScrollHeight={20}>
+
         <View style={styles.logoContainer}>
           <Image
             style={styles.logo}
@@ -57,14 +58,14 @@ export default function RiderLogin({navigation}) {
               },
             }}
             visible={snackBarVisisble}
+            duration={3500}
             onDismiss={onDismissSnackBar}
             action={{
-              label: "Dismiss",
-              onPress: () => {
-                onDismissSnackBar();
-              },
-            }}
-          >
+                label: '',
+                onPress: () => {
+                    onDismissSnackBar();
+                },
+            }}>
             {snackBarText}
           </Snackbar>
         </View>
@@ -86,20 +87,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "stretch",
     justifyContent: 'center',
-    marginTop: "7%",
+    marginTop: "15%",
     marginBottom: "3%",
-    height: "15%",
+     height: "15%",
   },
   logo: {
     width: "60%",
+    height: "100%",
     resizeMode: "contain",
+  },
+  welcomeContainer: {
+    marginLeft: -45,
+  },
+  signInText: {
+    color: AppStyles.color.platinum,
+    fontWeight: "bold",
+    fontSize: AppStyles.textFontSizes.header,
+  },
+  welcomeText: {
+    color: AppStyles.color.platinum,
+    lineHeight: 25,
+    fontWeight: "400",
+    fontSize: AppStyles.fontSize.normal,
   },
   formContainer: {
     paddingBottom: "3%",
   },
   touchables: {
     flexDirection: "row",
-    paddingBottom: "30%",
   },
   forgotBtn: {
     marginBottom: "10%",
@@ -113,25 +128,11 @@ const styles = StyleSheet.create({
     color: AppStyles.color.salmonred,
     marginLeft: "30%",
   },
-  signInText: {
-    color: AppStyles.color.platinum,
-    fontWeight: "bold",
-    fontSize: AppStyles.textFontSizes.header,
-  },
   snackBarContainer: {
     flex: 1,
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignContent: "center",
     alignItems: "center",
     backgroundColor: AppStyles.color.gray,
-  },
-  welcomeContainer: {
-    marginLeft: -45,
-  },
-  welcomeText: {
-    color: AppStyles.color.platinum,
-    lineHeight: 25,
-    fontWeight: "400",
-    fontSize: AppStyles.fontSize.normal,
   },
 });

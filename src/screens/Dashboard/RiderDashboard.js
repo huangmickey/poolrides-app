@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Dimensions, StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
-import Button from 'react-native-button';
+import { Dimensions, StyleSheet, Text, View, SafeAreaView, Image, TouchableWithoutFeedback } from "react-native";
+import {Keyboard} from 'react-native'
 import { AppStyles } from "../../utils/styles";
 import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import { useNavigation } from "@react-navigation/native";
 import FromAddressSearchBar from "../../components/FromAddressSearch";
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5); 
@@ -27,10 +30,6 @@ export default function RiderDashboard() {
 
     getUserData();
   }, []);
-
-  // function logoutHandler() {
-  //   authentication.signOut().then(() => console.log("User Logged Out"));
-  // } 
 
   function PressHandlerDashboard(title) {
     switch (title) {
@@ -60,35 +59,29 @@ export default function RiderDashboard() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{zIndex: 99, height: height * 0.38}}>
-        <View style={styles.header}>  
-          <Image
-            style={styles.logo}
-            source={require("../../../assets/logo.png")}
-          />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.container}>
+          <View style={styles.header}>  
+            <Image
+              style={styles.logo}
+              source={require("../../../assets/logo.png")}
+            />
+          </View>        
 
-          {/* <View style={{justifyContent: 'center'}}>
-            <Button
-              style={styles.logOutBTN}
-              onPress={logoutHandler}
-            >Log Out</Button>
-          </View> */}
-        </View>
+          <View style={styles.welcomeContainer}>
+            <Text style={styles.signInText}>Hello {userInfo?.firstname.toUpperCase()}!</Text>
+            <Text style={styles.welcomeText}>What would you like to do?</Text>
+          </View>
 
-        <View style={styles.welcomeContainer}>
-          <Text style={styles.signInText}>Hello {userInfo?.firstname.toUpperCase()}!</Text>
-          <Text style={styles.welcomeText}>What would you like to do?</Text>
-        </View>
-        <View style={styles.searchAddressBar}>
-          <FromAddressSearchBar/>
-        </View>
-      </View>
+          <View style={styles.searchAddressBar}>
+            <FromAddressSearchBar/>
+          </View>
 
-      <View style={styles.navContainer}>
-        <NavOptions userType={userInfo?.usertype} userInfo={userInfo}/>
-      </View>
-    </SafeAreaView>
+        <View style={styles.navContainer}>
+          <NavOptions userType={userInfo?.usertype} userInfo={userInfo}/>
+        </View>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -99,7 +92,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginTop: height * 0.05,
-    height: height * 0.08,
+    height: height * 0.07,
     paddingLeft: 15,
     paddingRight: 15,
     flexDirection: 'row',
@@ -132,12 +125,14 @@ const styles = StyleSheet.create({
   searchAddressBar: {
     alignItems: 'center',
     justifyContent: 'center',
-
+    zIndex: 9,
   },
   navContainer: {  
-    backgroundColor: AppStyles.color.black,
+    position: "absolute",
+    alignSelf: "center",
+    marginTop: height * 0.39,
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 0,
+    zIndex: -1,
   },
 });

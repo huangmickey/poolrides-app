@@ -1,11 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDestination, selectOrigin, setTravelTimeInformation } from '../../slices/navSlice';
 import MapViewDirections from 'react-native-maps-directions';
 import { config } from "../../config";
 
-const Map = () => {
+function Map({hasDriver}) {
+
+    const [driverMaker, setDriverMaker] = useState({isDriver: false, lat: null, lng: null});
+
+    useEffect(() => {
+        if(hasDriver) {
+            setDriverMaker({isDriver: true, lat: hasDriver.lat, lng: hasDriver.lng});
+        }
+      }, [hasDriver]);
+
     const origin = useSelector(selectOrigin);
     const destination = useSelector(selectDestination);
     const mapRef = useRef(null);
@@ -101,6 +110,15 @@ const Map = () => {
                     title="Destination"
                     description={destination.description}
                     identifer="destination"
+                />
+            )}
+
+            {driverMaker?.isDriver && (
+                <Marker
+                    coordinate={{
+                        latitude: driverMaker.lat,
+                        longitude: driverMaker.lng,
+                    }}
                 />
             )}
         </MapView>

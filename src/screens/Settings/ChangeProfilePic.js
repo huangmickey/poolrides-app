@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react';
-import { Alert, SafeAreaView, StyleSheet, View } from "react-native";   
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";   
+import { EvilIcons ,Feather , MaterialIcons, Octicons } from '@expo/vector-icons';    
 
 import { AppStyles } from '../../utils/styles';
 
@@ -12,14 +12,12 @@ import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
 import { getAuth, updateEmail } from "firebase/auth"
 
-export default function ChangePhone({ navigation }) {
+const { width, height } = Dimensions.get('screen');
+const thumbMeasure = ((width - 48 - 32) / 2.5); 
+
+export default function ChangeProfilePic({ navigation }) {
 
   const [userInfo, setUserInfo] = useState();
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPhone, setNewPhone] = useState('');
-
-  const keyboardAppearance = 'dark';
-  const maxInputLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
 
   useEffect(() => {
     const userUID = authentication.currentUser.uid;
@@ -33,7 +31,7 @@ export default function ChangePhone({ navigation }) {
     getUserData();
 }, []);
 
-const changePhone = () => {
+const uploadPicture = () => {
   // const auth = getAuth();
   // const user = auth.currentUser;
   // if (validator.isEmail(newEmail)) {
@@ -55,44 +53,31 @@ const changePhone = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.centeredView}>
-        <View style={styles.inputView}>
-          <FloatingLabelInput
-            value={newPhone}
-            label={'New phone number:'}
-            maskType={'phone'}
-            mask={'(999) 999-9999'}
-            hint={'(555) 555-5555'}
-            keyboardType='numeric'
-            keyboardAppearance={keyboardAppearance}
-            maxLength={14}
-            onChangeText={setNewPhone}
-        />
+
+        <View styles={styles.image}>
+          {userInfo?.profilePicture == null || item.profilePicture == "" 
+          ?
+          <EvilIcons name="user" size={150} color="white" />
+          :
+          <Image source={userInfo?.profilePicture} style={styles.bottomIcons} /> 
+          }
         </View>
-        <View style={styles.inputView}>
-            <FloatingLabelInput
-                value={currentPassword}
-                isPassword={true}
-                label={'Current password:'}
-                customShowPasswordComponent={<Icon name={"eye-off-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
-                customHidePasswordComponent={<Icon name={"eye-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
-                keyboardAppearance={keyboardAppearance}
-                maxLength={maxInputLength}
-                onChangeText={setCurrentPassword}  
-            />
-        </View>
+
         <View style={styles.button}>
           <CustomButton
             stretch={true}
-            title={"Change Phone"}
+            title={"Upload picture"}
             color={AppStyles.color.mint}
             textColor={AppStyles.color.black}
-            onPress={changePhone}
+            onPress={uploadPicture}
           />
         </View>
       </View>
     </SafeAreaView>
   );
 };
+
+
 
 const styles = StyleSheet.create({ 
     container: {
@@ -103,6 +88,10 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+  },
+  image: {
+
+    // marginBottom: '5%'
   },
     inputView: {
 

@@ -118,7 +118,6 @@ export default function RiderSignUp() {
                             keyboardAppearance={keyboardAppearance}
                             maxLength={maxInputLength}
 
-                            blurOnSubmit={false}
                             onChangeText={setFirstname}
                         />
                     </View>
@@ -129,8 +128,6 @@ export default function RiderSignUp() {
                             label={'Last Name:'}
                             keyboardAppearance={keyboardAppearance}
                             maxLength={maxInputLength}
-
-                            blurOnSubmit={false}
                             onChangeText={setLastname}
                         />
                     </View>
@@ -146,8 +143,6 @@ export default function RiderSignUp() {
                             keyboardType='numeric'
                             keyboardAppearance={keyboardAppearance}
                             maxLength={10}
-
-                            blurOnSubmit={false}
                             onChangeText={setDate}
                         />
                     </View>
@@ -158,8 +153,6 @@ export default function RiderSignUp() {
                             label={'E-mail Address:'}
                             keyboardAppearance={keyboardAppearance}
                             maxLength={maxInputLength}
-
-                            blurOnSubmit={false}
                             onChangeText={setEmail}
                         />
                     </View>
@@ -174,8 +167,6 @@ export default function RiderSignUp() {
                             keyboardType='numeric'
                             keyboardAppearance={keyboardAppearance}
                             maxLength={14}
-
-                            blurOnSubmit={false}
                             onChangeText={setPhone}
                         />
                     </View>
@@ -189,8 +180,6 @@ export default function RiderSignUp() {
                             customHidePasswordComponent={<Icon name={"eye-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
                             keyboardAppearance={keyboardAppearance}
                             maxLength={maxInputLength}
-
-                            blurOnSubmit={false}
                             onChangeText={setPassword}
                         />
                     </View>
@@ -208,8 +197,6 @@ export default function RiderSignUp() {
                             customHidePasswordComponent={<Icon name={"eye-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
                             keyboardAppearance={keyboardAppearance}
                             maxLength={maxInputLength}
-
-                            blurOnSubmit={false}
                             onChangeText={setConfirmPassword}
                         />
                     </View>

@@ -39,6 +39,15 @@ import ChangePassword from './src/screens/Settings/ChangePassword';
 import ChangePhone from './src/screens/Settings/ChangePhone';
 import ChangeEmail from './src/screens/Settings/ChangeEmail';
 import ChangeUsername from './src/screens/Settings/ChangeUsername';
+import ChangeProfilePic from './src/screens/Settings/ChangeProfilePic';
+import SettingsNotifications from './src/screens/Settings/Notifications';
+import Privacy from './src/screens/Settings/Privacy';
+import Security from './src/screens/Settings/Security';
+import Help from './src/screens/Settings/Help';
+import About from './src/screens/Settings/About';
+import RideSearch from './src/screens/RiderMap/RideSearch';
+import RideResults from './src/screens/RiderMap/RideResults';
+
 import * as Notifications from 'expo-notifications'
 import { useNotifications } from './src/hooks/useNotifications';
 
@@ -69,13 +78,8 @@ function App() {
         var result = await authenticate();
         console.log("Authentication was: " + result);
 
-        // let result = authenticate();
-        // await new Promise(result => setTimeout(result, 3000));
-
-        // console.log("Loading Fonts");
-        // result = await Font.loadAsync(Entypo.font);
-        // console.log(result);
-
+        // var test = await authentication.currentUser.getIdToken();
+        // console.log(test);
         console.log("Pre-Load Complete");
 
       } catch (e) {
@@ -93,17 +97,11 @@ function App() {
   /***********************************************/
   /**************PUSH NOTIFICATIONS***************/
   /***********************************************/
-  const { registerForPushNotificationsAsync, handleNotificationResponse } =
+  const { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse } =
     useNotifications();
   useEffect(() => {
     registerForPushNotificationsAsync()
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: false,
-        shouldSetBadge: true,
-      }),
-    });
+    Notifications.setNotificationHandler(handleNotification);
 
     const responseListener =
       Notifications.addNotificationResponseReceivedListener(
@@ -114,6 +112,20 @@ function App() {
         Notifications.removeNotificationSubscription(responseListener)
     }
   }, []);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -269,6 +281,8 @@ function App() {
         <Stack.Screen options={{ headerShown: false }} name="Rider Dashboard" component={RiderDashboard} />
         <Stack.Screen options={{ headerShown: false }} name="Rider Profile" component={RiderProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Rider Map" component={RiderMapView} />
+        <Stack.Screen options={{ headerShown: false }} name="Rider Ride Search" component={RideSearch} />
+        <Stack.Screen options={{ headerShown: false }} name="Ride Results" component={RideResults} />
         <Stack.Screen options={{ headerTitle: "Friends List" }} name="Friends List" component={FriendsList} />
         <Stack.Screen options={{ headerTitle: "Messages" }} name="Messages" component={Messages} />
         <Stack.Screen options={{ headerTitle: "DM's" }} name="DMS" component={DMS} />
@@ -281,6 +295,12 @@ function App() {
         <Stack.Screen name="Change Password" component={ChangePassword} />
         <Stack.Screen name="Change Phone" component={ChangePhone} />
         <Stack.Screen name="Change Username" component={ChangeUsername} />
+        <Stack.Screen name="Change Profile Picture" component={ChangeProfilePic} />
+        <Stack.Screen name="Notifications" component={SettingsNotifications} />
+        <Stack.Screen name="Privacy" component={Privacy} />
+        <Stack.Screen name="Security" component={Security} />
+        <Stack.Screen name="Help" component={Help} />
+        <Stack.Screen name="About" component={About} />
       </Stack.Navigator>
     )
   }
@@ -312,3 +332,12 @@ function App() {
   )
 }
 export default App;
+
+
+/*
+  IMPORTANT:
+  USE THIS WHEN RUNNING FIREBASE EMULATOR.
+  THIS WILL SAVE ALL DATA IN THE FIRESTORE EACH TIME ITS CLOSED AND LOAD IT EACH TIME ITS RUN.
+
+  yarn firebase emulators:start --import=exported-dev-data --export-on-exit=exported-dev-data
+*/

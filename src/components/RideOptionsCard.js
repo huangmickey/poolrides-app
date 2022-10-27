@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { Image, View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from '@react-navigation/native';
+
 import { AppStyles } from '../utils/styles';
-import { Icon } from 'react-native-elements';
 import tw from "tailwind-react-native-classnames";
-import 'intl';
-import 'intl/locale-data/jsonp/en'; // or any other locale you need
 
 import BASIC_IMG from '../../assets/basiccar.png'
 import XL_IMG from "../../assets/xlcar.png";
 import NIGHTSWIMMING_IMG from "../../assets/nightswimming.png";
-import { selectTravelTimeInformation } from '../../slices/navSlice';
-import { useSelector } from 'react-redux';
-import { TouchableRipple } from 'react-native-paper';
+import { selectTravelTimeInformation, setRideInformation } from '../../slices/navSlice';
+
+import 'intl';
+import 'intl/locale-data/jsonp/en';
+
 const BASIC = Image.resolveAssetSource(BASIC_IMG).uri;
 const XL = Image.resolveAssetSource(XL_IMG).uri;
 const NIGHTSWIMMING = Image.resolveAssetSource(NIGHTSWIMMING_IMG).uri;
@@ -38,10 +40,13 @@ const rideOptionsData = [
     }
 ];
 
-
 export default function RideOptionsCard() {
     const [selected, setSelected] = useState(null);
     const travelTimeInformation = useSelector(selectTravelTimeInformation);
+
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+
     return (
         <SafeAreaView style={tw`bg-black flex-grow`}>
             <Text style={styles.header}>Choose Ride - {travelTimeInformation?.distance.text}</Text>
@@ -60,8 +65,7 @@ export default function RideOptionsCard() {
                                 height: 80,
                                 resizeMode: 'contain',
                             }}
-                            source={{ uri: img }}
-                        />
+                            source={{ uri: img }}/>
                         <View style={tw`-ml-6`}>
                             <Text style={styles.title}>{title}</Text>
                             <Text style={styles.time}>{travelTimeInformation?.duration.text} travel time</Text>
@@ -76,12 +80,19 @@ export default function RideOptionsCard() {
                             )}
                         </Text>
                     </TouchableOpacity>
-                )}
-            />
+                )}/>
             <View style={tw`mt-auto border-t border-gray-300`}>
                 <TouchableOpacity
                     disabled={!selected}
-                    style={tw`bg-white rounded-full py-3 m-3 ${!selected && "bg-gray-300"}`}>
+                    style={tw`bg-white rounded-full py-3 m-3 ${!selected && "bg-gray-300"}`}
+                    onPress={() => {
+                        dispatch(
+                            setRideInformation({
+                                rideType: selected.id,
+                                rideCost: selected.cost,
+                            }))
+                        navigation.navigate("RidePayment");
+                    }}>
                     <Text style={tw`text-center text-black text-xl`}>
                         Choose {selected?.title}
                     </Text>

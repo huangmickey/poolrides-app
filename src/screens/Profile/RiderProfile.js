@@ -13,7 +13,6 @@ import { authentication, db } from '../../firebase/firebase-config';
 const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5); 
 
-const profilePicture = AppIcon.images.placeHolder;
 const userFriends = 'N/A'
 const userMilesTraveled = 'N/A'
 const userRating = 'N/A'
@@ -237,5 +236,3 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 });
-
-

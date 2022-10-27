@@ -100,7 +100,7 @@ export const HeaderButtonStyle = StyleSheet.create({
 export const ListStyle = StyleSheet.create({
   title: {
     fontSize: 16,
-    color: AppStyles.color.mint,
+    color: AppStyles.color.gray,
     fontWeight: "bold"
   },
   subtitleView: {

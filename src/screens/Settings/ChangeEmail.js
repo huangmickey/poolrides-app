@@ -1,36 +1,91 @@
-import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";                                                              
-import { AppStyles, AppIcon } from '../../utils/styles';
+import React, { useEffect, useState} from 'react';
+import { Alert, SafeAreaView, StyleSheet, View } from "react-native";   
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
-import { db, authentication } from '../../firebase/firebase-config';
-import { browserLocalPersistence } from 'firebase/auth';
+import { AppStyles } from '../../utils/styles';
 
-const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
-const defaultPicture = AppIcon.images.placeHolder;
+import CustomButton from "../../components/CustomButton";
+import { FloatingLabelInput } from 'react-native-floating-label-input';
+import validator from 'validator';
+
+import { doc, getDoc } from 'firebase/firestore/lite';
+import { authentication, db } from '../../firebase/firebase-config';
+import { getAuth, updateEmail } from "firebase/auth"
 
 export default function ChangeEmail({ navigation }) {
 
   const [userInfo, setUserInfo] = useState();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+
+  const keyboardAppearance = 'dark';
+  const maxInputLength = 32;           //Note that the Max length for Phone and Date are fix in the element not global
 
   useEffect(() => {
     const userUID = authentication.currentUser.uid;
+
     const getUserData = async () => {
-      const userDocReference = doc(db, "users", userUID);
-      const userDocSnapshot = await getDoc(userDocReference);
-      setUserInfo(userDocSnapshot.data());
-    };
+        const userDocReference = doc(db, "users", userUID);
+        const userDocSnapshot = await getDoc(userDocReference);
+        setUserInfo(userDocSnapshot.data());
+        console.log(userInfo);
+    }
     getUserData();
-  }, []);
+
+}, []);
+
+  const changeEmail = () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (validator.isEmail(newEmail)) {
+        reauthenticate().then(() => {
+            updateEmail(auth.currentUser, newEmail).then(() => {
+                Alert.alert("Email has been successfully changed");
+            }).catch((error) => {
+                Alert.alert(error.message);
+            });
+        }).catch((error) => {
+            Alert.alert(error.message);
+        })
+    } else {
+        Alert.alert('Please enter valid email.')
+    }
+    setNewEmail("");
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
-      {userInfo 
-      ?
-      <Text style={{color: 'white'}}>The current phone number is {userInfo?.email}</Text>
-      :
-      <Text style={{color: 'white'}}>The current phone number is Missing</Text>
-      }
+      <View style={styles.centeredView}>
+              <View style={styles.inputView}>
+                  <FloatingLabelInput
+                      value={newEmail}
+                      label={'New email:'}
+                      onChangeText={setNewEmail}
+                  />
+              </View>
+              <View style={styles.inputView}>
+                  <FloatingLabelInput
+                      value={currentPassword}
+                      isPassword={true}
+                      label={'Current password:'}
+                      customShowPasswordComponent={<Icon name={"eye-off-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
+                      customHidePasswordComponent={<Icon name={"eye-outline"} style={{ color: AppStyles.color.white, fontSize: 25 }} />}
+                      keyboardAppearance={keyboardAppearance}
+                      maxLength={maxInputLength}
+                      onChangeText={setCurrentPassword}  
+                  />
+              </View>
+              <View style={styles.button}>
+                <CustomButton
+                    stretch={true}
+                    title={"Change Email"}
+                    color={AppStyles.color.mint}
+                    textColor={AppStyles.color.black}
+                    onPress={changeEmail}
+                />
+                </View>
+      </View>
     </SafeAreaView>
   );
 };
@@ -39,8 +94,25 @@ export default function ChangeEmail({ navigation }) {
 const styles = StyleSheet.create({ 
     container: {
         flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
         backgroundColor: AppStyles.color.black,
     },
-});
+    centeredView: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+  },
+    inputView: {
+
+      width: AppStyles.textInputWidth.main,
+      marginTop: '4%',
+      marginBottom: '5%',
+      borderBottomWidth: 2,
+      borderStyle: 'solid',
+      borderColor: AppStyles.color.white,
+  },
+  button: {
+      width: AppStyles.textInputWidth.main,
+      marginTop: '4%',
+      marginBottom: '5%',
+  },
+});                

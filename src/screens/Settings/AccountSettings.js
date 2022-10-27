@@ -35,6 +35,11 @@ export default function AccountSettings({ navigation }) {
       pageName: "Change Phone",
       pageNavigation: "Change Phone",
     },
+    {
+      id: 5,
+      pageName: "Change Profile Picture",
+      pageNavigation: "Change Profile Picture",
+    },
 
   ]);
 
@@ -112,11 +117,3 @@ const styles = StyleSheet.create({
 
   },
 });
-
-
-
-
-
-
- 
-

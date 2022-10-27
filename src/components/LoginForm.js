@@ -132,7 +132,6 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
 
 const styles = StyleSheet.create({
   container: {
-    // position: "absolute",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -146,6 +145,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 5,
     top: 12,
+    zIndex: 999,
   },
   inputView: {
     backgroundColor: AppStyles.color.black,
@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     padding: 10,
     marginLeft: 2,
+    alignSelf: 'stretch',
   },
   loginBtn: {
     width: "80%",

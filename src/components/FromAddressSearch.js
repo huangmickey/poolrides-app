@@ -13,6 +13,7 @@ export default function FromAddressSearchBar() {
             placeholder="Where From?"
             enablePoweredByContainer={false}
             textInputProps={{
+                placeholderTextColor: AppStyles.color.black,
                 keyboardAppearance: 'dark',
             }}
             styles={{
@@ -25,11 +26,15 @@ export default function FromAddressSearchBar() {
                     backgroundColor: AppStyles.color.gray,
                 },
                 textInputContainer: {
-                    backgroundColor: 'black',
+                    // backgroundColor: 'black',
                 },
                 row: {
                     backgroundColor: AppStyles.color.gray,
+                    zIndex: 999,
                 },
+                separator: {
+                    backgroundColor: AppStyles.color.white,
+                }
 
             }}
             nearbyPlacesAPI="GooglePlacesSearch"
