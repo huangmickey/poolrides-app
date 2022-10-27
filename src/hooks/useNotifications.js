@@ -1,10 +1,13 @@
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
 import { Platform } from 'react-native'
+import { useDispatch } from 'react-redux'
+import { setPushToken } from '../../slices/navSlice'
+
+
 
 export const useNotifications = () => {
-  let globalToken;
-
+  const dispatch = useDispatch()
   const registerForPushNotificationsAsync = async () => {
     if (Device.isDevice) {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -18,8 +21,12 @@ export const useNotifications = () => {
         return;
       }
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-      globalToken = token;
-      console.log('TOKEN ====== ', token);
+
+      dispatch(setPushToken({
+        pushToken: token
+      }))
+
+      console.log('useNotifications.js Push Token === ', token);
 
     } else {
       alert('Must use physical device for Push Notifications');
@@ -30,13 +37,13 @@ export const useNotifications = () => {
         name: 'default',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        // enableLights: true,
         lightColor: '#FF231F7C',
       });
     }
   };
 
   const handleNotification = () => {
+    console.log('NOTIFICATION RECEIVED')
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,

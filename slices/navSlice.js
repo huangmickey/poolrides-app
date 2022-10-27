@@ -4,7 +4,6 @@ const initialState = {
     origin: null,
     destination: null,
     travelTimeInformation: null,
-    // informaiton regarding the ride such as type, and cost.
     rideInformation: null,
     pushToken: null,
 };
@@ -31,7 +30,7 @@ export const navSlice = createSlice({
     },
 });
 
-export const { setOrigin, setDestination, setTravelTimeInformation, setRideInformation, setPushToken} = navSlice.actions;
+export const { setOrigin, setDestination, setTravelTimeInformation, setRideInformation, setPushToken } = navSlice.actions;
 
 // Selectors
 export const selectOrigin = (state) => state.nav.origin;

@@ -5,21 +5,21 @@ import { selectDestination, selectOrigin, setTravelTimeInformation } from '../..
 import MapViewDirections from 'react-native-maps-directions';
 import { config } from "../../config";
 
-function Map({hasDriver}) {
+function Map({ hasDriver }) {
 
-    const [driverMaker, setDriverMaker] = useState({isDriver: false, lat: null, lng: null});
+    const [driverMaker, setDriverMaker] = useState({ isDriver: false, lat: null, lng: null });
 
     useEffect(() => {
-        if(hasDriver) {
-            setDriverMaker({isDriver: true, lat: hasDriver.lat, lng: hasDriver.lng});
+        if (hasDriver) {
+            setDriverMaker({ isDriver: true, lat: hasDriver.lat, lng: hasDriver.lng });
         }
-      }, [hasDriver]);
+    }, [hasDriver]);
 
     const origin = useSelector(selectOrigin);
     const destination = useSelector(selectDestination);
     const mapRef = useRef(null);
     const dispatch = useDispatch();
-    
+
     useEffect(() => {
         if (!origin || !destination) {
             console.log('return');
@@ -55,7 +55,7 @@ function Map({hasDriver}) {
             &key=${config.GOOGLE_DISTANCEMATRIX_APIKEY}`
             ).then((res) => res.json())
                 .then(data => {
-                    console.log(data.rows[0].elements[0]);
+                    // console.log(data.rows[0].elements[0]);
                     dispatch(setTravelTimeInformation(data.rows[0].elements[0]))
                 })
         };
