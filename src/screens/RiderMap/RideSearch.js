@@ -25,7 +25,8 @@ export default function RideSearch() {
     const [isSearching, setIsSerching] = useState(true);
     const [serverResponse, setServerResponse] = useState({ status: null, data: null });
 
-    const baseURL = 'https://us-central1-pool-rides-db.cloudfunctions.net/requestride';
+    // const baseURL = 'https://us-central1-pool-rides-db.cloudfunctions.net/requestride';
+    const baseURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/requestride";
 
     useEffect(() => {
         async function sendRequest() {
@@ -79,7 +80,7 @@ export default function RideSearch() {
                             setServerResponse({ status: error.response.status, data: error.response.data });
                         }
                         if (error.request) {
-                            setServerResponse({ status: error.request.status, data: error.response.data });
+                            setServerResponse({ status: error.request.status, data: error.request.data });
                         }
                         await timeout(2000); //added as Firestore is to fast. 
                         setIsSerching(false);
@@ -99,7 +100,6 @@ export default function RideSearch() {
     function timeout(delay) {
         return new Promise(res => setTimeout(res, delay));
     }
-
 
     return (
         <View style={styles.container}>

@@ -25,7 +25,6 @@ import RiderSignUp from './src/screens/Signup/RiderSignUp'
 import DriverSignUp from './src/screens/Signup/DriverSignUp'
 import Startup from './src/screens/Startup'
 
-
 import { authentication, db } from './src/firebase/firebase-config'
 import { doc, getDoc } from 'firebase/firestore/lite'
 import { onIdTokenChanged } from 'firebase/auth'
@@ -109,17 +108,6 @@ function AppEntry() {
         Notifications.removeNotificationSubscription(responseListener)
     }
   }, []);
-
-
-
-
-
-
-
-
-
-
-
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -324,12 +312,3 @@ function AppEntry() {
   )
 }
 export default AppEntry;
-
-
-/*
-  IMPORTANT:
-  USE THIS WHEN RUNNING FIREBASE EMULATOR.
-  THIS WILL SAVE ALL DATA IN THE FIRESTORE EACH TIME ITS CLOSED AND LOAD IT EACH TIME ITS RUN.
-
-  yarn firebase emulators:start --import=exported-dev-data --export-on-exit=exported-dev-data
-*/
