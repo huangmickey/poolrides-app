@@ -29,6 +29,9 @@ export const useNotifications = () => {
       console.log('useNotifications.js Push Token === ', token);
 
     } else {
+      dispatch(setPushToken({
+        pushToken: '123'
+      }))
       alert('Must use physical device for Push Notifications');
     }
 
