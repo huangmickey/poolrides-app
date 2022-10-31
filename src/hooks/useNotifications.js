@@ -29,7 +29,7 @@ export const useNotifications = () => {
 
     } else {
       dispatch(setPushToken({
-        riderPushToken: '123'
+        ridePushToken: '123'
       }))
       alert('Must use physical device for Push Notifications');
     }
@@ -57,41 +57,29 @@ export const useNotifications = () => {
 
   const handleReceivedNotification = async response => {
     console.log("NOTIFICATION RECEIVED")
+
+
+    // 20s timer to dismiss notification
+    await timeout(20000)
     await Notifications.dismissAllNotificationsAsync();
+
   };
 
   const handleNotificationResponse = async response => {
-
-    let now = new Date()
-    let receivedUTC = response.notification.date
-    let received = new Date(0)
-    received.setUTCSeconds(receivedUTC)
-
-
-    let differenceInSeconds = (now - received) / 1000
-
-    console.log("NOTIFICATION OPENED")
-
+    console.log("NOTIFICATION CLICKED")
+    // Navigate to new page => show notification data as UI and show accept/reject button
+    // If the driver accepts the ride request, make a post request to the server which will set the rides "isAccepted" to true, and add the driversuserID, and driverPushToken to the entry
+    // Use the rideDoc located on line 98 of index.js in the backend.  This is the exact document to update.
     let notificationData = response.notification.request.content.data
     console.log(notificationData)
-
-    if (differenceInSeconds - 1 <= 15) {
-      console.log('opened notification in roughly less than 15s')
-      // accepted ride:
-      // navigate to screen
-      // create new ride in db
-      console.log(RootNavigation.navigationRef.current.getRootState())
-      // RootNavigation.navigate('ChatScreen', { userName: 'Lucy' });
-    } else {
-      console.log('took roughly greater than 15s to open notification')
-    }
-
-
-
+    console.log(RootNavigation.navigationRef.current.getRootState())
+    // RootNavigation.navigate('ChatScreen', { userName: 'Lucy' });
   };
 
   return { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse, handleReceivedNotification }
 }
 
 
-
+function timeout(delay) {
+  return new Promise(res => setTimeout(res, delay));
+}
