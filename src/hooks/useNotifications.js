@@ -3,8 +3,7 @@ import * as Notifications from 'expo-notifications'
 import { Platform } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { setPushToken } from '../../slices/navSlice'
-
-
+import * as RootNavigation from '../../RootNavigation.js';
 
 export const useNotifications = () => {
   const dispatch = useDispatch()
@@ -23,14 +22,14 @@ export const useNotifications = () => {
       const token = (await Notifications.getExpoPushTokenAsync()).data;
 
       dispatch(setPushToken({
-        pushToken: token
+        riderPushToken: token
       }))
 
-      console.log('useNotifications.js Push Token === ', token);
+      // console.log('useNotifications.js Push Token === ', token);
 
     } else {
       dispatch(setPushToken({
-        pushToken: '123'
+        riderPushToken: '123'
       }))
       alert('Must use physical device for Push Notifications');
     }
@@ -46,7 +45,7 @@ export const useNotifications = () => {
   };
 
   const handleNotification = () => {
-    console.log('NOTIFICATION RECEIVED')
+
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
@@ -56,15 +55,42 @@ export const useNotifications = () => {
     });
   };
 
-  const handleNotificationResponse = response => {
+  const handleReceivedNotification = async response => {
+    console.log("NOTIFICATION RECEIVED")
+    await Notifications.dismissAllNotificationsAsync();
+  };
+
+  const handleNotificationResponse = async response => {
+
+    let now = new Date()
+    let receivedUTC = response.notification.date
+    let received = new Date(0)
+    received.setUTCSeconds(receivedUTC)
+
+
+    let differenceInSeconds = (now - received) / 1000
+
     console.log("NOTIFICATION OPENED")
+
+    let notificationData = response.notification.request.content.data
+    console.log(notificationData)
+
+    if (differenceInSeconds - 1 <= 15) {
+      console.log('opened notification in roughly less than 15s')
+      // accepted ride:
+      // navigate to screen
+      // create new ride in db
+      console.log(RootNavigation.navigationRef.current.getRootState())
+      // RootNavigation.navigate('ChatScreen', { userName: 'Lucy' });
+    } else {
+      console.log('took roughly greater than 15s to open notification')
+    }
+
+
+
   };
 
-  const returnToken = response => {
-    return globalToken;
-  };
-
-  return { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse, returnToken }
+  return { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse, handleReceivedNotification }
 }
 
 

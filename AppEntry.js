@@ -44,17 +44,15 @@ import Help from './src/screens/Settings/Help';
 import About from './src/screens/Settings/About';
 import RideSearch from './src/screens/RiderMap/RideSearch';
 import RideResults from './src/screens/RiderMap/RideResults';
-
+import { navigationRef } from './RootNavigation';
 import * as Notifications from 'expo-notifications'
 import { useNotifications } from './src/hooks/useNotifications';
-
 LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
 
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
 
 function AppEntry() {
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState();
   const [userType, setUserType] = useState();
@@ -68,20 +66,20 @@ function AppEntry() {
     async function prepare() {
       try {
         // Pre-load fonts, images, or make any API calls you need to do here
-        console.log("Beginning App Pre-Load");
+        // console.log("Beginning App Pre-Load");
 
-        console.log("Running User Authentication");
+        // console.log("Running User Authentication");
         var result = await authenticate();
-        console.log("Authentication was: " + result);
+        // console.log("Authentication was: " + result);
 
         // var test = await authentication.currentUser.getIdToken();
         // console.log(test);
-        console.log("Pre-Load Complete");
+        // console.log("Pre-Load Complete");
 
       } catch (e) {
         console.warn(e);
       } finally {
-        console.log("App is ready to Load")
+        // console.log("App is ready to Load")
         setAppIsReady(true);
 
         // authentication.signOut();
@@ -93,16 +91,15 @@ function AppEntry() {
   /***********************************************/
   /**************PUSH NOTIFICATIONS***************/
   /***********************************************/
-  const { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse } =
+  const { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse, handleReceivedNotification } =
     useNotifications();
   useEffect(() => {
     registerForPushNotificationsAsync()
     Notifications.setNotificationHandler(handleNotification);
 
     const responseListener =
-      Notifications.addNotificationResponseReceivedListener(
-        handleNotificationResponse
-      )
+      Notifications.addNotificationResponseReceivedListener(handleNotificationResponse)
+    Notifications.addNotificationReceivedListener(handleReceivedNotification)
     return () => {
       if (responseListener)
         Notifications.removeNotificationSubscription(responseListener)
@@ -140,9 +137,9 @@ function AppEntry() {
   useEffect(() => {
     async function checkUser() {
       try {
-        console.log("Running User Authentication");
+        // console.log("Running User Authentication");
         var result = await authenticate();
-        console.log("Authentication was: " + result);
+        // console.log("Authentication was: " + result);
       } catch (e) {
         console.warn(e);
       }
@@ -241,6 +238,8 @@ function AppEntry() {
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Ride History" component={RideHistory} />
         <Stack.Screen name="Settings" component={Settings} />
+        {/* // Driver Map */}
+        {/* // Driver Accept/Decline Page */}
       </Stack.Navigator>
     )
   }
@@ -300,7 +299,7 @@ function AppEntry() {
     <View
       style={{ flex: 1, width: '100%', height: '100%', backgroundColor: AppStyles.color.black }}
       onLayout={onLayoutRootView}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <StatusBar style='light' />
         {!isLoggedIn && <AuthStack />}
         {isLoggedIn && isGeneralFilled == null && isMusicFilled == null && !isEmailVerified && <AuthInterestsStack />}

@@ -18,15 +18,20 @@ export default function RideSearch() {
     const pushToken = useSelector(selectPushToken);
 
     const navigation = useNavigation();
-    const [snackBarText, setSnackBarText] = useState("Your Ride Has Been Canceled.");
+    const [snackBarText, setSnackBarText] = useState("");
     const [snackBarVisisble, setSnackBarVisible] = useState(false);
     const onDismissSnackBar = () => setSnackBarVisible(false);
 
     const [isSearching, setIsSerching] = useState(true);
     const [serverResponse, setServerResponse] = useState({ status: null, data: null });
 
-    // const baseURL = 'https://us-central1-pool-rides-db.cloudfunctions.net/requestride';
-    const baseURL = "http://192.168.1.19:5002/pool-rides-db/us-central1/requestride";
+
+    const baseURL = 'https://us-central1-pool-rides-db.cloudfunctions.net/requestride';
+    // const rideRequestURL = "http://localhost:5002/pool-rides-db/us-central1/requestride";
+    // const cancelURL = "http://localhost:5002/pool-rides-db/us-central1/cancelRide";
+    const rideRequestURL = "https://us-central1-pool-rides-db.cloudfunctions.net/requestride";
+    const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide";
+    https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide
 
     useEffect(() => {
         async function sendRequest() {
@@ -37,8 +42,8 @@ export default function RideSearch() {
             try {
                 const axios = require('axios').default;
                 var data = {
-                    "pushToken": pushToken.pushToken,
-                    "userID": userUID,
+                    "riderPushToken": pushToken.riderPushToken,
+                    "riderUID": userUID,
                     "originLat": origin.location.lat,
                     "originLng": origin.location.lng,
                     "originAddress": origin.originAddress,
@@ -53,14 +58,13 @@ export default function RideSearch() {
 
                 var config = {
                     method: 'post',
-                    url: baseURL,
+                    url: rideRequestURL,
                     headers: {
                         'Authorization': 'Bearer ' + refreshToken,
                         'Content-Type': 'application/json'
                     },
                     data: data
                 };
-
                 console.log(config);
 
                 axios(config)
@@ -75,6 +79,7 @@ export default function RideSearch() {
                         navigation.pop();
                         navigation.navigate("Ride Results")
                     })
+
                     .catch(async function (error) {
                         if (error.response) {
                             setServerResponse({ status: error.response.status, data: error.response.data });
@@ -138,37 +143,67 @@ export default function RideSearch() {
 
             <View style={tw`mt-auto border-t border-gray-300`}>
                 <TouchableOpacity
-                    style={tw`bg-white rounded-full py-3 m-3 `} //${!selected && "bg-gray-300"}`}
+                    style={tw`bg-white rounded-full py-3 m-3 `}
                     onPress={async () => {
 
                         var refreshToken = await authentication.currentUser.getIdToken(true);
+                        const userUID = authentication.currentUser.uid;
+                        try {
+                            const axios = require('axios').default;
 
-                        var config = {
-                            method: 'post',
-                            url: cancelURL,
-                            headers: {
-                                'Authorization': 'Bearer ' + refreshToken,
-                            },
-                            data: { userID: userUID }
-                        };
-                        axios(config)
-                            .then(function (response) {
-                                setSnackBarVisible(true);
-                            })
-                            .catch(function (error) {
-                                console.log(error.response.data);
-                                setResponse({
-                                    status: 400,
-                                    data: "Something went wrong.\nPlease try again"
+                            var config = {
+                                method: 'post',
+                                url: cancelURL,
+                                headers: {
+                                    'Authorization': 'Bearer ' + refreshToken,
+                                },
+                                data: { "riderUID": userUID }
+                            };
+
+                            axios(config)
+                                .then(async function (response) {
+                                    setSnackBarText("Your Ride Has Been Canceled.")
+                                    setSnackBarVisible(true);
+                                    await timeout(2000);
+                                    navigation.goBack();
+                                })
+                                .catch(async function (error) {
+                                    setSnackBarText("An Error has occured. Reload App")
+                                    setSnackBarVisible(true);
+                                    await timeout(2000);
+                                    navigation.goBack();
                                 });
-                            });
-                        navigation.goBack();
+
+                        } catch (e) {
+                            console.warn(e);
+                        }
                     }}>
                     <Text style={tw`text-center text-black text-xl`}>
                         Cancel Ride
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            <Snackbar
+                theme={{
+                    colors: {
+                        onSurface: AppStyles.color.gray,
+                        surface: AppStyles.color.white,
+                        accent: AppStyles.color.salmonred,
+                    },
+                }}
+                visible={snackBarVisisble}
+                duration={3500}
+                onDismiss={onDismissSnackBar}
+                action={{
+                    label: '',
+                    onPress: () => {
+                        onDismissSnackBar();
+                    },
+                }}>
+                {snackBarText}
+            </Snackbar>
+
         </View>
     );
 }
