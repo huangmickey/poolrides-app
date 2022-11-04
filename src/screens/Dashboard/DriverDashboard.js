@@ -6,10 +6,15 @@ import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
 import Button from 'react-native-button';
+import { setDriverLocation } from "../../../slices/navSlice";
+import { useDispatch } from "react-redux";
+import * as Location from 'expo-location'
 
 export default function DriverDashboard() {
     const [userInfo, setUserInfo] = useState();
     const [isDriverVerified, setIsDriverVerified] = useState(null);
+    const dispatch = useDispatch()
+
     useEffect(() => {
         // Update the document title using Firebase SDK
         const userUID = authentication.currentUser.uid; // Coming from auth when logged in
@@ -23,6 +28,29 @@ export default function DriverDashboard() {
 
         getUserData();
     }, [isDriverVerified]);
+
+    useEffect(() => {
+        // get drivers initial location
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync()
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            } else if (status === 'granted') {
+                try {
+                    var location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
+                } catch {
+                    location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
+                }
+                dispatch(
+                    setDriverLocation({
+                        driverLocation: location
+                    }))
+                // console.log('location grabbed in driver dashboard => ', location)
+            }
+        })();
+
+    }, []);
 
     function logoutHandler() {
         console.log("User Logged Out");

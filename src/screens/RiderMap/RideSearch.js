@@ -42,7 +42,7 @@ export default function RideSearch() {
             try {
                 const axios = require('axios').default;
                 var data = {
-                    "riderPushToken": pushToken.riderPushToken,
+                    "riderPushToken": pushToken.pushToken,
                     "riderUID": userUID,
                     "originLat": origin.location.lat,
                     "originLng": origin.location.lng,

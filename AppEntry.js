@@ -1,53 +1,55 @@
-import { useCallback, useEffect, useState } from 'react';
-import { LogBox, View } from 'react-native'; //THIS IS BAD PRACTICE FOR NOW
+import { useCallback, useEffect, useState } from 'react'
+import { LogBox, View } from 'react-native' //THIS IS BAD PRACTICE FOR NOW
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen'
+import { StatusBar } from 'expo-status-bar'
 
 import RiderDashboard from './src/screens/Dashboard/RiderDashboard'
 import DriverDashboard from './src/screens/Dashboard/DriverDashboard'
 import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
-import DMS from './src/screens/Friends/DMS';
-import FriendsList from './src/screens/Friends/FriendsList';
-import Messages from './src/screens/Friends/Messages';
+import DMS from './src/screens/Friends/DMS'
+import FriendsList from './src/screens/Friends/FriendsList'
+import Messages from './src/screens/Friends/Messages'
 import GeneralInterests from './src/screens/Interests/GeneralInterests'
 import MusicInterests from './src/screens/Interests/MusicInterests'
 import VerifyAccount from './src/screens/Interests/VerifyAccount'
 import Login from './src/screens/Login'
 import DriverProfile from './src/screens/Profile/DriverProfile'
-import RiderProfile from './src/screens/Profile/RiderProfile';
-import RiderMapView from './src/screens/RiderMap/RiderMapView';
+import RiderProfile from './src/screens/Profile/RiderProfile'
+import RiderMapView from './src/screens/RiderMap/RiderMapView'
 import Signup from './src/screens/Signup/Signup'
 import RiderSignUp from './src/screens/Signup/RiderSignUp'
 import DriverSignUp from './src/screens/Signup/DriverSignUp'
 import Startup from './src/screens/Startup'
+import DriverMap from './src/screens/DriverMap/DriverMap'
+import RideRequest from './src/screens/DriverMap/RideRequest'
 
 import { authentication, db } from './src/firebase/firebase-config'
 import { doc, getDoc } from 'firebase/firestore/lite'
 import { onIdTokenChanged } from 'firebase/auth'
-import { AppStyles } from './src/utils/styles';
-import RideHistory from './src/screens/History/RideHistory';
-import Settings from './src/screens/Settings/Settings';
-import AccountSettings from './src/screens/Settings/AccountSettings';
-import ChangePassword from './src/screens/Settings/ChangePassword';
-import ChangePhone from './src/screens/Settings/ChangePhone';
-import ChangeEmail from './src/screens/Settings/ChangeEmail';
-import ChangeUsername from './src/screens/Settings/ChangeUsername';
-import ChangeProfilePic from './src/screens/Settings/ChangeProfilePic';
-import SettingsNotifications from './src/screens/Settings/Notifications';
-import Privacy from './src/screens/Settings/Privacy';
-import Security from './src/screens/Settings/Security';
-import Help from './src/screens/Settings/Help';
-import About from './src/screens/Settings/About';
-import RideSearch from './src/screens/RiderMap/RideSearch';
-import RideResults from './src/screens/RiderMap/RideResults';
-import { navigationRef } from './RootNavigation';
+import { AppStyles } from './src/utils/styles'
+import RideHistory from './src/screens/History/RideHistory'
+import Settings from './src/screens/Settings/Settings'
+import AccountSettings from './src/screens/Settings/AccountSettings'
+import ChangePassword from './src/screens/Settings/ChangePassword'
+import ChangePhone from './src/screens/Settings/ChangePhone'
+import ChangeEmail from './src/screens/Settings/ChangeEmail'
+import ChangeUsername from './src/screens/Settings/ChangeUsername'
+import ChangeProfilePic from './src/screens/Settings/ChangeProfilePic'
+import SettingsNotifications from './src/screens/Settings/Notifications'
+import Privacy from './src/screens/Settings/Privacy'
+import Security from './src/screens/Settings/Security'
+import Help from './src/screens/Settings/Help'
+import About from './src/screens/Settings/About'
+import RideSearch from './src/screens/RiderMap/RideSearch'
+import RideResults from './src/screens/RiderMap/RideResults'
+import { navigationRef } from './RootNavigation'
 import * as Notifications from 'expo-notifications'
-import { useNotifications } from './src/hooks/useNotifications';
-LogBox.ignoreLogs(['Setting a timer for a long period of time']); //MIGHT IGNORE TIMER ISSUES ON ANDROID
+import { useNotifications } from './src/hooks/useNotifications'
+LogBox.ignoreLogs(['Setting a timer for a long period of time'])
 
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
@@ -238,8 +240,8 @@ function AppEntry() {
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Ride History" component={RideHistory} />
         <Stack.Screen name="Settings" component={Settings} />
-        {/* // Driver Map */}
-        {/* // Driver Accept/Decline Page */}
+        <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Driver Map" component={DriverMap} />
+        <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Ride Request" component={RideRequest} />
       </Stack.Navigator>
     )
   }

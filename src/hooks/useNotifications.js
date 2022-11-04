@@ -22,14 +22,14 @@ export const useNotifications = () => {
       const token = (await Notifications.getExpoPushTokenAsync()).data;
 
       dispatch(setPushToken({
-        riderPushToken: token
+        pushToken: token
       }))
 
       // console.log('useNotifications.js Push Token === ', token);
 
     } else {
       dispatch(setPushToken({
-        ridePushToken: '123'
+        pushToken: '123'
       }))
       alert('Must use physical device for Push Notifications');
     }
@@ -57,8 +57,6 @@ export const useNotifications = () => {
 
   const handleReceivedNotification = async response => {
     console.log("NOTIFICATION RECEIVED")
-
-
     // 20s timer to dismiss notification
     await timeout(20000)
     await Notifications.dismissAllNotificationsAsync();
@@ -71,9 +69,9 @@ export const useNotifications = () => {
     // If the driver accepts the ride request, make a post request to the server which will set the rides "isAccepted" to true, and add the driversuserID, and driverPushToken to the entry
     // Use the rideDoc located on line 98 of index.js in the backend.  This is the exact document to update.
     let notificationData = response.notification.request.content.data
-    console.log(notificationData)
-    console.log(RootNavigation.navigationRef.current.getRootState())
-    // RootNavigation.navigate('ChatScreen', { userName: 'Lucy' });
+    // console.log(notificationData)
+    // console.log(RootNavigation.navigationRef.current.getRootState())
+    RootNavigation.navigate('Driver Map', { notificationData: notificationData })
   };
 
   return { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse, handleReceivedNotification }

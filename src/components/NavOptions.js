@@ -67,8 +67,7 @@ function NavOptions({ userType, userInfo }) {
   if (userType === 'Driver') {
     data[0].screen = "Driver Map";
     data[0].title = "Go Online";
-    data[0].origin = false;
-    data[0].opacity = 0.2;
+    data[0].origin = true;
     data[1].screen = "Driver Profile"
   }
 

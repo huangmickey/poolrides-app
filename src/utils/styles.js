@@ -11,6 +11,7 @@ export const AppStyles = {
     salmonred: '#f85f6a',
     text: '#ffffff',
     errorred: '#ff9494',
+    blue: '#2196F3',
   },
   textFontSizes: {
     sm: 10,
@@ -32,12 +33,12 @@ export const AppStyles = {
     normal: 16
   },
   spacing: {
-      sm: 8,
-      md: 16,
-      lg: 24,
-      xl: 32,
-      xxl: 40,
-      xxxl: 80,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    xxl: 40,
+    xxxl: 80,
   },
   buttonWidth: {
     main: "70%",
@@ -131,7 +132,7 @@ export const IDStyle = StyleSheet.create({
     color: AppStyles.color.salmonred,
     justifyContent: 'center',
     paddingBottom: '5%',
-    
+
   }
 
 })
