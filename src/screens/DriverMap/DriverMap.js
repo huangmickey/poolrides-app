@@ -7,7 +7,7 @@ import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
 import { authentication, db } from "../../firebase/firebase-config";
 import * as Location from 'expo-location'
 import { useSelector, useDispatch } from 'react-redux';
-import { selectDriverLocation, setDriverLocation, selectPushToken } from '../../../slices/navSlice';
+import { selectDriverLocation, setDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
 import { AppStyles } from '../../utils/styles';
 
 export default function DriverMap({ route, navigation }) {
@@ -15,12 +15,13 @@ export default function DriverMap({ route, navigation }) {
   const dispatch = useDispatch()
   const driverLocation = useSelector(selectDriverLocation)
   const driverPushToken = useSelector(selectPushToken)
+  const driverName = useSelector(selectDriverName)
   const mapRef = useRef(null);
   const driverUID = authentication.currentUser.uid
+
   const [receivedRideRequest, setReceivedRideRequest] = useState(false)
   const [notificationData, setNotificationData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
-
 
   // runs on route params
   useEffect(() => {
@@ -42,7 +43,8 @@ export default function DriverMap({ route, navigation }) {
       driverID: driverUID,
       driverPushToken: driverPushToken.pushToken,
       lat: driverLocation.driverLocation.coords.latitude,
-      lng: driverLocation.driverLocation.coords.longitude
+      lng: driverLocation.driverLocation.coords.longitude,
+      isBusy: false,
     }
     const docRef = doc(db, 'activeDrivers', driverUID);
     await setDoc(docRef, data, { merge: true });
@@ -79,7 +81,7 @@ export default function DriverMap({ route, navigation }) {
           } else if (status === 'granted') {
             await getCurrentPosition()
             await updateLocationInDB()
-            console.log("lat = ", driverLocation.driverLocation.coords.latitude, " long = ", driverLocation.driverLocation.coords.longitude)
+            // console.log("lat = ", driverLocation.driverLocation.coords.latitude, " long = ", driverLocation.driverLocation.coords.longitude)
           }
         }
       })();
@@ -102,10 +104,16 @@ export default function DriverMap({ route, navigation }) {
 
   async function acceptRide() {
     // notificationData.rideDoc
-    const docRef = doc(db, 'rides', notificationData.rideDoc);
+    const docRef = doc(db, 'rides', notificationData.riderUID);
+    const activeDriverDocRef = doc(db, 'activeDrivers', driverUID);
+
     await updateDoc(docRef, {
-      isAccepted: true
-      // if accepted update ride doc to include driver details
+      isAccepted: true,
+      driverUID: driverUID,
+      driverName: driverName.driverName,
+    });
+    await updateDoc(activeDriverDocRef, {
+      isBusy: true
     });
     setModalVisible(!modalVisible)
   }

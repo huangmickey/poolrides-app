@@ -6,7 +6,7 @@ import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
 import Button from 'react-native-button';
-import { setDriverLocation } from "../../../slices/navSlice";
+import { setDriverLocation, setDriverName } from "../../../slices/navSlice";
 import { useDispatch } from "react-redux";
 import * as Location from 'expo-location'
 
@@ -24,6 +24,11 @@ export default function DriverDashboard() {
             const userDocSnapshot = await getDoc(userDocReference);
             setUserInfo(userDocSnapshot.data());
             setIsDriverVerified(userDocSnapshot.data().isVerified);
+            const driverFullName = userInfo?.firstname + " " + userInfo?.lastname
+            dispatch(
+                setDriverName({
+                    driverName: driverFullName
+                }))
         };
 
         getUserData();

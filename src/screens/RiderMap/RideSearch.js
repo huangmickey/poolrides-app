@@ -27,11 +27,12 @@ export default function RideSearch() {
 
 
     const baseURL = 'https://us-central1-pool-rides-db.cloudfunctions.net/requestride';
-    // const rideRequestURL = "http://localhost:5002/pool-rides-db/us-central1/requestride";
-    // const cancelURL = "http://localhost:5002/pool-rides-db/us-central1/cancelRide";
+    // const rideRequestURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/requestride";
+    // const cancelURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/cancelRide";
+
     const rideRequestURL = "https://us-central1-pool-rides-db.cloudfunctions.net/requestride";
     const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide";
-    https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide
+    //https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide
 
     useEffect(() => {
         async function sendRequest() {
@@ -164,14 +165,14 @@ export default function RideSearch() {
                                 .then(async function (response) {
                                     setSnackBarText("Your Ride Has Been Canceled.")
                                     setSnackBarVisible(true);
-                                    await timeout(2000);
-                                    navigation.goBack();
+                                    await timeout(3500);
+                                    navigation.goBack(2);
                                 })
                                 .catch(async function (error) {
                                     setSnackBarText("An Error has occured. Reload App")
                                     setSnackBarVisible(true);
-                                    await timeout(2000);
-                                    navigation.goBack();
+                                    await timeout(3500);
+                                    navigation.goBack(2);
                                 });
 
                         } catch (e) {
