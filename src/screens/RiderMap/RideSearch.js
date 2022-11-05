@@ -22,16 +22,18 @@ export default function RideSearch() {
     const [snackBarVisisble, setSnackBarVisible] = useState(false);
     const onDismissSnackBar = () => setSnackBarVisible(false);
 
+    const [isCanceled, setIsCanceled] = useState(false);
     const [isSearching, setIsSerching] = useState(true);
     const [serverResponse, setServerResponse] = useState({ status: null, data: null });
 
 
     const baseURL = 'https://us-central1-pool-rides-db.cloudfunctions.net/requestride';
-    // const rideRequestURL = "http://localhost:5002/pool-rides-db/us-central1/requestride";
-    // const cancelURL = "http://localhost:5002/pool-rides-db/us-central1/cancelRide";
+    // const rideRequestURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/requestride";
+    // const cancelURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/cancelRide";
+
     const rideRequestURL = "https://us-central1-pool-rides-db.cloudfunctions.net/requestride";
     const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide";
-    https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide
+    //https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide
 
     useEffect(() => {
         async function sendRequest() {
@@ -70,16 +72,9 @@ export default function RideSearch() {
                 axios(config)
                     .then(async function (response) {
                         setServerResponse({ status: response.status, data: response.data });
-
-                        await timeout(2000); //added as Firestore is to fast. 
                         setIsSerching(false);
-
-                        await timeout(4000); //added to make it look like something is happening.
-
-                        navigation.pop();
-                        navigation.navigate("Ride Results")
+                        await timeout(6000); //added to make it look like something is happening.
                     })
-
                     .catch(async function (error) {
                         if (error.response) {
                             setServerResponse({ status: error.response.status, data: error.response.data });
@@ -87,10 +82,13 @@ export default function RideSearch() {
                         if (error.request) {
                             setServerResponse({ status: error.request.status, data: error.response.data });
                         }
-                        await timeout(2000); //added as Firestore is to fast. 
                         setIsSerching(false);
-
                     });
+
+                if (!isCanceled && serverResponse.status == 200) {
+                    navigation.pop();
+                    navigation.navigate("Ride Results")
+                }
             } catch (e) {
                 console.warn(e);
                 setServerResponse({ status: "P404", data: "Error connecting to server. Please try again" });
@@ -164,14 +162,18 @@ export default function RideSearch() {
                                 .then(async function (response) {
                                     setSnackBarText("Your Ride Has Been Canceled.")
                                     setSnackBarVisible(true);
-                                    await timeout(2000);
-                                    navigation.goBack();
+                                    setIsCanceled(true);
+                                    await timeout(3500);
+                                    navigation.goBack(2);
                                 })
                                 .catch(async function (error) {
+                                    console.log(error.response.status)
+                                    console.log(error.request.status)
                                     setSnackBarText("An Error has occured. Reload App")
                                     setSnackBarVisible(true);
-                                    await timeout(2000);
-                                    navigation.goBack();
+                                    setIsCanceled(true);
+                                    await timeout(3500);
+                                    navigation.goBack(2);
                                 });
 
                         } catch (e) {

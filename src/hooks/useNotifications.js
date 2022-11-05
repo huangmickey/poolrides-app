@@ -20,12 +20,11 @@ export const useNotifications = () => {
         return;
       }
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-
       dispatch(setPushToken({
         pushToken: token
       }))
 
-      // console.log('useNotifications.js Push Token === ', token);
+      console.log('useNotifications.js Push Token === ', token);
 
     } else {
       dispatch(setPushToken({
