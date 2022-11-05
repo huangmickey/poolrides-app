@@ -9,6 +9,8 @@ import * as Location from 'expo-location'
 import { useSelector, useDispatch } from 'react-redux';
 import { selectDriverLocation, setDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
 import { AppStyles } from '../../utils/styles';
+import CustomButton from '../../components/CustomButton';
+
 
 export default function DriverMap({ route, navigation }) {
   const [errorMsg, setErrorMsg] = useState();
@@ -111,6 +113,7 @@ export default function DriverMap({ route, navigation }) {
       isAccepted: true,
       driverUID: driverUID,
       driverName: driverName.driverName,
+      driverPushToken: driverPushToken.pushToken,
     });
     await updateDoc(activeDriverDocRef, {
       isBusy: true
@@ -157,6 +160,8 @@ export default function DriverMap({ route, navigation }) {
 
       <View style={styles.driverHUD}>
 
+        <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
+
         {receivedRideRequest &&
           <Modal
             animationType="slide"
@@ -191,7 +196,6 @@ export default function DriverMap({ route, navigation }) {
             </View>
           </Modal>
         }
-
 
       </View>
 
