@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 config.js
 yarn-error.log
+yarn.lock
 # macOS
 .DS_Store
 .env
