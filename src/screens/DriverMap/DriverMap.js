@@ -40,7 +40,7 @@ useEffect(() => {
     if (driverLocation !== undefined) {
         goOnline();
     }
-})
+},[driverLocation])
 
 useEffect(() => {
     if (notificationData !== undefined) {
@@ -79,14 +79,6 @@ useEffect(() => {
     await setDoc(docRef, data, { merge: true });
   }
 
-  async function updateLocationInDB() {
-    const data = {
-      lat: driverLocation.driverLocation.coords.latitude,
-      lng: driverLocation.driverLocation.coords.longitude
-    }
-    const docRef = doc(db, 'activeDrivers', driverUID);
-    await updateDoc(docRef, data);
-  }
 
   useEffect(() => {
     // Background Location
@@ -94,7 +86,6 @@ useEffect(() => {
     const updateDBInterval = setInterval(() => {
       getGPSLocation()
       // Foreground Location
-      updateLocationInDB()
     }, 15000);
     return () => clearInterval(updateDBInterval);
   }, []);
@@ -202,7 +193,7 @@ useEffect(() => {
         />}
 
       </MapView>}
-      {!driverLocation &&<Text style = {styles.modalText}>Loading Map...</Text>}
+      {!driverLocation && <Text style = {styles.modalText}>Loading Map...</Text>}
     </View>
       
       <View style={styles.driverHUD}>
