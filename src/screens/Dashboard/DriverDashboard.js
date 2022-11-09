@@ -6,15 +6,18 @@ import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
 import Button from 'react-native-button';
-import { setDriverLocation, setDriverName } from "../../../slices/navSlice";
-import { useDispatch } from "react-redux";
-import * as Location from 'expo-location'
+import { setDriverName, selectLocationPermissionStatus } from "../../../slices/navSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getLocationPermission } from "../../utils/gpsUtils";
 
 export default function DriverDashboard() {
     const [userInfo, setUserInfo] = useState();
     const [isDriverVerified, setIsDriverVerified] = useState(null);
     const dispatch = useDispatch()
+    const locationPermissionStatus = useSelector(selectLocationPermissionStatus)
+    const { askForLocationPermission, getGPSLocation } = getLocationPermission();
 
+    // initla useEffect to get Driver Information and verify that the Driver is verified
     useEffect(() => {
         // Update the document title using Firebase SDK
         const userUID = authentication.currentUser.uid; // Coming from auth when logged in
@@ -34,28 +37,17 @@ export default function DriverDashboard() {
         getUserData();
     }, [isDriverVerified]);
 
+    // initial useEffect to call askForLocationPermission Hook
     useEffect(() => {
-        // get drivers initial location
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync()
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-                return;
-            } else if (status === 'granted') {
-                try {
-                    var location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
-                } catch {
-                    location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
-                }
-                dispatch(
-                    setDriverLocation({
-                        driverLocation: location
-                    }))
-                // console.log('location grabbed in driver dashboard => ', location)
-            }
-        })();
-
+        askForLocationPermission()
     }, []);
+
+    // useEffect to call getGPSLocation() Hook after askForLocationPermission() Hook
+    useEffect(() => {
+        if (locationPermissionStatus?.locationPermissionStatus.granted === true) {
+            getGPSLocation()
+        }
+    }, [locationPermissionStatus])
 
     function logoutHandler() {
         console.log("User Logged Out");

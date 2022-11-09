@@ -1,30 +1,29 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Dimensions, View, StyleSheet, Platform, Text, Pressable, Modal } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, View, StyleSheet, Text, Pressable, Modal } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
 import { authentication, db } from "../../firebase/firebase-config";
-import * as Location from 'expo-location'
 import { useSelector, useDispatch } from 'react-redux';
-import { selectDriverLocation, setDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
+import { selectDriverLocation, selectPushToken, selectDriverName, selectLocationPermissionStatus } from '../../../slices/navSlice';
 import { AppStyles } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
-
+import { getLocationPermission } from '../../utils/gpsUtils';
 
 export default function DriverMap({ route, navigation }) {
-  const [errorMsg, setErrorMsg] = useState();
-  const dispatch = useDispatch()
   const driverLocation = useSelector(selectDriverLocation)
   const driverPushToken = useSelector(selectPushToken)
   const driverName = useSelector(selectDriverName)
-  const mapRef = useRef(null);
   const driverUID = authentication.currentUser.uid
 
   const [receivedRideRequest, setReceivedRideRequest] = useState(false)
   const [notificationData, setNotificationData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
+  const { startBackgroundLocation, getGPSLocation } = getLocationPermission();
 
+  console.log(driverLocation)
+  // console.log(locationPermissionStatus)
   // runs on route params
   useEffect(() => {
     setReceivedRideRequest(false)
@@ -61,48 +60,20 @@ export default function DriverMap({ route, navigation }) {
     await updateDoc(docRef, data);
   }
 
-  // Timer useEffect to get location updates every 15000ms
   useEffect(() => {
 
     goOnline()
 
-    const interval = setInterval(() => {
-      (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync()
+    // Background Location
+    // startBackgroundLocation()
 
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          return;
-        } else if (status === 'granted') {
-          if (Platform.OS === 'android') {
-            status = await Location.requestBackgroundPermissionsAsync()
-          }
-          if (status !== 'granted') {
-            setErrorMsg('Permission to access background location was denied')
-            return;
-          } else if (status === 'granted') {
-            await getCurrentPosition()
-            await updateLocationInDB()
-            // console.log("lat = ", driverLocation.driverLocation.coords.latitude, " long = ", driverLocation.driverLocation.coords.longitude)
-          }
-        }
-      })();
+    const updateDBInterval = setInterval(() => {
+      getGPSLocation()
+      // Foreground Location
+      updateLocationInDB()
     }, 15000);
-    return () => clearInterval(interval);
-
+    return () => clearInterval(updateDBInterval);
   }, []);
-
-  async function getCurrentPosition() {
-    try {
-      var location = await Location.getCurrentPositionAsync({});
-    } catch {
-      location = await Location.getCurrentPositionAsync({});
-    }
-    dispatch(
-      setDriverLocation({
-        driverLocation: location
-      }))
-  }
 
   async function acceptRide() {
     // notificationData.rideDoc
@@ -132,7 +103,6 @@ export default function DriverMap({ route, navigation }) {
       <View style={styles.container}>
 
         <MapView
-          ref={mapRef}
           style={styles.mapStyle}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
