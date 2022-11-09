@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, View, StyleSheet, Text, Pressable, Modal, ActivityIndicator } from 'react-native';
+import { Dimensions, View, StyleSheet, Text, Pressable, Modal, ActivityIndicator,Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
@@ -144,7 +144,7 @@ useEffect(() => {
         }}
         customMapStyle={mapStyle}>
         
-        {notificationData && <MapViewDirections
+        {/* {notificationData && <MapViewDirections
           destination={riderTrip.destination} 
           waypoints={[{
               latitude: riderTrip.origin.latitude,
@@ -155,7 +155,7 @@ useEffect(() => {
           strokeColor={AppStyles.color.mint}
           // lineDashPattern={[0]}
         
-        /> }
+        /> } */}
 
         <Marker
           image={require('./car-128px.png')}
