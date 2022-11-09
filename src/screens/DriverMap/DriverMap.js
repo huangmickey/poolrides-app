@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, View, StyleSheet, Text, Pressable, Modal } from 'react-native';
+import { Dimensions, View, StyleSheet, Text, Pressable, Modal, ActivityIndicator } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
@@ -10,20 +10,47 @@ import { selectDriverLocation, selectPushToken, selectDriverName, selectLocation
 import { AppStyles } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
+import MapViewDirections from 'react-native-maps-directions';
+import { config } from "../../../config";
 
 export default function DriverMap({ route, navigation }) {
   const driverLocation = useSelector(selectDriverLocation)
   const driverPushToken = useSelector(selectPushToken)
   const driverName = useSelector(selectDriverName)
   const driverUID = authentication.currentUser.uid
-
   const [receivedRideRequest, setReceivedRideRequest] = useState(false)
   const [notificationData, setNotificationData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
   const { startBackgroundLocation, getGPSLocation } = getLocationPermission();
+  const [AcceptedRideRequest,setAcceptedRideRequest] = useState(false)
 
-  console.log(driverLocation)
-  // console.log(locationPermissionStatus)
+
+  let riderTrip = {
+    origin: {
+        latitude: null,
+        longitude: null
+    },
+    destination: {
+        latitude: null,
+        longitude: null
+    }
+  }
+
+useEffect(() => {
+    if (driverLocation !== undefined) {
+        goOnline();
+    }
+})
+
+useEffect(() => {
+    if (notificationData !== undefined) {
+        riderTrip.origin.latitude = notificationData.origin.latitude
+        riderTrip.origin.longitude = notificationData.origin.longitude
+        riderTrip.destination.latitude = notificationData.destination.latitude
+        riderTrip.destination.longitude = notificationData.destination.longitude
+    }
+},[notificationData])
+
   // runs on route params
   useEffect(() => {
     setReceivedRideRequest(false)
@@ -31,6 +58,7 @@ export default function DriverMap({ route, navigation }) {
       setReceivedRideRequest(true)
       setModalVisible(true)
       setNotificationData(route.params.notificationData)
+      setAcceptedRideRequest(true)
     }
   }, [route])
 
@@ -61,12 +89,8 @@ export default function DriverMap({ route, navigation }) {
   }
 
   useEffect(() => {
-
-    goOnline()
-
     // Background Location
     // startBackgroundLocation()
-
     const updateDBInterval = setInterval(() => {
       getGPSLocation()
       // Foreground Location
@@ -97,79 +121,133 @@ export default function DriverMap({ route, navigation }) {
     setModalVisible(!modalVisible)
   }
 
+  function handleGetDirections() {
+    if (notificationData !== undefined) {
+        const destinationLat = notificationData.destination.lat
+        const destinationLng = notificationData.destination.lng
+        const originLat = notificationData.origin.lat
+        const originLng = notificationData.origin.lng
+        const url = `https://www.google.com/maps/dir/?api=1&destination=${destinationLat},${destinationLng}&travelmode=driving&dir_action=navigate&waypoints=${originLat},${originLng}`
+        Linking.openURL(url);
+        console.log('Google Trip URL ===> ' + url)
+    } else {
+        Alert.alert('uh oh')
+    }
+
+}
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
 
-      <View style={styles.container}>
+    <View style={styles.container}>
 
-        <MapView
-          style={styles.mapStyle}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
+      {driverLocation && <MapView
+        style={styles.mapStyle}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: driverLocation.driverLocation.coords.latitude,
+          longitude: driverLocation.driverLocation.coords.longitude,
+          latitudeDelta: 0.004,
+          longitudeDelta: 0.004,
+        }}
+        customMapStyle={mapStyle}>
+        
+        {notificationData && <MapViewDirections
+          destination={riderTrip.destination} 
+          waypoints={[{
+              latitude: riderTrip.origin.latitude,
+              longitude: riderTrip.origin.longitude
+          }]} 
+          apikey={config.GOOGLE_DIRECTIONS_APIKEY}
+          strokeWidth={3}
+          strokeColor={AppStyles.color.mint}
+          // lineDashPattern={[0]}
+        
+        /> }
+
+        <Marker
+          image={require('./car-128px.png')}
+          coordinate={{
             latitude: driverLocation.driverLocation.coords.latitude,
             longitude: driverLocation.driverLocation.coords.longitude,
-            latitudeDelta: 0.004,
-            longitudeDelta: 0.004,
           }}
-          customMapStyle={mapStyle}>
+          onDragEnd={
+            (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+          }
+          title={'Driver'}
+        />
 
-          <Marker
-            image={require('./car-128px.png')}
-            coordinate={{
-              latitude: driverLocation.driverLocation.coords.latitude,
-              longitude: driverLocation.driverLocation.coords.longitude,
-            }}
-            onDragEnd={
-              (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
-            }
-            title={'Driver'}
-          />
-        </MapView>
+         {AcceptedRideRequest && <Marker
+          image={require('./person-128px_inverted.png')}
+          coordinate={{
+            latitude: notificationData.origin.lat, //38.558227 
+            longitude: notificationData.origin.lng, //-121.4266 
+          }}
+          onDragEnd={
+            (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+          }
+          title={'Pick Up Location'}
+        /> }
 
-      </View>
+        {AcceptedRideRequest && <Marker
+          coordinate={{
+            latitude: notificationData.destination.lat, //38.568491 
+            longitude: notificationData.destination.lng, //-121.418 
+          }}
+          onDragEnd={
+            (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+          }
+          title={'Drop Off Here'}
+        />}
 
+      </MapView>}
+      {!driverLocation &&<Text style = {styles.modalText}>Loading Map...</Text>}
+    </View>
+      
       <View style={styles.driverHUD}>
+      {AcceptedRideRequest && <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />}
+      <View style = {styles.space}/>
+      <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
 
-        <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
-
-        {receivedRideRequest &&
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>
-                  Origin: {notificationData.originAddress}{"\n"}
-                  Destination: {notificationData.destinationAddress}{"\n"}
-                  Money Earned: {notificationData.travelTime_cost}{"\n"}
-                  Distance: {notificationData.travelTime_distance}{"\n"}
-                  Time: {notificationData.travelTime_time}
-                </Text>
-                <View style={styles.modalButtonContainer}>
-                  <Pressable
-                    style={[styles.modalButton, styles.buttonAccept]}
-                    onPress={acceptRide}>
-                    <Text style={styles.modalButtonText}>Accept Ride</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.modalButton, styles.buttonReject]}
-                    onPress={rejectRide}>
-                    <Text style={styles.modalButtonText}>Reject Ride</Text>
-                  </Pressable>
-                </View>
+      {receivedRideRequest &&
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Origin: {notificationData.originAddress}{"\n"}
+                Destination: {notificationData.destinationAddress}{"\n"}
+                Money Earned: {notificationData.travelTime_cost}{"\n"}
+                Distance: {notificationData.travelTime_distance}{"\n"}
+                Time: {notificationData.travelTime_time}
+              </Text>
+              <View style={styles.modalButtonContainer}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonAccept]}
+                  onPress={acceptRide}>
+                  <Text style={styles.modalButtonText}>Accept Ride</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonReject]}
+                  onPress={rejectRide}>
+                  <Text style={styles.modalButtonText}>Reject Ride</Text>
+                </Pressable>
               </View>
             </View>
-          </Modal>
-        }
+          </View>
+        </Modal>
+      }
 
-      </View>
+    </View>
 
-    </SafeAreaView>
+  </SafeAreaView>
   );
 };
 
