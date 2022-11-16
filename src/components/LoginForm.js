@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard, } from "react-native";
-
 import { AppStyles } from "../utils/styles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 // import { authentication } from '../firebase/firebase-config';
@@ -25,7 +24,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
     if (!inputs.email) {
       handleError("*Please input email", "email");
       valid = false;
-    } else if (!inputs.email.match(/\S+@\S+\.\S+/)) {
+    } else if (!inputs.email.match(/\S+@\S+\.\S+/)) {    
       handleError("*Please input valid email", "email");
       valid = false;
     }
@@ -96,7 +95,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
               setHidePassword(!hidePassword);
             }}
           >
-            <Icon
+            <Icon 
               name={hidePassword === true ? "eye-off-outline" : "eye-outline"}
               style={{ color: AppStyles.color.white, fontSize: 20 }}
             />
