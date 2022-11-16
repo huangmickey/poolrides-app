@@ -6,7 +6,7 @@ const initialState = {
     travelTimeInformation: null,
     rideInformation: null,
     pushToken: null,
-    driverLocation: null,
+    driverLocation: undefined,
     driverName: null,
     locationPermissionStatus: null,
 };
