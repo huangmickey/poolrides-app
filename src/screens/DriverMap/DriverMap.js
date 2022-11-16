@@ -14,9 +14,6 @@ import MapViewDirections from 'react-native-maps-directions';
 import { config } from "../../../config";
 import mapStyle from ' ../../../components/mapStyle.json'
 
-
-
-
 export default function DriverMap({ route, navigation }) {
   const driverLocation = useSelector(selectDriverLocation)
   const driverPushToken = useSelector(selectPushToken)
@@ -104,11 +101,18 @@ useEffect(() => {
             lng: driverLocation.driverLocation.coords.longitude,
             isBusy: false,
           }
+          mapRef.current.animateToRegion(
+            {
+                latitude: driverLocation.driverLocation.coords.latitude,
+                longitude: driverLocation.driverLocation.coords.longitude,
+                latitudeDelta: 0.04,
+                longitudeDelta: 0.04
+            },2000
+        )
           const docRef = doc(db, 'activeDrivers', driverUID);
           await setDoc(docRef, data, { merge: true });
     }
   }
-
 
   useEffect(() => {
     // Background Location
@@ -174,9 +178,10 @@ useEffect(() => {
           initialRegion={{
             latitude: driverLocation.driverLocation.coords.latitude,
             longitude: driverLocation.driverLocation.coords.longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04
           }}
+
           customMapStyle={mapStyle}
         >
 

@@ -72,6 +72,7 @@ function Map({ hasDriver }) {
             style={{ flex: 1 }}
             pitchEnabled={false}
             loadingEnabled={true}
+            provider={PROVIDER_GOOGLE}
             initialRegion={{
                 latitude: origin.location.lat,
                 longitude: origin.location.lng,
