@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Dimensions, View, StyleSheet, Text, Pressable, Modal, ActivityIndicator, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
 import MapViewDirections from 'react-native-maps-directions';
 import { config } from "../../../config";
+import mapStyle from ' ../../../components/mapStyle.json'
 
 export default function DriverMap({ route, navigation }) {
   const driverLocation = useSelector(selectDriverLocation)
@@ -24,29 +25,34 @@ export default function DriverMap({ route, navigation }) {
   const { startBackgroundLocation, getGPSLocation } = getLocationPermission();
   const [AcceptedRideRequest, setAcceptedRideRequest] = useState(false)
   const [canceledRideModal, setCanceledRideModal] = useState(false)
-  let riderTrip = {
-    origin: {
-      latitude: null,
-      longitude: null
-    },
-    destination: {
-      latitude: null,
-      longitude: null
-    }
-  }
+  const [text,setText] = useState('')
+  const [animate,setAnimate] = useState(true)
+  const mapRef = useRef(null)
+
 
   useEffect(() => {
-    if (driverLocation !== undefined) {
-      goOnline();
-    }
+    getGPSLocation()
+    goOnline()
   }, [driverLocation])
 
+
   useEffect(() => {
-    if (notificationData !== undefined) {
-      riderTrip.origin.latitude = notificationData.origin.latitude
-      riderTrip.origin.longitude = notificationData.origin.longitude
-      riderTrip.destination.latitude = notificationData.destination.latitude
-      riderTrip.destination.longitude = notificationData.destination.longitude
+    if (notificationData !== undefined && driverLocation !== undefined) {
+      const markers = [
+
+        {
+            latitude: notificationData.origin.lat,
+            longitude: notificationData.origin.lng,
+        },
+        {
+            latitude: notificationData.destination.lat, 
+            longitude: notificationData.destination.lng
+        }
+        ]
+      mapRef.current.fitToCoordinates(markers, {
+        edgePadding: { top: 75, right: 75, bottom: 75, left: 75 },
+        animated: true
+    });
     }
   }, [notificationData])
 
@@ -64,23 +70,49 @@ export default function DriverMap({ route, navigation }) {
     }
   }, [route])
 
+  useEffect(() => {
+    // Background Location
+    // startBackgroundLocation()
+    const updateDBInterval = setInterval(() => {
+    getGPSLocation()
+    // Foreground Location
+    }, 15000);
+        return () => clearInterval(updateDBInterval);
+}, []);
+
+useEffect(() => {
+    setText('Loading Map...')
+    setTimeout(() => {
+        setText('Loading Map...' + '\n' + 'Just a little bit longer...')
+    }, 5000);
+},[setTimeout])
+
   async function goOffline() {
     await deleteDoc(doc(db, "activeDrivers", driverUID));
     navigation.navigate('Driver Dashboard')
   }
 
   async function goOnline() {
-    const data = {
-      driverID: driverUID,
-      driverPushToken: driverPushToken.pushToken,
-      lat: driverLocation.driverLocation.coords.latitude,
-      lng: driverLocation.driverLocation.coords.longitude,
-      isBusy: false,
+    if (driverLocation !== undefined) {
+        const data = {
+            driverID: driverUID,
+            driverPushToken: driverPushToken.pushToken,
+            lat: driverLocation.driverLocation.coords.latitude,
+            lng: driverLocation.driverLocation.coords.longitude,
+            isBusy: false,
+          }
+          mapRef.current.animateToRegion(
+            {
+                latitude: driverLocation.driverLocation.coords.latitude,
+                longitude: driverLocation.driverLocation.coords.longitude,
+                latitudeDelta: 0.04,
+                longitudeDelta: 0.04
+            },2000
+        )
+          const docRef = doc(db, 'activeDrivers', driverUID);
+          await setDoc(docRef, data, { merge: true });
     }
-    const docRef = doc(db, 'activeDrivers', driverUID);
-    await setDoc(docRef, data, { merge: true });
   }
-
 
   useEffect(() => {
     // Background Location
@@ -126,9 +158,9 @@ export default function DriverMap({ route, navigation }) {
       const originLng = notificationData.origin.lng
       const url = `https://www.google.com/maps/dir/?api=1&destination=${destinationLat},${destinationLng}&travelmode=driving&dir_action=navigate&waypoints=${originLat},${originLng}`
       Linking.openURL(url);
-      console.log('Google Trip URL ===> ' + url)
+      console.log('Google Trip URL: ' + url)
     } else {
-      Alert.alert('uh oh')
+      Alert.alert('Error 500: Internal Server Error')
     }
 
   }
@@ -139,28 +171,33 @@ export default function DriverMap({ route, navigation }) {
       <View style={styles.container}>
 
         {driverLocation && <MapView
+          ref={mapRef}
           style={styles.mapStyle}
+          pitchEnabled={false}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
             latitude: driverLocation.driverLocation.coords.latitude,
             longitude: driverLocation.driverLocation.coords.longitude,
-            latitudeDelta: 0.004,
-            longitudeDelta: 0.004,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04
           }}
-          customMapStyle={mapStyle}>
 
-          {/* {notificationData && <MapViewDirections
-          destination={riderTrip.destination} 
-          waypoints={[{
-              latitude: riderTrip.origin.latitude,
-              longitude: riderTrip.origin.longitude
-          }]} 
+          customMapStyle={mapStyle}
+        >
+
+        {notificationData?.destination && <MapViewDirections
+          origin={{
+            latitude: driverLocation.driverLocation.coords.latitude,
+            longitude: driverLocation.driverLocation.coords.longitude
+          }}
+          destination={`${notificationData.destination.lat},${notificationData.destination.lng}`}
+          waypoints={[`${notificationData.origin.lat},${notificationData.origin.lng}`]}
           apikey={config.GOOGLE_DIRECTIONS_APIKEY}
           strokeWidth={3}
-          strokeColor={AppStyles.color.mint}
-          // lineDashPattern={[0]}
+          strokeColor={AppStyles.color.salmonred}
+          lineDashPattern={[0]}
         
-        /> } */}
+        /> }
 
           <Marker
             image={require('./car-128px.png')}
@@ -198,14 +235,22 @@ export default function DriverMap({ route, navigation }) {
           />}
 
         </MapView>}
-        {!driverLocation && <Text style={styles.modalText}>Loading Map...</Text>}
-      </View>
+        {!driverLocation &&<ActivityIndicator
+            style={styles.loadingMap}
+            animating={animate}
+            size="large" 
+            color={"#AFAFAF"}
+       />}
+      {!driverLocation && <Text style= {styles.loadingText}>{text}</Text>}
 
       <View style={styles.driverHUD}>
         {AcceptedRideRequest && <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />}
         <View style={styles.space} />
         <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
+            </View>
+      </View>
 
+        <View>
         {receivedRideRequest &&
           <Modal
             animationType="slide"
@@ -271,87 +316,6 @@ export default function DriverMap({ route, navigation }) {
   );
 };
 
-const mapStyle = [
-  { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-  {
-    featureType: 'administrative.locality',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#d59563' }],
-  },
-  {
-    featureType: 'poi',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#d59563' }],
-  },
-  {
-    featureType: 'poi.park',
-    elementType: 'geometry',
-    stylers: [{ color: '#263c3f' }],
-  },
-  {
-    featureType: 'poi.park',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#6b9a76' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry',
-    stylers: [{ color: '#38414e' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#212a37' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#9ca5b3' }],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry',
-    stylers: [{ color: '#746855' }],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#1f2835' }],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#f3d19c' }],
-  },
-  {
-    featureType: 'transit',
-    elementType: 'geometry',
-    stylers: [{ color: '#2f3948' }],
-  },
-  {
-    featureType: 'transit.station',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#d59563' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'geometry',
-    stylers: [{ color: '#17263c' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#515c6d' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'labels.text.stroke',
-    stylers: [{ color: '#17263c' }],
-  },
-];
-
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
@@ -370,16 +334,45 @@ const styles = StyleSheet.create({
     bottom: '35%',
   },
   driverHUD: {
-    position: 'absolute',
-    flex: 1,
+    position: 'relative',
+    flex: 0,
     backgroundColor: 'black',
     alignItems: 'center',
-    top: '71%',
+    top: '65%',
+    paddingTop:'25%',
     height: Dimensions.get('screen').height,
     width: Dimensions.get('screen').width,
   },
+  space: {
+    height: 20,
+    width: 20 
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: "center",
+  },
+  loadingText: {
+    textAlign: 'center',
+    color: '#AFAFAF',
+    fontWeight: 'bold',
+    top:'32.5%',
+  },
+  loadingMap: {
+    flex: 1,
+    position: 'absolute',
+    top:'25%',
+    left:'45%',
+    justifyContent: 'center',
+    alignItems: "center",
 
-
+  },
+  edgePadding: {
+    top: '5%',
+    left: '5%',
+    bottom: '5%',
+    right: '5%'
+  },
 
   centeredView: {
     flex: 1,
