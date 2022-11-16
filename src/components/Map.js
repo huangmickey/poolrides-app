@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectDestination, selectOrigin, setTravelTimeInformation } from '../../slices/navSlice';
 import MapViewDirections from 'react-native-maps-directions';
 import { config } from "../../config";
+import mapStyle from '../components/mapStyle.json'
+import { AppStyles } from '../utils/styles';
 
 function Map({ hasDriver }) {
 
@@ -69,7 +71,6 @@ function Map({ hasDriver }) {
             ref={mapRef}
             style={{ flex: 1 }}
             pitchEnabled={false}
-            mapType='mutedStandard'
             loadingEnabled={true}
             initialRegion={{
                 latitude: origin.location.lat,
@@ -77,6 +78,7 @@ function Map({ hasDriver }) {
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
             }}
+            customMapStyle={mapStyle}
         >
 
             {origin && destination && (
@@ -85,7 +87,7 @@ function Map({ hasDriver }) {
                     destination={destination.description}
                     apikey={config.GOOGLE_DIRECTIONS_APIKEY}
                     strokeWidth={3}
-                    strokeColor='black'
+                    strokeColor={AppStyles.color.mint}
                 />
             )}
 
