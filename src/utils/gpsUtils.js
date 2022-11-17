@@ -42,7 +42,6 @@ export const getLocationPermission = () => {
         console.error(error);
         return;
       }
-
       if (locations.length > 0) {
         let location = locations[locations.length - 1];
         if (location.coords) {
@@ -82,7 +81,7 @@ export const getLocationPermission = () => {
         driverLocation: location
       }))
   }
-
-
   return { askForLocationPermission, getGPSLocation, startBackgroundLocation }
 }
+
+//https://stackoverflow.com/questions/34573109/how-to-make-an-android-app-to-always-run-in-background

@@ -9,11 +9,11 @@ import { AppStyles } from '../utils/styles';
 
 function Map({ hasDriver }) {
 
-    const [driverMaker, setDriverMaker] = useState({ isDriver: false, lat: null, lng: null });
+    const [driverMaker, setDriverMaker] = useState({ lat: null, lng: null });
 
     useEffect(() => {
         if (hasDriver) {
-            setDriverMaker({ isDriver: true, lat: hasDriver.lat, lng: hasDriver.lng });
+            setDriverMaker({ lat: hasDriver.lat, lng: hasDriver.lng });
         }
     }, [hasDriver]);
 
@@ -26,7 +26,27 @@ function Map({ hasDriver }) {
         if (!origin || !destination) {
             console.log('return');
             return;
-        } else {
+        } else if (driverMaker.lat != null || driverMaker.lng != null){
+            const markers = [
+                {
+                    latitude: origin.location.lat,
+                    longitude: origin.location.lng,
+                },
+                {
+                    latitude: destination.location.lat,
+                    longitude: destination.location.lng,
+                },
+                {
+                    latitude: driverMaker.lat,
+                    longitude: driverMaker.lng,
+                }
+            ]
+            mapRef.current.fitToCoordinates(markers, {
+                edgePadding: { top: 75, right: 75, bottom: 75, left: 75 },
+                animated: true
+            });
+        } 
+        else {
             const markers = [
                 {
                     latitude: origin.location.lat,
@@ -36,14 +56,14 @@ function Map({ hasDriver }) {
                     latitude: destination.location.lat,
                     longitude: destination.location.lng,
                 }
+                
             ]
             mapRef.current.fitToCoordinates(markers, {
                 edgePadding: { top: 75, right: 75, bottom: 75, left: 75 },
                 animated: true
-            });
+            });            
         }
-
-    }, [origin, destination]);
+    }, [origin, destination, driverMaker]);
 
     // Retrieve Route information via Google Matrix API
     // Returns Distance, Time, and Etc. from Origin to Destination
@@ -82,7 +102,7 @@ function Map({ hasDriver }) {
             customMapStyle={mapStyle}
         >
 
-            {origin && destination && (
+            {origin && destination && 
                 <MapViewDirections
                     origin={origin.description}
                     destination={destination.description}
@@ -90,10 +110,11 @@ function Map({ hasDriver }) {
                     strokeWidth={3}
                     strokeColor={AppStyles.color.mint}
                 />
-            )}
+            }
 
-            {origin?.location && (
+            {origin?.location && 
                 <Marker
+                image={require('../../assets/man-100px.png')}
                     coordinate={{
                         latitude: origin.location.lat,
                         longitude: origin.location.lng,
@@ -101,11 +122,12 @@ function Map({ hasDriver }) {
                     title="Origin"
                     description={origin.description}
                     identifer="origin"
-                />
-            )}
+                    />
+            }
 
-            {destination?.location && (
+            {destination?.location && 
                 <Marker
+                    image={require('../../assets/flag-128px.png')}
                     coordinate={{
                         latitude: destination.location.lat,
                         longitude: destination.location.lng,
@@ -113,17 +135,17 @@ function Map({ hasDriver }) {
                     title="Destination"
                     description={destination.description}
                     identifer="destination"
-                />
-            )}
+                    />
+            }
 
-            {driverMaker?.isDriver && (
+            {driverMaker?.lat && 
                 <Marker
+                image={require('../../assets/hovercar-128px.png')}
                     coordinate={{
                         latitude: driverMaker.lat,
                         longitude: driverMaker.lng,
-                    }}
-                />
-            )}
+                    }}/>
+            }
         </MapView>
     )
 }

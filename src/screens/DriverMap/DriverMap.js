@@ -1,24 +1,26 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Dimensions, View, StyleSheet, Text, Pressable, Modal, ActivityIndicator, Linking } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import {  ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { PROVIDER_GOOGLE } from 'react-native-maps';
-import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
-import { authentication, db } from "../../firebase/firebase-config";
-import { useSelector, useDispatch } from 'react-redux';
-import { selectDriverLocation, selectPushToken, selectDriverName, selectLocationPermissionStatus } from '../../../slices/navSlice';
+import MapViewDirections from 'react-native-maps-directions';
+import { useSelector } from 'react-redux';
+import { selectDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
 import { AppStyles } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
-import MapViewDirections from 'react-native-maps-directions';
 import { config } from "../../../config";
 import mapStyle from ' ../../../components/mapStyle.json'
+
+import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
+import { authentication, db } from "../../firebase/firebase-config";
+
+const { width, height } = Dimensions.get('screen');
+const thumbMeasure = ((width - 48 - 32) / 2.5); 
 
 export default function DriverMap({ route, navigation }) {
   const driverLocation = useSelector(selectDriverLocation)
   const driverPushToken = useSelector(selectPushToken)
   const driverName = useSelector(selectDriverName)
-  const driverUID = authentication.currentUser.uid
   const [receivedRideRequest, setReceivedRideRequest] = useState(false)
   const [notificationData, setNotificationData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
@@ -29,6 +31,7 @@ export default function DriverMap({ route, navigation }) {
   const [animate,setAnimate] = useState(true)
   const mapRef = useRef(null)
 
+  const driverUID = authentication.currentUser.uid
 
   useEffect(() => {
     getGPSLocation()
@@ -39,7 +42,6 @@ export default function DriverMap({ route, navigation }) {
   useEffect(() => {
     if (notificationData !== undefined && driverLocation !== undefined) {
       const markers = [
-
         {
             latitude: notificationData.origin.lat,
             longitude: notificationData.origin.lng,
@@ -70,22 +72,25 @@ export default function DriverMap({ route, navigation }) {
     }
   }, [route])
 
+  //UseEffect for Waiting for Map to Load
+  useEffect(() => {
+      setText('Loading Map...')
+      setTimeout(() => {
+          setText('Loading Map...' + '\n' + 'Just a little bit longer...')
+      }, 5000);
+  },[setTimeout])
+
+  //UseEffect for every 15 seconds
   useEffect(() => {
     // Background Location
     // startBackgroundLocation()
     const updateDBInterval = setInterval(() => {
-    getGPSLocation()
+      getGPSLocation()
     // Foreground Location
     }, 15000);
-        return () => clearInterval(updateDBInterval);
-}, []);
+    return () => clearInterval(updateDBInterval);
+  }, []);
 
-useEffect(() => {
-    setText('Loading Map...')
-    setTimeout(() => {
-        setText('Loading Map...' + '\n' + 'Just a little bit longer...')
-    }, 5000);
-},[setTimeout])
 
   async function goOffline() {
     await deleteDoc(doc(db, "activeDrivers", driverUID));
@@ -113,16 +118,6 @@ useEffect(() => {
           await setDoc(docRef, data, { merge: true });
     }
   }
-
-  useEffect(() => {
-    // Background Location
-    // startBackgroundLocation()
-    const updateDBInterval = setInterval(() => {
-      getGPSLocation()
-      // Foreground Location
-    }, 15000);
-    return () => clearInterval(updateDBInterval);
-  }, []);
 
   async function acceptRide() {
     // notificationData.rideDoc
@@ -162,30 +157,26 @@ useEffect(() => {
     } else {
       Alert.alert('Error 500: Internal Server Error')
     }
-
-  }
+}
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={styles.container}>
 
-      <View style={styles.container}>
+      {driverLocation && <MapView
+        ref={mapRef}
+        style={styles.mapStyle}
+        pitchEnabled={false}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: driverLocation.driverLocation.coords.latitude,
+          longitude: driverLocation.driverLocation.coords.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04
+        }}
+        customMapStyle={mapStyle}
+      >
 
-        {driverLocation && <MapView
-          ref={mapRef}
-          style={styles.mapStyle}
-          pitchEnabled={false}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            latitude: driverLocation.driverLocation.coords.latitude,
-            longitude: driverLocation.driverLocation.coords.longitude,
-            latitudeDelta: 0.04,
-            longitudeDelta: 0.04
-          }}
-
-          customMapStyle={mapStyle}
-        >
-
-        {notificationData?.destination && <MapViewDirections
+        {notificationData?.destination ? <MapViewDirections
           origin={{
             latitude: driverLocation.driverLocation.coords.latitude,
             longitude: driverLocation.driverLocation.coords.longitude
@@ -196,61 +187,59 @@ useEffect(() => {
           strokeWidth={3}
           strokeColor={AppStyles.color.salmonred}
           lineDashPattern={[0]}
-        
-        /> }
+        /> : <></> }
 
-          <Marker
-            image={require('./car-128px.png')}
-            coordinate={{
-              latitude: driverLocation.driverLocation.coords.latitude,
-              longitude: driverLocation.driverLocation.coords.longitude,
-            }}
-            onDragEnd={
-              (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
-            }
-            title={'Driver'}
-          />
+        <Marker
+          image={require('../../../assets/car-128px.png')}
+          // image={require('./car-128px.png')}
+          coordinate={{
+            latitude: driverLocation.driverLocation.coords.latitude,
+            longitude: driverLocation.driverLocation.coords.longitude,
+          }}
+          onDragEnd={
+            (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+          }
+          title={'Driver'}
+        />
 
-          {AcceptedRideRequest && <Marker
-            image={require('./person-128px_inverted.png')}
-            coordinate={{
-              latitude: notificationData.origin.lat, //38.558227 
-              longitude: notificationData.origin.lng, //-121.4266 
-            }}
-            onDragEnd={
-              (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
-            }
-            title={'Pick Up Location'}
-          />}
+        {AcceptedRideRequest && <Marker
+          image={require('../../../assets/person-128px_inverted.png')}
+          //image={require('./person-128px_inverted.png')}
+          coordinate={{
+            latitude: notificationData.origin.lat, //38.558227 
+            longitude: notificationData.origin.lng, //-121.4266 
+          }}
+          onDragEnd={
+            (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+          }
+          title={'Pick Up Location'}
+        />}
 
-          {AcceptedRideRequest && <Marker
-            coordinate={{
-              latitude: notificationData.destination.lat, //38.568491 
-              longitude: notificationData.destination.lng, //-121.418 
-            }}
-            onDragEnd={
-              (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
-            }
-            title={'Drop Off Here'}
-          />}
+        {AcceptedRideRequest && <Marker
+          coordinate={{
+            latitude: notificationData.destination.lat, //38.568491 
+            longitude: notificationData.destination.lng, //-121.418 
+          }}
+          onDragEnd={
+            (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+          }
+          title={'Drop Off Here'}
+        />}
+      </MapView>}
 
-        </MapView>}
-        {!driverLocation &&<ActivityIndicator
-            style={styles.loadingMap}
-            animating={animate}
-            size="large" 
-            color={"#AFAFAF"}
-       />}
-      {!driverLocation && <Text style= {styles.loadingText}>{text}</Text>}
+        {!driverLocation && <View style={styles.loadingGroup}>
+          <ActivityIndicator animating={animate} size="large" color={AppStyles.color.platinum} />
+          <Text style={styles.loadingText}>{text}</Text>
+        </View>}
 
-      <View style={styles.driverHUD}>
-        {AcceptedRideRequest && <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />}
-        <View style={styles.space} />
-        <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
-            </View>
-      </View>
+        {AcceptedRideRequest && <View style={styles.mapButton}>
+          <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />
+        </View>}
 
-        <View>
+        <View style={styles.offlineButton}>
+          <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
+        </View>
+
         {receivedRideRequest &&
           <Modal
             animationType="slide"
@@ -285,6 +274,7 @@ useEffect(() => {
             </View>
           </Modal>
         }
+
         {canceledRideModal &&
           <Modal
             animationType="slide"
@@ -299,10 +289,13 @@ useEffect(() => {
                 <Text style={styles.modalText}>
                   The ride has been canceled
                 </Text>
-                <View style={styles.modalButtonContainer}>
+                <View style={[styles.modalButtonContainer, {alignSelf: 'center'}]}>
                   <Pressable
                     style={[styles.modalButton, styles.buttonAccept]}
-                    onPress={() => setCanceledRideModal(!canceledRideModal)}>
+                    onPress={() => {setCanceledRideModal(!canceledRideModal);
+                                    setAcceptedRideRequest(false)
+                                    // setNotificationData({origin: notificationData.origin, destination: {lat: undefined, lng: undefined}})
+                                  }}>
                     <Text style={styles.modalButtonText}>Continue</Text>
                   </Pressable>
                 </View>
@@ -310,78 +303,47 @@ useEffect(() => {
             </View>
           </Modal>
         }
-      </View>
-
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    // alignItems: 'center',
-    // justifyContent: 'flex-end',
+    flex: 1,
+    backgroundColor: AppStyles.color.black,
   },
   mapStyle: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: '35%',
+    height: height * 0.7,
+    width: width
   },
-  driverHUD: {
-    position: 'relative',
-    flex: 0,
-    backgroundColor: 'black',
-    alignItems: 'center',
-    top: '65%',
-    paddingTop:'25%',
-    height: Dimensions.get('screen').height,
-    width: Dimensions.get('screen').width,
-  },
-  space: {
-    height: 20,
-    width: 20 
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
+  loadingGroup: {
     alignItems: "center",
+    marginTop: height * 0.3
   },
   loadingText: {
-    textAlign: 'center',
-    color: '#AFAFAF',
+    color: AppStyles.color.platinum,
     fontWeight: 'bold',
-    top:'32.5%',
+    textAlign: 'center',
+    marginBottom: "5%"
   },
-  loadingMap: {
-    flex: 1,
+  mapButton: {
+    width: width,
+    marginTop: 10,
+  },
+  offlineButton: {
     position: 'absolute',
-    top:'25%',
-    left:'45%',
+    bottom: 0,
     justifyContent: 'center',
-    alignItems: "center",
-
+    alignItems: 'center',
+    width: width,
   },
-  edgePadding: {
-    top: '5%',
-    left: '5%',
-    bottom: '5%',
-    right: '5%'
-  },
-
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
   },
   modalView: {
-    width: '75%',
+    width: '85%',
     height: '25%',
     backgroundColor: AppStyles.color.gray,
     borderRadius: 25,
@@ -394,6 +356,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 3,
     elevation: 5,
+  },
+  modalText: {
+    textAlign: 'justify',
+    color: AppStyles.color.black,
+    fontWeight: 'bold',
+    marginTop: 4
   },
   modalButtonContainer: {
     flexDirection: 'row',
@@ -414,10 +382,6 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: AppStyles.color.platinum,
     fontWeight: 'bold',
-  },
-  modalText: {
-    textAlign: 'justify',
-    color: AppStyles.color.black,
-    fontWeight: 'bold'
+    fontSize: 16,
   },
 });

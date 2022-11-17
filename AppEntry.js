@@ -132,7 +132,6 @@ function AppEntry() {
         setIsGeneralFilled(null);
         setIsMusicFilled(null);
       }
-
     });
   }
 

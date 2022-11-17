@@ -1,11 +1,4 @@
-import {
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-} from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { AppStyles } from "../utils/styles";
 import { Icon } from "react-native-elements";
@@ -66,6 +59,7 @@ function NavOptions({ userType, userInfo }) {
   }
   if (userType === 'Driver') {
     data[0].screen = "Driver Map";
+    data[0].opacity = 1.0;
     data[0].title = "Go Online";
     data[0].origin = true;
     data[1].screen = "Driver Profile"

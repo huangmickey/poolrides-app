@@ -1,14 +1,20 @@
-import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
 import React, { useState, useEffect } from "react";
-import { AppStyles } from "../../utils/styles";
-import { authentication, db } from "../../firebase/firebase-config";
-import { doc, getDoc } from "firebase/firestore/lite";
+import { Dimensions, Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import Button from 'react-native-button';
+import { useDispatch, useSelector } from "react-redux";
+
 import NavOptions from "../../components/NavOptions";
 import IDVerification from "../IDVerification/IDVerification";
-import Button from 'react-native-button';
+
 import { setDriverName, selectLocationPermissionStatus } from "../../../slices/navSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { getLocationPermission } from "../../utils/gpsUtils";
+import { AppStyles } from "../../utils/styles";
+
+import { authentication, db } from "../../firebase/firebase-config";
+import { doc, getDoc } from "firebase/firestore/lite";
+
+const { width, height } = Dimensions.get('screen');
+const thumbMeasure = ((width - 48 - 32) / 2.5); 
 
 export default function DriverDashboard() {
     const [userInfo, setUserInfo] = useState();
@@ -60,11 +66,7 @@ export default function DriverDashboard() {
                 <SafeAreaView style={styles.container}>
                     <View style={styles.header}>
                         <Image
-                            style={{
-                                width: 100,
-                                height: 100,
-                                resizeMode: "contain",
-                            }}
+                            style={styles.logo}
                             source={require("../../../assets/logo.png")}
                         />
                         <View style={{ justifyContent: 'center', }}>
@@ -93,9 +95,7 @@ export default function DriverDashboard() {
                     :
                     <View style={styles.container} />
             }
-
         </>
-
     );
 }
 
@@ -104,39 +104,44 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: AppStyles.color.black,
     },
-    text: {
-        color: AppStyles.color.white,
-    },
     header: {
-        paddingLeft: 10,
+        marginTop: height * 0.05,
+        height: height * 0.07,
+        paddingLeft: 15,
+        paddingRight: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    logo: {
+        height: '100%',
+        width: "35%",
+        resizeMode: "contain",
+    },
     logOutBTN: {
         color: AppStyles.color.salmonred,
-        fontSize: 20,
+        fontSize: 24,
     },
-    navContainer: {
-        backgroundColor: AppStyles.color.black,
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: 100,
+    welcomeContainer: {
+        padding: 10,
+        paddingTop: 20,
     },
     signInText: {
         color: AppStyles.color.platinum,
         fontWeight: "bold",
         fontSize: AppStyles.textFontSizes.header,
     },
-    welcomeContainer: {
-        alignItems: "flex-start",
-        justifyContent: "flex-start",
-        padding: 10,
-    },
     welcomeText: {
         color: AppStyles.color.platinum,
         lineHeight: 25,
-        fontWeight: "400",
-        paddingBottom: 40,
+        paddingBottom: "7%",
         fontSize: AppStyles.fontSize.normal,
     },
+    navContainer: {  
+        position: "absolute",
+        alignSelf: "center",
+        marginTop: height * 0.33,
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: -1,
+      },
 });

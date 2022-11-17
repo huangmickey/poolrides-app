@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    TouchableOpacity,
-    Modal,
-    Button,
-    Alert,
-} from 'react-native';
+import { Alert, Button, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CustomButton from "../../components/CustomButton";
 import { FloatingLabelInput } from 'react-native-floating-label-input';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,14 +8,7 @@ import { EvilIcons, AntDesign, Fontisto, MaterialIcons } from '@expo/vector-icon
 import validator from 'validator';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
-import {
-    getAuth,
-    updatePassword,
-    updateEmail,
-    reauthenticateWithCredential,
-    EmailAuthProvider,
-    deleteUser
-} from "firebase/auth"
+import { getAuth, updatePassword, updateEmail, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth"
 
 export default function DriverProfile() {
 
@@ -41,7 +25,6 @@ export default function DriverProfile() {
     const [deleteModalOpen, setDeleteModalOpen] = useState('false');
     const [newEmail, setNewEmail] = useState('');
     const [newPhone, setNewPhone] = useState('');
-
 
     useEffect(() => {
         const userUID = authentication.currentUser.uid;
@@ -154,7 +137,6 @@ export default function DriverProfile() {
     }
 
     return (
-
         <SafeAreaView style={styles.container}>
             <Modal visible={modalOpen}
                 animationType="slide"
@@ -549,5 +531,4 @@ const styles = StyleSheet.create({
         padding: 20, width: '100%',
         marginBottom: 10
     }
-
 })
