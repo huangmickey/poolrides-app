@@ -75,9 +75,10 @@ export default function DriverMap({ route, navigation }) {
   //UseEffect for Waiting for Map to Load
   useEffect(() => {
     setText('Loading Map...')
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setText('Loading Map...' + '\n' + 'Just a little bit longer...')
     }, 5000);
+    return () => clearTimeout(timer)
   }, [setTimeout])
 
   //UseEffect for every 15 seconds
@@ -102,6 +103,14 @@ export default function DriverMap({ route, navigation }) {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       }
+      mapRef.current.animateToRegion(
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04
+        }, 2000
+      )
       const docRef = doc(db, 'activeDrivers', driverUID);
       await setDoc(docRef, data, { merge: true });
     } catch {
