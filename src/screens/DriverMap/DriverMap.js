@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {  ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
@@ -10,12 +10,12 @@ import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
 import { config } from "../../../config";
 import mapStyle from ' ../../../components/mapStyle.json'
-
+import * as Location from 'expo-location'
 import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
 import { authentication, db } from "../../firebase/firebase-config";
 
 const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const thumbMeasure = ((width - 48 - 32) / 2.5);
 
 export default function DriverMap({ route, navigation }) {
   const driverLocation = useSelector(selectDriverLocation)
@@ -27,8 +27,8 @@ export default function DriverMap({ route, navigation }) {
   const { startBackgroundLocation, getGPSLocation } = getLocationPermission();
   const [AcceptedRideRequest, setAcceptedRideRequest] = useState(false)
   const [canceledRideModal, setCanceledRideModal] = useState(false)
-  const [text,setText] = useState('')
-  const [animate,setAnimate] = useState(true)
+  const [text, setText] = useState('')
+  const [animate, setAnimate] = useState(true)
   const mapRef = useRef(null)
 
   const driverUID = authentication.currentUser.uid
@@ -36,25 +36,25 @@ export default function DriverMap({ route, navigation }) {
   useEffect(() => {
     getGPSLocation()
     goOnline()
-  }, [driverLocation])
+  }, [])
 
 
   useEffect(() => {
     if (notificationData !== undefined && driverLocation !== undefined) {
       const markers = [
         {
-            latitude: notificationData.origin.lat,
-            longitude: notificationData.origin.lng,
+          latitude: notificationData.origin.lat,
+          longitude: notificationData.origin.lng,
         },
         {
-            latitude: notificationData.destination.lat, 
-            longitude: notificationData.destination.lng
+          latitude: notificationData.destination.lat,
+          longitude: notificationData.destination.lng
         }
-        ]
+      ]
       mapRef.current.fitToCoordinates(markers, {
         edgePadding: { top: 75, right: 75, bottom: 75, left: 75 },
         animated: true
-    });
+      });
     }
   }, [notificationData])
 
@@ -74,23 +74,42 @@ export default function DriverMap({ route, navigation }) {
 
   //UseEffect for Waiting for Map to Load
   useEffect(() => {
-      setText('Loading Map...')
-      setTimeout(() => {
-          setText('Loading Map...' + '\n' + 'Just a little bit longer...')
-      }, 5000);
-  },[setTimeout])
+    setText('Loading Map...')
+    setTimeout(() => {
+      setText('Loading Map...' + '\n' + 'Just a little bit longer...')
+    }, 5000);
+  }, [setTimeout])
 
   //UseEffect for every 15 seconds
   useEffect(() => {
     // Background Location
     // startBackgroundLocation()
     const updateDBInterval = setInterval(() => {
-      getGPSLocation()
-    // Foreground Location
-    }, 15000);
+      // getGPSLocation()
+      updateLocationToDB()
+
+    }, 5000);
     return () => clearInterval(updateDBInterval);
   }, []);
 
+  async function updateLocationToDB() {
+    try {
+      var location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
+      console.log('This location is being printed every 5s: (lat: ', location.coords.latitude, ' long: ', location.coords.longitude, ')')
+      const data = {
+        driverID: driverUID,
+        driverPushToken: driverPushToken.pushToken,
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      }
+      const docRef = doc(db, 'activeDrivers', driverUID);
+      await setDoc(docRef, data, { merge: true });
+    } catch {
+      console.log('catch')
+      location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
+    }
+
+  }
 
   async function goOffline() {
     await deleteDoc(doc(db, "activeDrivers", driverUID));
@@ -99,23 +118,23 @@ export default function DriverMap({ route, navigation }) {
 
   async function goOnline() {
     if (driverLocation !== undefined) {
-        const data = {
-            driverID: driverUID,
-            driverPushToken: driverPushToken.pushToken,
-            lat: driverLocation.driverLocation.coords.latitude,
-            lng: driverLocation.driverLocation.coords.longitude,
-            isBusy: false,
-          }
-          mapRef.current.animateToRegion(
-            {
-                latitude: driverLocation.driverLocation.coords.latitude,
-                longitude: driverLocation.driverLocation.coords.longitude,
-                latitudeDelta: 0.04,
-                longitudeDelta: 0.04
-            },2000
-        )
-          const docRef = doc(db, 'activeDrivers', driverUID);
-          await setDoc(docRef, data, { merge: true });
+      const data = {
+        driverID: driverUID,
+        driverPushToken: driverPushToken.pushToken,
+        lat: driverLocation.driverLocation.coords.latitude,
+        lng: driverLocation.driverLocation.coords.longitude,
+        isBusy: false,
+      }
+      mapRef.current.animateToRegion(
+        {
+          latitude: driverLocation.driverLocation.coords.latitude,
+          longitude: driverLocation.driverLocation.coords.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04
+        }, 2000
+      )
+      const docRef = doc(db, 'activeDrivers', driverUID);
+      await setDoc(docRef, data, { merge: true });
     }
   }
 
@@ -157,7 +176,7 @@ export default function DriverMap({ route, navigation }) {
     } else {
       Alert.alert('Error 500: Internal Server Error')
     }
-}
+  }
 
   return (
     <View style={styles.container}>
@@ -187,7 +206,7 @@ export default function DriverMap({ route, navigation }) {
           strokeWidth={3}
           strokeColor={AppStyles.color.salmonred}
           lineDashPattern={[0]}
-        /> : <></> }
+        /> : <></>}
 
         <Marker
           image={require('../../../assets/car-128px.png')}
@@ -227,82 +246,83 @@ export default function DriverMap({ route, navigation }) {
         />}
       </MapView>}
 
-        {!driverLocation && <View style={styles.loadingGroup}>
-          <ActivityIndicator animating={animate} size="large" color={AppStyles.color.platinum} />
-          <Text style={styles.loadingText}>{text}</Text>
-        </View>}
+      {!driverLocation && <View style={styles.loadingGroup}>
+        <ActivityIndicator animating={animate} size="large" color={AppStyles.color.platinum} />
+        <Text style={styles.loadingText}>{text}</Text>
+      </View>}
 
-        {AcceptedRideRequest && <View style={styles.mapButton}>
-          <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />
-        </View>}
+      {AcceptedRideRequest && <View style={styles.mapButton}>
+        <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />
+      </View>}
 
-        <View style={styles.offlineButton}>
-          <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
-        </View>
+      <View style={styles.offlineButton}>
+        <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
+      </View>
 
-        {receivedRideRequest &&
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>
-                  Origin: {notificationData.originAddress}{"\n"}
-                  Destination: {notificationData.destinationAddress}{"\n"}
-                  Money Earned: {notificationData.travelTime_cost}{"\n"}
-                  Distance: {notificationData.travelTime_distance}{"\n"}
-                  Time: {notificationData.travelTime_time}
-                </Text>
-                <View style={styles.modalButtonContainer}>
-                  <Pressable
-                    style={[styles.modalButton, styles.buttonAccept]}
-                    onPress={acceptRide}>
-                    <Text style={styles.modalButtonText}>Accept Ride</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.modalButton, styles.buttonReject]}
-                    onPress={rejectRide}>
-                    <Text style={styles.modalButtonText}>Reject Ride</Text>
-                  </Pressable>
-                </View>
+      {receivedRideRequest &&
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Origin: {notificationData.originAddress}{"\n"}
+                Destination: {notificationData.destinationAddress}{"\n"}
+                Money Earned: {notificationData.travelTime_cost}{"\n"}
+                Distance: {notificationData.travelTime_distance}{"\n"}
+                Time: {notificationData.travelTime_time}
+              </Text>
+              <View style={styles.modalButtonContainer}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonAccept]}
+                  onPress={acceptRide}>
+                  <Text style={styles.modalButtonText}>Accept Ride</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonReject]}
+                  onPress={rejectRide}>
+                  <Text style={styles.modalButtonText}>Reject Ride</Text>
+                </Pressable>
               </View>
             </View>
-          </Modal>
-        }
+          </View>
+        </Modal>
+      }
 
-        {canceledRideModal &&
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={canceledRideModal}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!canceledRideModal);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>
-                  The ride has been canceled
-                </Text>
-                <View style={[styles.modalButtonContainer, {alignSelf: 'center'}]}>
-                  <Pressable
-                    style={[styles.modalButton, styles.buttonAccept]}
-                    onPress={() => {setCanceledRideModal(!canceledRideModal);
-                                    setAcceptedRideRequest(false)
-                                    // setNotificationData({origin: notificationData.origin, destination: {lat: undefined, lng: undefined}})
-                                  }}>
-                    <Text style={styles.modalButtonText}>Continue</Text>
-                  </Pressable>
-                </View>
+      {canceledRideModal &&
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={canceledRideModal}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!canceledRideModal);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                The ride has been canceled
+              </Text>
+              <View style={[styles.modalButtonContainer, { alignSelf: 'center' }]}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonAccept]}
+                  onPress={() => {
+                    setCanceledRideModal(!canceledRideModal);
+                    setAcceptedRideRequest(false)
+                    // setNotificationData({origin: notificationData.origin, destination: {lat: undefined, lng: undefined}})
+                  }}>
+                  <Text style={styles.modalButtonText}>Continue</Text>
+                </Pressable>
               </View>
             </View>
-          </Modal>
-        }
+          </View>
+        </Modal>
+      }
     </View>
   );
 };
