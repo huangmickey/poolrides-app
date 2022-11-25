@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dimensions, StyleSheet, Text, View, SafeAreaView, Image, TouchableWithoutFeedback } from "react-native";
+import { Dimensions, Image, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import {Keyboard} from 'react-native'
 import { AppStyles } from "../../utils/styles";
 import { authentication, db } from "../../firebase/firebase-config";
@@ -7,9 +7,6 @@ import { doc, getDoc } from "firebase/firestore/lite";
 import NavOptions from "../../components/NavOptions";
 import { useNavigation } from "@react-navigation/native";
 import FromAddressSearchBar from "../../components/FromAddressSearch";
-
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
 
 const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5); 

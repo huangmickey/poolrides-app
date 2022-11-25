@@ -70,8 +70,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
         <View style={styles.inputView} marginBottom={10}>
           <TextInput
             style={styles.textInput}
-            // placeholder={text}
-            placeholder={'example@email.com'}
+            placeholder={text}
             placeholderTextColor={AppStyles.color.gray}
             keyboardAppearance={keyboardAppearance}
             maxLength={maxLength}

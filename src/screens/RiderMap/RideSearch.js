@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { Snackbar } from "react-native-paper";
@@ -8,6 +8,9 @@ import { authentication } from "../../firebase/firebase-config";
 import tw from "tailwind-react-native-classnames";
 import { AppStyles } from '../../utils/styles';
 import { selectOrigin, selectDestination, selectTravelTimeInformation, selectRideInformation, selectPushToken } from '../../../slices/navSlice'
+
+const { width, height } = Dimensions.get('screen');
+const thumbMeasure = ((width - 48 - 32) / 2.5); 
 
 export default function RideSearch() {
 
@@ -23,17 +26,13 @@ export default function RideSearch() {
     const onDismissSnackBar = () => setSnackBarVisible(false);
 
     const [isCanceled, setIsCanceled] = useState(false);
-    const [isSearching, setIsSerching] = useState(true);
+    const [isSearching, setIsSearching] = useState(true);
     const [serverResponse, setServerResponse] = useState({ status: null, data: null });
-
-
-    const baseURL = 'https://us-central1-pool-rides-db.cloudfunctions.net/requestride';
-    // const rideRequestURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/requestride";
-    // const cancelURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/cancelRide";
 
     const rideRequestURL = "https://us-central1-pool-rides-db.cloudfunctions.net/requestride";
     const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide";
-    //https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide
+    // const rideRequestURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/requestride";
+    // const cancelURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/cancelRide";
 
     useEffect(() => {
         async function sendRequest() {
@@ -72,8 +71,13 @@ export default function RideSearch() {
                 axios(config)
                     .then(async function (response) {
                         setServerResponse({ status: response.status, data: response.data });
-                        setIsSerching(false);
-                        await timeout(6000); //added to make it look like something is happening.
+                        setIsSearching(false);
+                        await timeout(4000); //added to make it look like something is happening.
+
+                        if (isCanceled == false) {
+                            navigation.pop(2);
+                            navigation.navigate({name:"Ride Results", params:{data: response.data.data}});
+                        }
                     })
                     .catch(async function (error) {
                         if (error.response) {
@@ -82,19 +86,14 @@ export default function RideSearch() {
                         if (error.request) {
                             setServerResponse({ status: error.request.status, data: error.response.data });
                         }
-                        setIsSerching(false);
+                        setIsSearching(false);
                     });
-
-                if (!isCanceled && serverResponse.status == 200) {
-                    navigation.pop();
-                    navigation.navigate("Ride Results")
-                }
             } catch (e) {
                 console.warn(e);
                 setServerResponse({ status: "P404", data: "Error connecting to server. Please try again" });
 
-                await timeout(2000); //added as Firestore is to fast. 
-                setIsSerching(false);
+                await timeout(2000);
+                setIsSearching(false);
             }
         }
         sendRequest();
@@ -113,7 +112,6 @@ export default function RideSearch() {
                     <Text style={styles.text}>We are currently searching for a driver.</Text>
                 </View>
                 :
-
                 serverResponse.status == 200
                     ?
                     <View style={styles.center}>
@@ -164,7 +162,8 @@ export default function RideSearch() {
                                     setSnackBarVisible(true);
                                     setIsCanceled(true);
                                     await timeout(3500);
-                                    navigation.goBack(2);
+                                    navigation.pop(2);
+                                    navigation.goBack();
                                 })
                                 .catch(async function (error) {
                                     console.log(error.response.status)
@@ -173,7 +172,8 @@ export default function RideSearch() {
                                     setSnackBarVisible(true);
                                     setIsCanceled(true);
                                     await timeout(3500);
-                                    navigation.goBack(2);
+                                    navigation.pop(2);
+                                    navigation.goBack();
                                 });
 
                         } catch (e) {
@@ -205,7 +205,6 @@ export default function RideSearch() {
                 }}>
                 {snackBarText}
             </Snackbar>
-
         </View>
     );
 }
@@ -213,7 +212,7 @@ export default function RideSearch() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "black",
+        backgroundColor: AppStyles.color.black,
     },
     center: {
         flex: 1,
@@ -225,5 +224,5 @@ const styles = StyleSheet.create({
     },
     spacing: {
         marginBottom: "5%"
-    }
+    },
 });

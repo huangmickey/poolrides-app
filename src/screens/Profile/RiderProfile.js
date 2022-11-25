@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, ImageBackground, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Avatar } from 'react-native-paper';
 import { EvilIcons, Feather, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { AppStyles, AppIcon } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
 
-
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
-
 
 const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5);
@@ -61,7 +58,7 @@ export default function RiderProfile({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 0.6 }}>
+            <View style={{ flex: 0.6, zIndex: 1 }}>
                 <ImageBackground
                     source={AppIcon.images.profileBackground}
                     style={styles.profileContainer}
@@ -138,7 +135,7 @@ export default function RiderProfile({ navigation }) {
                 <CustomButton title={"Edit Profile"} stretch={true} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={editProfileHandler} />
             </View>
 
-            <View style={{ flex: 0.4, justifyContent: 'center' }}>
+            <View style={{ flex: 0.4, justifyContent: 'center', zIndex: 9}}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }} >
 
                     <TouchableOpacity style={styles.align} onPress={paymentHandler}>
@@ -151,20 +148,19 @@ export default function RiderProfile({ navigation }) {
                     <TouchableOpacity style={styles.align} onPress={interestHandler}>
                         <Octicons name="tasklist" size={50} color="white" />
                         <Text style={styles.bottomText}>
-                            {'Update Interests'}
+                            {'Update Interests\n'}
                         </Text>
                     </TouchableOpacity >
 
                     <TouchableOpacity style={styles.align} onPress={settingsHandler}>
                         <Feather name="settings" size={50} color="white" />
                         <Text style={styles.bottomText}>
-                            {'Settings'}
+                            {'Settings\n'}
                         </Text>
-                        <Text></Text>
                     </TouchableOpacity >
-
                 </View>
             </View>
+
         </View>
     );
 }
@@ -189,12 +185,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         width: width,
         zIndex: 5,
-    },
-    avatar: {
-        width: thumbMeasure,
-        height: thumbMeasure,
-        borderRadius: 50,
-        borderWidth: 0,
     },
     info: {
         marginTop: 30,
