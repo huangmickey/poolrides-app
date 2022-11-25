@@ -1,14 +1,14 @@
 import React from 'react';
+import '@testing-library/jest-native/extend-expect';
 import{render, fireEvent, screen} from '@testing-library/react-native';
-
 import LoginForm from "../src/components/LoginForm";
 
 
-it('renders default elements', ()=>{
-    const {getAllByText} = render (<LoginForm/>);
-    expect(getAllByText('Sign In').length).toBe(1);
-    screen.getByPlaceholderText('Password');
-    screen.getByPlaceholderText('example@email.com');
+it('elements are visible to the user', ()=>{
+    const {getByText, getByPlaceholderText} = render (<LoginForm/>);
+    expect(getByText('Sign In')).toBeVisible();
+    expect(getByPlaceholderText('Password')).toBeVisible();
+    expect(getByPlaceholderText('example@email.com')).toBeVisible();
     
 });
 

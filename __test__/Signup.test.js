@@ -1,16 +1,17 @@
 import React from 'react';
 import Signup from '../src/screens/Signup/Signup';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import '@testing-library/jest-native/extend-expect';
 
 
 
 describe('Signup screen', () => {
 
-    it("renders default elements", () => {
-        const { getAllByText } = render(<Signup />)
-        expect(getAllByText("Driver Sign Up").length).toBe(1)
-        expect(getAllByText("Rider Sign Up").length).toBe(1)
-        expect(getAllByText("Have an Account?").length).toBe(1)
+    it('elements are visible to the user', () => {
+        const { getByText } = render(<Signup />);
+        expect(getByText("Driver Sign Up")).toBeVisible();
+        expect(getByText("Rider Sign Up")).toBeVisible();
+        expect(getByText("Have an Account?")).toBeVisible();
     });
 
 
