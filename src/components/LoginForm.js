@@ -11,7 +11,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
     email: "",
     password: "",
   });
-
+ 
   const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState({});
   const keyboardAppearance = "dark";
@@ -70,7 +70,9 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
         <View style={styles.inputView} marginBottom={10}>
           <TextInput
             style={styles.textInput}
-            placeholder={text}
+            autoCorrect={false}
+            spellCheck={false}
+            placeholder={'example@email.com'}
             placeholderTextColor={AppStyles.color.gray}
             keyboardAppearance={keyboardAppearance}
             maxLength={maxLength}

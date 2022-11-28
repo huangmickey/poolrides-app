@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import{render, fireEvent, screen} from '@testing-library/react-native';
 import { AppStyles } from '../src/utils/styles';
 import Chip from "../src/components/Chip";
@@ -37,12 +37,13 @@ const defaultInterests = [
 describe('Chip element', () => {
 
     it('buttons are visible to the user ', ()=>{
-        const {getByTestId, getByText} = render (<Chip interest = 'Food' interestsObj = {defaultInterests} />);
+        const {getByText} = render (<Chip interest = 'Food' interestsObj = {defaultInterests} />);
         expect(getByText('Food')).toBeVisible();
     });
     it('button style changes on press', ()=>{
-        const {getByTestId, getByText} = render (<Chip interest = 'Food' interestsObj = {defaultInterests} />);
+        const {getByText} = render (<Chip interest = 'Food' interestsObj = {defaultInterests} />);
         const FoodBtn = getByText('Food');
+        expect(FoodBtn).toHaveStyle({color: AppStyles.color.white});
         fireEvent.press(FoodBtn);
         expect(FoodBtn).toHaveStyle({color: AppStyles.color.gray});
         fireEvent.press(FoodBtn);
