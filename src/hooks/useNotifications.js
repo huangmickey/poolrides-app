@@ -57,6 +57,17 @@ export const useNotifications = () => {
   const handleReceivedNotification = async response => {
     console.log("NOTIFICATION RECEIVED")
     // 20s timer to dismiss notification
+
+    let notificationData = response.request.trigger.payload.body
+
+    // console.log("Response for notification: ", response);
+    // console.log("Notification Data: ", notificationData);
+
+    if (notificationData.notificationType == "rideComplete") {
+      await timeout(5000)
+      RootNavigation.navigate('Rider Dashboard')
+    }
+
     await timeout(20000)
     await Notifications.dismissAllNotificationsAsync();
 
@@ -68,14 +79,22 @@ export const useNotifications = () => {
     // If the driver accepts the ride request, make a post request to the server which will set the rides "isAccepted" to true, and add the driversuserID, and driverPushToken to the entry
     // Use the rideDoc located on line 98 of index.js in the backend.  This is the exact document to update.
     let notificationData = response.notification.request.content.data
+
+
+    // console.log("Response for notification: ", response);
     // console.log(notificationData)
     // console.log(RootNavigation.navigationRef.current.getRootState())
-    RootNavigation.navigate('Driver Map', { notificationData: notificationData })
+
+
+    if (notificationData.notificationType == "rideCanceled" || notificationData.notificationType == "rideReceived") {
+      RootNavigation.navigate('Driver Map', { notificationData: notificationData })
+    } else {
+      RootNavigation.navigate('Rider Dashboard')
+    }
   };
 
   return { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse, handleReceivedNotification }
 }
-
 
 function timeout(delay) {
   return new Promise(res => setTimeout(res, delay));
