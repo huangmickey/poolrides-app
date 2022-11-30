@@ -13,7 +13,7 @@ import { AppStyles } from '../../utils/styles';
 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore/lite';
-import { db, authentication } from '../../firebase/firebase-config';
+// import { db, authentication } from '../../firebase/firebase-config';
 import AuthErrorHandler from '../../utils/AuthErrorHandler';
 
 export default function RiderSignUp() {
@@ -114,8 +114,9 @@ export default function RiderSignUp() {
                 <KeyboardAwareScrollView contentContainerStyle={styles.scrollviewContainer}
                     enableOnAndroid={true} extraScrollHeight={60}
                 >
-                    <View style={[styles.InputContainer, { borderColor: validationHandler(firstname) }]}>
+                    <View testID='fname' style={[styles.InputContainer, { borderColor: validationHandler(firstname) }]}>
                         <FloatingLabelInput
+                            testID='firstName'
                             value={firstname}
                             label={'First Name:'}
                             keyboardAppearance={keyboardAppearance}
@@ -124,8 +125,9 @@ export default function RiderSignUp() {
                         />
                     </View>
 
-                    <View style={[styles.InputContainer, { borderColor: validationHandler(lastname) }]}>
+                    <View testID='lname'style={[styles.InputContainer, { borderColor: validationHandler(lastname) }]}>
                         <FloatingLabelInput
+                            testID='lastName'
                             value={lastname}
                             label={'Last Name:'}
                             keyboardAppearance={keyboardAppearance}
@@ -134,8 +136,9 @@ export default function RiderSignUp() {
                         />
                     </View>
 
-                    <View style={[styles.InputContainer, { borderColor: validationHandler(date) }]}>
+                    <View testID='dob'style={[styles.InputContainer, { borderColor: validationHandler(date) }]}>
                         <FloatingLabelInput
+                            testID='DOB'
                             value={date}
                             label={'Date Of Birth:'}
                             maskType={'date'}
@@ -149,8 +152,9 @@ export default function RiderSignUp() {
                         />
                     </View>
 
-                    <View style={[styles.InputContainer, { borderColor: validationHandler(email) }]}>
+                    <View testID='email' style={[styles.InputContainer, { borderColor: validationHandler(email) }]}>
                         <FloatingLabelInput
+                            testID='Email'
                             value={email}
                             label={'E-mail Address:'}
                             keyboardAppearance={keyboardAppearance}
@@ -159,8 +163,9 @@ export default function RiderSignUp() {
                         />
                     </View>
 
-                    <View style={[styles.InputContainer, { borderColor: validationHandler(phone) }]}>
+                    <View testID='phone' style={[styles.InputContainer, { borderColor: validationHandler(phone) }]}>
                         <FloatingLabelInput
+                            testID='Phone'
                             value={phone}
                             label={'Phone Number:'}
                             maskType={'phone'}
@@ -173,8 +178,9 @@ export default function RiderSignUp() {
                         />
                     </View>
 
-                    <View style={[styles.InputContainer, { borderColor: validationHandler(password) }]}>
+                    <View testID='password' style={[styles.InputContainer, { borderColor: validationHandler(password) }]}>
                         <FloatingLabelInput
+                            testID='Password'
                             value={password}
                             label={'Password:'}
                             isPassword={true}
@@ -190,8 +196,9 @@ export default function RiderSignUp() {
                         <Text style={styles.passwordMsg} >{passwordMsg}</Text>
                     </View>
 
-                    <View style={[styles.InputContainer, { borderColor: validationHandler(confirmpassword) }]}>
+                    <View testID='confirmpassword' style={[styles.InputContainer, { borderColor: validationHandler(confirmpassword) }]}>
                         <FloatingLabelInput
+                            testID='confirmPassword'
                             value={confirmpassword}
                             label={'Confirm Password:'}
                             isPassword={true}
