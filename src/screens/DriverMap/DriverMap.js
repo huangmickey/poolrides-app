@@ -3,14 +3,16 @@ import { ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, T
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
-import { useSelector } from 'react-redux';
-import { selectDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { Snackbar } from "react-native-paper";
+import * as Location from 'expo-location'
+
+import { selectDriverLocation, setDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
 import { AppStyles } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
 import { config } from "../../../config";
 import mapStyle from ' ../../../components/mapStyle.json'
-import * as Location from 'expo-location'
 import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
 import { authentication, db } from "../../firebase/firebase-config";
 
@@ -31,7 +33,15 @@ export default function DriverMap({ route, navigation }) {
   const [animate, setAnimate] = useState(true)
   const mapRef = useRef(null)
 
+  const [snackBarText, setSnackBarText] = useState("");
+  const [snackBarVisisble, setSnackBarVisible] = useState(false);
+  const onDismissSnackBar = () => setSnackBarVisible(false);
+  const dispatch = useDispatch()
+
+  const [isCloseToDestination, setIsCloseToDestination] = useState(false);
+
   const driverUID = authentication.currentUser.uid
+  const completeRideURL = "https://us-central1-pool-rides-db.cloudfunctions.net/completeride";
 
   useEffect(() => {
     getGPSLocation()
@@ -68,7 +78,6 @@ export default function DriverMap({ route, navigation }) {
       } else if (route.params.notificationData.notificationType === 'rideCanceled') {
         setCanceledRideModal(true)
       }
-
     }
   }, [route])
 
@@ -88,10 +97,52 @@ export default function DriverMap({ route, navigation }) {
     const updateDBInterval = setInterval(() => {
       // getGPSLocation()
       updateLocationToDB()
-
     }, 5000);
     return () => clearInterval(updateDBInterval);
   }, []);
+
+
+
+  //UseEffect for checking Haversine every 5 seconds
+  useEffect(() => {
+    if (AcceptedRideRequest) {
+      const checkHaversine = setInterval(() => {
+
+        // 1 = Destination
+        // 2 = Driver Location
+        var lat1 = notificationData.destination.lat;
+        var lon1 = notificationData.destination.lng;
+
+        var lat2 = driverLocation.driverLocation.coords.latitude;
+        var lon2 = driverLocation.driverLocation.coords.longitude;
+
+        if ((lat1 === lat2) && (lon1 === lon2)) {
+          setIsCloseToDestination(true);
+        } else {
+          var radlat1 = Math.PI * lat1 / 180;
+          var radlat2 = Math.PI * lat2 / 180;
+          var theta = lon1 - lon2;
+          var radtheta = Math.PI * theta / 180;
+          var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+          if (dist > 1) {
+            dist = 1;
+          }
+          dist = Math.acos(dist);
+          dist = dist * 180 / Math.PI;
+          dist = dist * 60 * 1.1515;
+
+          // dist = miles
+          console.log('Driver is ', dist, ' miles away from destination')
+          if (dist <= 0.0947) {
+            setIsCloseToDestination(true);
+          } else {
+            setIsCloseToDestination(false);
+          }
+        }
+      }, 5000);
+      return () => clearInterval(checkHaversine);
+    }
+  }, [AcceptedRideRequest]);
 
   async function updateLocationToDB() {
     try {
@@ -113,11 +164,15 @@ export default function DriverMap({ route, navigation }) {
       )
       const docRef = doc(db, 'activeDrivers', driverUID);
       await setDoc(docRef, data, { merge: true });
+
+      dispatch(setDriverLocation({
+        driverLocation: location
+      }))
+
     } catch {
-      console.log('catch')
+      // console.log('catch')
       location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
     }
-
   }
 
   async function goOffline() {
@@ -185,6 +240,72 @@ export default function DriverMap({ route, navigation }) {
     } else {
       Alert.alert('Error 500: Internal Server Error')
     }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  async function rideComplete() {
+    // Makes the post request to rideComplete backend function
+    // needs to pass in riderUID and riderPushToken
+
+    // Reset everything for Driver
+
+    var refreshToken = await authentication.currentUser.getIdToken(true);
+    try {
+      const axios = require('axios').default;
+
+      var config = {
+        method: 'post',
+        url: completeRideURL,
+        headers: {
+          'Authorization': 'Bearer ' + refreshToken,
+        },
+        data: {
+          "riderUID": notificationData.riderUID,
+          "riderPushToken": notificationData.riderPushToken
+        }
+      };
+
+      axios(config)
+        .then(async function (response) {
+          setSnackBarText("Your Ride Is Complete.")
+          setSnackBarVisible(true);
+          await timeout(3500);
+          goOffline()
+          navigation.goBack();
+        })
+        .catch(async function (error) {
+
+          console.log(error.response.status);
+          setSnackBarText("An Error has occured.")
+          setSnackBarVisible(true);
+          await timeout(3500);
+          goOffline()
+          navigation.goBack();
+        });
+
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  function timeout(delay) {
+    return new Promise(res => setTimeout(res, delay));
   }
 
   return (
@@ -264,9 +385,21 @@ export default function DriverMap({ route, navigation }) {
         <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />
       </View>}
 
-      <View style={styles.offlineButton}>
-        <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
-      </View>
+      {AcceptedRideRequest && isCloseToDestination
+        ?
+        <View style={styles.offlineButton}>
+          <CustomButton stretch={true} title={"Ride Complete"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={rideComplete} />
+        </View>
+        :
+        AcceptedRideRequest && !isCloseToDestination
+          ?
+          <View style={styles.offlineButton}>
+            <CustomButton stretch={true} title={"Ride Complete"} color={AppStyles.color.gray} textColor={AppStyles.color.black} />
+          </View>
+          :
+          <View style={styles.offlineButton}>
+            <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
+          </View>}
 
       {receivedRideRequest &&
         <Modal
@@ -320,10 +453,15 @@ export default function DriverMap({ route, navigation }) {
               <View style={[styles.modalButtonContainer, { alignSelf: 'center' }]}>
                 <Pressable
                   style={[styles.modalButton, styles.buttonAccept]}
-                  onPress={() => {
+                  onPress={async () => {
                     setCanceledRideModal(!canceledRideModal);
                     setAcceptedRideRequest(false)
                     // setNotificationData({origin: notificationData.origin, destination: {lat: undefined, lng: undefined}})
+
+                    const activeDriverDocRef = doc(db, 'activeDrivers', driverUID);
+                    await updateDoc(activeDriverDocRef, {
+                      isBusy: true
+                    });
                   }}>
                   <Text style={styles.modalButtonText}>Continue</Text>
                 </Pressable>
@@ -332,6 +470,27 @@ export default function DriverMap({ route, navigation }) {
           </View>
         </Modal>
       }
+
+      <Snackbar
+        theme={{
+          colors: {
+            onSurface: AppStyles.color.gray,
+            surface: AppStyles.color.white,
+            accent: AppStyles.color.salmonred,
+          },
+        }}
+        visible={snackBarVisisble}
+        duration={3500}
+        onDismiss={onDismissSnackBar}
+        action={{
+          label: '',
+          onPress: () => {
+            onDismissSnackBar();
+          },
+        }}>
+        {snackBarText}
+      </Snackbar>
+
     </View>
   );
 };
