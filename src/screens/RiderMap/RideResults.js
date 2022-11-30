@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { EvilIcons } from '@expo/vector-icons';
-import { Snackbar } from "react-native-paper";  
+import { Snackbar } from "react-native-paper";
 import { useNavigation } from '@react-navigation/native';
 import { AppStyles } from '../../utils/styles';
 
@@ -11,10 +11,10 @@ import { StatusBar } from 'expo-status-bar';
 import Map from '../../components/Map';
 import tw from "tailwind-react-native-classnames";
 
-import {authentication } from '../../firebase/firebase-config';
+import { authentication } from '../../firebase/firebase-config';
 
 const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const thumbMeasure = ((width - 48 - 32) / 2.5);
 
 export default function RideResults({ route }) {
 
@@ -27,21 +27,18 @@ export default function RideResults({ route }) {
   const [snackBarVisisble, setSnackBarVisible] = useState(false);
   const onDismissSnackBar = () => setSnackBarVisible(false);
 
-  const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide";
-  const updateURL = "https://us-central1-pool-rides-db.cloudfunctions.net/getDriverLoc";
-
-  // const cancelURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/cancelRide";
-  // const updateURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/getDriverLoc";
+  const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelride";
+  const updateURL = "https://us-central1-pool-rides-db.cloudfunctions.net/getdriverloc";
 
   useEffect(() => {
-    if(route.params.data != null) { 
-      setDriverData(route.params.data); 
-    }   
+    if (route.params.data != null) {
+      setDriverData(route.params.data);
+    }
 
     async function ready() {
       await updateDriverLoc();
     }
-    ready(); 
+    ready();
 
     const updateDriverInterval = setInterval(async () => {
       await updateDriverLoc();
@@ -49,7 +46,7 @@ export default function RideResults({ route }) {
     return () => clearInterval(updateDriverInterval);
   }, []);
 
-  async function updateDriverLoc () {
+  async function updateDriverLoc() {
     var refreshToken = await authentication.currentUser.getIdToken(true);
     const userUID = authentication.currentUser.uid;
     // console.log(userUID)
@@ -62,13 +59,13 @@ export default function RideResults({ route }) {
         headers: {
           'Authorization': 'Bearer ' + refreshToken,
         },
-        data: {"riderUID": userUID}
+        data: { "riderUID": userUID }
       };
 
       axios(config)
         .then(async function (response) {
           setServerResponse({ status: response.status, data: response.data });
-          setDriverInfoCurr({lat: response.data.lat, lng: response.data.lng})
+          setDriverInfoCurr({ lat: response.data.lat, lng: response.data.lng })
           console.log(JSON.stringify(response.data))
         })
         .catch(async function (error) {
@@ -100,24 +97,24 @@ export default function RideResults({ route }) {
       <View style={styles.center}>
         <Text style={styles.driverInfo}>Driver Info</Text>
       </View>
-       
+
       <View style={styles.infoGroup}>
-        {driverData?.profilePicture == null || driverData?.profilePicture == "" 
-        ?
-        <EvilIcons name="user" size={90} color="white" />
-        :
-        <Image source={driverData.profilePicture} style={styles.bottomIcons} /> 
+        {driverData?.profilePicture == null || driverData?.profilePicture == ""
+          ?
+          <EvilIcons name="user" size={90} color="white" />
+          :
+          <Image source={driverData.profilePicture} style={styles.bottomIcons} />
         }
 
         <View style={styles.leftContent}>
           <Text style={styles.name}>
             {driverData?.driverName.length < 16
-            ?
-            driverData?.driverName
-            :
-            driverData?.driverName.substring(0,16) + '...'
+              ?
+              driverData?.driverName
+              :
+              driverData?.driverName.substring(0, 16) + '...'
             }
-          </Text> 
+          </Text>
         </View>
       </View>
 
@@ -151,16 +148,16 @@ export default function RideResults({ route }) {
                   await timeout(3500);
                   navigation.goBack();
                 });
-              } catch (e) {
-                console.warn(e);
-              }
-            }}>
+            } catch (e) {
+              console.warn(e);
+            }
+          }}>
           <Text style={tw`text-center text-black text-xl`}>
             Cancel Ride
           </Text>
         </TouchableOpacity>
       </View>
-      
+
       <Snackbar
         theme={{
           colors: {

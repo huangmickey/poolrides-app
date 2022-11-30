@@ -10,7 +10,7 @@ import { AppStyles } from '../../utils/styles';
 import { selectOrigin, selectDestination, selectTravelTimeInformation, selectRideInformation, selectPushToken } from '../../../slices/navSlice'
 
 const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const thumbMeasure = ((width - 48 - 32) / 2.5);
 
 export default function RideSearch() {
 
@@ -30,9 +30,7 @@ export default function RideSearch() {
     const [serverResponse, setServerResponse] = useState({ status: null, data: null });
 
     const rideRequestURL = "https://us-central1-pool-rides-db.cloudfunctions.net/requestride";
-    const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelRide";
-    // const rideRequestURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/requestride";
-    // const cancelURL = "http://192.168.1.19:5001/pool-rides-db/us-central1/cancelRide";
+    const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelride";
 
     useEffect(() => {
         async function sendRequest() {
@@ -76,7 +74,7 @@ export default function RideSearch() {
 
                         if (isCanceled == false) {
                             navigation.pop(2);
-                            navigation.navigate({name:"Ride Results", params:{data: response.data.data}});
+                            navigation.navigate({ name: "Ride Results", params: { data: response.data.data } });
                         }
                     })
                     .catch(async function (error) {
