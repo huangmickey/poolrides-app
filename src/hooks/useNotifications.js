@@ -57,6 +57,13 @@ export const useNotifications = () => {
   const handleReceivedNotification = async response => {
     console.log("NOTIFICATION RECEIVED")
     // 20s timer to dismiss notification
+
+    let notificationData = response.notification.request.content.data
+    if (notificationData.notificationType == "rideComplete") {
+      await timeout(1500)
+      RootNavigation.navigate('Rider Dashboard')
+    }
+
     await timeout(20000)
     await Notifications.dismissAllNotificationsAsync();
 
@@ -70,7 +77,9 @@ export const useNotifications = () => {
     let notificationData = response.notification.request.content.data
     // console.log(notificationData)
     // console.log(RootNavigation.navigationRef.current.getRootState())
-    RootNavigation.navigate('Driver Map', { notificationData: notificationData })
+    if (notificationData.notificationType == "rideCanceled" || notificationData.notificationType == "rideReceived") {
+      RootNavigation.navigate('Driver Map', { notificationData: notificationData })
+    }
   };
 
   return { registerForPushNotificationsAsync, handleNotification, handleNotificationResponse, handleReceivedNotification }

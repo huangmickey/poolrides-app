@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Snackbar } from "react-native-paper";
 import * as Location from 'expo-location'
 
-import { selectDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
+import { selectDriverLocation, setDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
 import { AppStyles } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
@@ -15,7 +15,6 @@ import { config } from "../../../config";
 import mapStyle from ' ../../../components/mapStyle.json'
 import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
 import { authentication, db } from "../../firebase/firebase-config";
-import { setDriverLocation } from '../../slices/navSlice';
 
 const { width, height } = Dimensions.get('screen');
 const thumbMeasure = ((width - 48 - 32) / 2.5);
@@ -105,49 +104,45 @@ export default function DriverMap({ route, navigation }) {
 
 
   //UseEffect for checking Haversine every 5 seconds
-  // useEffect(() => {
-  //   if (AcceptedRideRequest) {
-  //     const checkHaversine = setInterval(() => {
+  useEffect(() => {
+    if (AcceptedRideRequest) {
+      const checkHaversine = setInterval(() => {
 
-  //       // 1 = Destination
-  //       // 2 = Driver Location
-  //       var lat1 = notificationData.destination.lat;
-  //       var lon1 = notificationData.destination.lng;
+        // 1 = Destination
+        // 2 = Driver Location
+        var lat1 = notificationData.destination.lat;
+        var lon1 = notificationData.destination.lng;
 
-  //       var lat2 = ;
-  //       var lon2 = ;
+        var lat2 = driverLocation.driverLocation.coords.latitude;
+        var lon2 = driverLocation.driverLocation.coords.longitude;
 
+        if ((lat1 === lat2) && (lon1 === lon2)) {
+          setIsCloseToDestination(true);
+        } else {
+          var radlat1 = Math.PI * lat1 / 180;
+          var radlat2 = Math.PI * lat2 / 180;
+          var theta = lon1 - lon2;
+          var radtheta = Math.PI * theta / 180;
+          var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+          if (dist > 1) {
+            dist = 1;
+          }
+          dist = Math.acos(dist);
+          dist = dist * 180 / Math.PI;
+          dist = dist * 60 * 1.1515;
 
-  //       if ((lat1 === lat2) && (lon1 === lon2)) {
-  //         return 0;
-  //       } else {
-  //         var radlat1 = Math.PI * lat1 / 180;
-  //         var radlat2 = Math.PI * lat2 / 180;
-  //         var theta = lon1 - lon2;
-  //         var radtheta = Math.PI * theta / 180;
-  //         var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-  //         if (dist > 1) {
-  //           dist = 1;
-  //         }
-  //         dist = Math.acos(dist);
-  //         dist = dist * 180 / Math.PI;
-  //         dist = dist * 60 * 1.1515;
-  //         return dist;
-  //       }
-
-  //     }, 5000);
-  //     return () => clearInterval(checkHaversine);
-  //   }
-  // }, [AcceptedRideRequest]);
-
-
-
-
-
-
-
-
-
+          // dist = miles
+          console.log('Driver is ', dist, ' miles away from destination')
+          if (dist <= 0.0947) {
+            setIsCloseToDestination(true);
+          } else {
+            setIsCloseToDestination(false);
+          }
+        }
+      }, 5000);
+      return () => clearInterval(checkHaversine);
+    }
+  }, [AcceptedRideRequest]);
 
   async function updateLocationToDB() {
     try {
@@ -179,28 +174,6 @@ export default function DriverMap({ route, navigation }) {
       location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   async function goOffline() {
     await deleteDoc(doc(db, "activeDrivers", driverUID));
@@ -293,13 +266,12 @@ export default function DriverMap({ route, navigation }) {
     // Reset everything for Driver
 
     var refreshToken = await authentication.currentUser.getIdToken(true);
-    const userUID = authentication.currentUser.uid;
     try {
       const axios = require('axios').default;
 
       var config = {
         method: 'post',
-        url: completeRideUrl,
+        url: completeRideURL,
         headers: {
           'Authorization': 'Bearer ' + refreshToken,
         },
@@ -318,13 +290,10 @@ export default function DriverMap({ route, navigation }) {
           navigation.goBack();
         })
         .catch(async function (error) {
-          console.log(error.response.status)
-          console.log(error.request.status)
-          setSnackBarText("An Error has occured. Reload App")
+          setSnackBarText("An Error has occured.")
           setSnackBarVisible(true);
-          setIsCanceled(true);
           await timeout(3500);
-          navigation.pop(2);
+          goOffline()
           navigation.goBack();
         });
 
@@ -332,22 +301,6 @@ export default function DriverMap({ route, navigation }) {
       console.warn(e);
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   return (
@@ -427,27 +380,6 @@ export default function DriverMap({ route, navigation }) {
         <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />
       </View>}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       {AcceptedRideRequest && isCloseToDestination
         ?
         <View style={styles.offlineButton}>
@@ -463,28 +395,6 @@ export default function DriverMap({ route, navigation }) {
           <View style={styles.offlineButton}>
             <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
           </View>}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       {receivedRideRequest &&
         <Modal
@@ -538,10 +448,15 @@ export default function DriverMap({ route, navigation }) {
               <View style={[styles.modalButtonContainer, { alignSelf: 'center' }]}>
                 <Pressable
                   style={[styles.modalButton, styles.buttonAccept]}
-                  onPress={() => {
+                  onPress={async () => {
                     setCanceledRideModal(!canceledRideModal);
                     setAcceptedRideRequest(false)
                     // setNotificationData({origin: notificationData.origin, destination: {lat: undefined, lng: undefined}})
+
+                    const activeDriverDocRef = doc(db, 'activeDrivers', driverUID);
+                    await updateDoc(activeDriverDocRef, {
+                      isBusy: true
+                    });
                   }}>
                   <Text style={styles.modalButtonText}>Continue</Text>
                 </Pressable>
