@@ -170,7 +170,7 @@ export default function DriverMap({ route, navigation }) {
       }))
 
     } catch {
-      console.log('catch')
+      // console.log('catch')
       location = await Location.getCurrentPositionAsync({ accuracy: Location.LocationAccuracy.BestForNavigation });
     }
   }
@@ -290,6 +290,8 @@ export default function DriverMap({ route, navigation }) {
           navigation.goBack();
         })
         .catch(async function (error) {
+
+          console.log(error.response.status);
           setSnackBarText("An Error has occured.")
           setSnackBarVisible(true);
           await timeout(3500);
@@ -302,6 +304,9 @@ export default function DriverMap({ route, navigation }) {
     }
   }
 
+  function timeout(delay) {
+    return new Promise(res => setTimeout(res, delay));
+  }
 
   return (
     <View style={styles.container}>
