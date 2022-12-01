@@ -40,15 +40,14 @@ export default function RideResults({ route }) {
     }
     ready();
 
-    // const updateDriverInterval = setInterval(async () => {
-    //   await updateDriverLoc();
-    // }, 15000);
-    // return () => clearInterval(updateDriverInterval);
+    const updateDriverInterval = setInterval(async () => {
+      await updateDriverLoc();
+    }, 15000);
+    return () => clearInterval(updateDriverInterval);
   }, []);
   async function updateDriverLoc() {
     var refreshToken = await authentication.currentUser.getIdToken(true);
     const userUID = authentication.currentUser.uid;
-    // console.log(userUID)
 
     try {
       const axios = require('axios').default;

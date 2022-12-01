@@ -92,16 +92,16 @@ export default function DriverMap({ route, navigation }) {
     return () => clearTimeout(timer)
   }, [setTimeout])
 
-  //UseEffect for every 15 seconds
-  // useEffect(() => {
-  //   // Background Location
-  //   // startBackgroundLocation()
-  //   const updateDBInterval = setInterval(() => {
-  //     // getGPSLocation()
-  //     updateLocationToDB()
-  //   }, 5000);
-  //   return () => clearInterval(updateDBInterval);
-  // }, []);
+  // UseEffect for every 5 seconds
+  useEffect(() => {
+    // Background Location
+    // startBackgroundLocation()
+    const updateDBInterval = setInterval(() => {
+      // getGPSLocation()
+      updateLocationToDB()
+    }, 5000);
+    return () => clearInterval(updateDBInterval);
+  }, []);
 
 
 
