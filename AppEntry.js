@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 
+import DeleteAccount from './src/screens/Settings/DeleteAccount'
 import RiderDashboard from './src/screens/Dashboard/RiderDashboard'
 import DriverDashboard from './src/screens/Dashboard/DriverDashboard'
 import RecoverPassword from './src/screens/ForgotPassword/RecoverPassword'
@@ -51,6 +52,8 @@ import { navigationRef } from './RootNavigation'
 import * as Notifications from 'expo-notifications'
 import { useNotifications } from './src/hooks/useNotifications'
 import DriverRideComplete from './src/screens/DriverMap/DriverRideComplete'
+
+import UploadPicture from './src/screens/Settings/UploadPicture'
 LogBox.ignoreLogs(['Setting a timer for a long period of time',])
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
@@ -72,7 +75,7 @@ function AppEntry() {
         // console.log("Beginning App Pre-Load");
 
         // console.log("Running User Authentication");
-        var result = await authenticate();
+        // var result = await authenticate();
         // console.log("Authentication was: " + result);
 
         // var test = await authentication.currentUser.getIdToken();
@@ -246,11 +249,15 @@ function AppEntry() {
         <Stack.Screen name="Change Phone" component={ChangePhone} />
         <Stack.Screen name="Change Username" component={ChangeUsername} />
         <Stack.Screen name="Change Profile Picture" component={ChangeProfilePic} />
+        <Stack.Screen name="Upload Picture" component={UploadPicture} />
+
+
         <Stack.Screen name="Notifications" component={SettingsNotifications} />
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Security" component={Security} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="About" component={About} />
+        <Stack.Screen name="Delete Account" component={DeleteAccount} />
         <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Driver Map" component={DriverMap} />
         <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Ride Request" component={RideRequest} />
         <Stack.Screen options={
@@ -297,11 +304,15 @@ function AppEntry() {
         <Stack.Screen name="Change Phone" component={ChangePhone} />
         <Stack.Screen name="Change Username" component={ChangeUsername} />
         <Stack.Screen name="Change Profile Picture" component={ChangeProfilePic} />
+        <Stack.Screen name="Upload Picture" component={UploadPicture} />
+
+
         <Stack.Screen name="Notifications" component={SettingsNotifications} />
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Security" component={Security} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="About" component={About} />
+        <Stack.Screen name="Delete Account" component={DeleteAccount} />
         <Stack.Screen options={
           {
             headerShown: false,

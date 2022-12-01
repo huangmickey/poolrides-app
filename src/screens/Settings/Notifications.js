@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";                                                              
+import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AppStyles, AppIcon } from '../../utils/styles';
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
@@ -7,7 +7,7 @@ import { db, authentication } from '../../firebase/firebase-config';
 import { browserLocalPersistence } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const thumbMeasure = ((width - 48 - 32) / 2.5);
 const defaultPicture = AppIcon.images.placeHolder;
 
 export default function SettingsNotifications({ navigation }) {
@@ -25,22 +25,22 @@ export default function SettingsNotifications({ navigation }) {
   }, []);
   return (
     <SafeAreaView style={styles.container}>
-      {userInfo 
-      ?
-      <Text style={{color: 'white'}}>The on Notificaitons:{userInfo?.profilePicture}</Text>
-      :
-      <Text style={{color: 'white'}}>The on Notificaitons: Missing</Text>
+      {userInfo
+        ?
+        <Text style={{ color: 'white', alignSelf: 'center' }}>The welcome to the Notifications page:{userInfo?.profilePicture}</Text>
+        :
+        <Text style={{ color: 'white', alignSelf: 'center' }}>The Notifications page is missing</Text>
       }
     </SafeAreaView>
   );
 };
 
 
-const styles = StyleSheet.create({ 
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        backgroundColor: AppStyles.color.black,
-    },
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    backgroundColor: AppStyles.color.black,
+  },
 });

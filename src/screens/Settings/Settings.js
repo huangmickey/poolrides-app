@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";   
-import { EvilIcons , AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';                                                         
+import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { EvilIcons, AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
 import { AppStyles, AppIcon } from '../../utils/styles';
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
+import { useDispatch } from 'react-redux'
+import { setOrigin, setDestination, setTravelTimeInformation, setRideInformation, setDriverLocation, setDriverName, setRiderName } from '../../../slices/navSlice';
+
+import { doc, getDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
-import { browserLocalPersistence } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const thumbMeasure = ((width - 48 - 32) / 2.5);
 const defaultPicture = AppIcon.images.placeHolder;
 
 export default function Settings({ navigation }) {
@@ -80,8 +82,37 @@ export default function Settings({ navigation }) {
   }, []);
 
   function logoutHandler() {
+
+    dispatch(setOrigin({
+      origin: null
+    }))
+
+    dispatch(setDestination({
+      destination: null
+    }))
+
+    dispatch(setTravelTimeInformation({
+      travelTimeInformation: null
+    }))
+
+    dispatch(setRideInformation({
+      pushToken: null
+    }))
+
+    dispatch(setDriverLocation({
+      driverLocation: undefined
+    }))
+
+    dispatch(setDriverName({
+      driverName: null
+    }))
+
+    dispatch(setRiderName({
+      riderName: null
+    }))
+
     authentication.signOut().then(() => console.log("User Logged Out"));
-  } 
+  }
 
   const renderItem = ({ item }) => {
     return (
@@ -100,40 +131,40 @@ export default function Settings({ navigation }) {
   const Item = ({ item }) => (
     <TouchableOpacity onPress={() => settingsHandler(item)} style={styles.item}>
       <View style={styles.infoGroup}>
-      <Feather name={item.pageIcon} size={25} color="white" /> 
+        <Feather name={item.pageIcon} size={25} color="white" />
         <Text style={styles.pageName}>  {item.pageName}</Text>
       </View>
       <View style={styles.infoGroup}>
-        <MaterialIcons name="keyboard-arrow-right" size={30} color='white' style={styles.infoIcons}/>
+        <MaterialIcons name="keyboard-arrow-right" size={30} color='white' style={styles.infoIcons} />
       </View>
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          ListFooterComponent={
-            <View >
-              <View style={styles.bar}></View>
+      <FlatList
+        data={DATA}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        ListFooterComponent={
+          <View >
+            <View style={styles.bar}></View>
 
-              <Text style={{color: 'white', alignSelf: 'center', marginTop: 10}}>Pool Rides</Text>
-              <Text style={{color: 'white', margin: 25, textAlign: 'justify'}}>Pool Rides is developing a new branch within the ride sharing space known as insta transit. The business model for PoolRides differs from the similar applications as 
-              PoolRides goal is to deliver a personalized ride experience for every user. The app would allow riders to plot a trip and match with transporters, while the transporters will be able to see 
-              unaccepted trips in the area and choose whether or not to take the fare. The riders will also be able to personalize a profile of their preferences, including music tastes, conversation topics, 
-              and other preferences in order to have the best ride sharing experience possible, setting Poolrides apart from their competitors. The users will be divided into two groups, riders and transporters. 
+            <Text style={{ color: 'white', alignSelf: 'center', marginTop: 10 }}>Pool Rides</Text>
+            <Text style={{ color: 'white', margin: 25, textAlign: 'justify' }}>Pool Rides is developing a new branch within the ride sharing space known as insta transit. The business model for PoolRides differs from the similar applications as
+              PoolRides goal is to deliver a personalized ride experience for every user. The app would allow riders to plot a trip and match with transporters, while the transporters will be able to see
+              unaccepted trips in the area and choose whether or not to take the fare. The riders will also be able to personalize a profile of their preferences, including music tastes, conversation topics,
+              and other preferences in order to have the best ride sharing experience possible, setting Poolrides apart from their competitors. The users will be divided into two groups, riders and transporters.
               To handle this there will be two different dashboards based on the user type in order to handle different functions of each role.</Text>
-              
-              <View style={styles.bar}></View>
 
-              <TouchableOpacity style={styles.textContainer} onPress={logoutHandler}>
-                <Text style={styles.logoutText}>Log Out</Text>
-              </TouchableOpacity>
-            </View>
-          }
-        />
+            <View style={styles.bar}></View>
+
+            <TouchableOpacity style={styles.textContainer} onPress={logoutHandler}>
+              <Text style={styles.logoutText}>Log Out</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
     </SafeAreaView>
   );
 
@@ -176,7 +207,7 @@ const styles = StyleSheet.create({
   bar: {
     marginTop: '5%',
     paddingBottom: 20,
-    
+
     borderColor: AppStyles.color.darkgray,
     borderTopWidth: 1,
   },
@@ -188,7 +219,7 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: AppStyles.color.salmonred,
-    fontSize: 24,    
+    fontSize: 24,
     alignSelf: 'stretch',
     textAlign: 'center',
     padding: 10,
@@ -196,7 +227,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppStyles.color.black,
     borderColor: AppStyles.color.darkgray,
     borderRadius: 20,
-    borderWidth: 1, 
+    borderWidth: 1,
   },
 });
 
@@ -205,5 +236,5 @@ const styles = StyleSheet.create({
 
 
 
- 
+
 
