@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { selectDriverName } from '../../../slices/navSlice';
 
 
-export default function ChangeProfilePic({ driverVerification }) {
+export default function IDVerification({ driverVerification }) {
   const [image, setImage] = useState(null);
   const [isUploaded, setIsUploaded] = useState(null);
   const navigation = useNavigation();
@@ -83,3 +83,39 @@ export default function ChangeProfilePic({ driverVerification }) {
     </View>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// return (
+//   <View style={{ flex: 1, backgroundColor: '#000000', justifyContent: 'center', alignItems: 'center' }}>
+//     <Text style={IDStyle.title}>Profile Picture Upload</Text>
+//     <Text style={IDStyle.subTitle}>Please upload picture for your profile page</Text>
+//     <Button title='Choose Photo' onPress={pickImage} />
+
+
+//     {/* {isUploaded && <Image source={{ uri: image.uri }} style={{ width: 400, height: 400, resizeMode: 'contain' }} />} */}
+//     {/* {isUploaded &&
+//         <View style={{ flex: 0, paddingTop: '5%' }}>
+//           <CustomButton
+//             title='Continue'
+//             color={AppStyles.color.mint}
+//             textColor='black'
+//             onPress={buttonHandler}
+//           />
+//         </View>
+//       } */}
+//   </View>
+// );
+// }

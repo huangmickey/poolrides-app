@@ -31,19 +31,19 @@ export default function RiderMapView() {
                             component={RiderNavigateCard}
                             options={{
                                 headerShown: false,
-                            }}/>
+                            }} />
                         <Stack.Screen
                             name="RideOptionsCard"
                             component={RideOptionsCard}
                             options={{
                                 headerShown: false,
-                            }}/>
+                            }} />
                         <Stack.Screen
                             name="RidePayment"
                             component={RiderPaymentCard}
                             options={{
                                 headerShown: false,
-                            }}/>
+                            }} />
                     </Stack.Navigator>
                 </View>
             </View>

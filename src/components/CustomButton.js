@@ -1,15 +1,13 @@
-import { Button } from "react-native"
 // https://github.com/rcaferati/react-native-really-awesome-button
 import AwesomeButton from "react-native-really-awesome-button";
-import { StyleSheet } from "react-native"
 import { AppStyles } from '../utils/styles';
 
-export default function CustomButton({ title, color, textColor, onPress, stretch }) {
+export default function CustomButton({ title, color, textColor, onPress, stretch, width }) {
 
     return (
         <AwesomeButton
             stretch={stretch}
-            width={null}
+            width={width}
             backgroundColor={color}
             textColor={textColor}
             borderRadius={50}
@@ -23,13 +21,3 @@ export default function CustomButton({ title, color, textColor, onPress, stretch
         </AwesomeButton>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: AppStyles.color.black,
-    }
-
-
-});
