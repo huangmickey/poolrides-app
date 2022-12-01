@@ -26,6 +26,7 @@ import DriverSignUp from './src/screens/Signup/DriverSignUp'
 import Startup from './src/screens/Startup'
 import DriverMap from './src/screens/DriverMap/DriverMap'
 import RideRequest from './src/screens/DriverMap/RideRequest'
+import RiderRideComplete from './src/screens/RiderMap/RiderRideComplete'
 
 import { authentication, db } from './src/firebase/firebase-config'
 import { doc, getDoc } from 'firebase/firestore/lite'
@@ -49,8 +50,8 @@ import RideResults from './src/screens/RiderMap/RideResults'
 import { navigationRef } from './RootNavigation'
 import * as Notifications from 'expo-notifications'
 import { useNotifications } from './src/hooks/useNotifications'
-LogBox.ignoreLogs(['Setting a timer for a long period of time'])
-
+import DriverRideComplete from './src/screens/DriverMap/DriverRideComplete'
+LogBox.ignoreLogs(['Setting a timer for a long period of time',])
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
 
@@ -241,6 +242,13 @@ function AppEntry() {
         <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Driver Map" component={DriverMap} />
         <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Ride Request" component={RideRequest} />
+        <Stack.Screen options={
+          {
+            headerShown: false,
+            headerBackButtonMenuEnabled: false,
+            gestureEnabled: false
+          }
+        } name="RideComplete" component={DriverRideComplete} />
       </Stack.Navigator>
     )
   }
@@ -283,6 +291,13 @@ function AppEntry() {
         <Stack.Screen name="Security" component={Security} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="About" component={About} />
+        <Stack.Screen options={
+          {
+            headerShown: false,
+            headerBackButtonMenuEnabled: false,
+            gestureEnabled: false
+          }
+        } name="RideComplete" component={RiderRideComplete} />
       </Stack.Navigator>
     )
   }

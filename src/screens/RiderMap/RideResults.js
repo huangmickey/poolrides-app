@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pressable } from "react-native";
 import { EvilIcons } from '@expo/vector-icons';
 import { Snackbar } from "react-native-paper";
 import { useNavigation } from '@react-navigation/native';
 import { AppStyles } from '../../utils/styles';
-
+import CustomButton from '../../components/CustomButton';
+import CustomChip from '../../components/Chip';
 import { StatusBar } from 'expo-status-bar';
 
 import Map from '../../components/Map';
@@ -22,14 +23,13 @@ export default function RideResults({ route }) {
   const [driverInfoCurr, setDriverInfoCurr] = useState({ lat: 0.1, lng: 0.1 });
   const [driverData, setDriverData] = useState(null);
   const [serverResponse, setServerResponse] = useState({ status: null, data: null });
-
+  const [driverInterests, setDriverInterests] = useState(null)
   const [snackBarText, setSnackBarText] = useState("");
   const [snackBarVisisble, setSnackBarVisible] = useState(false);
   const onDismissSnackBar = () => setSnackBarVisible(false);
-
+  const [interestsModal, setInterestsModal] = useState(false)
   const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelride";
   const updateURL = "https://us-central1-pool-rides-db.cloudfunctions.net/getdriverloc";
-
   useEffect(() => {
     if (route.params.data != null) {
       setDriverData(route.params.data);
@@ -40,12 +40,11 @@ export default function RideResults({ route }) {
     }
     ready();
 
-    const updateDriverInterval = setInterval(async () => {
-      await updateDriverLoc();
-    }, 15000);
-    return () => clearInterval(updateDriverInterval);
+    // const updateDriverInterval = setInterval(async () => {
+    //   await updateDriverLoc();
+    // }, 15000);
+    // return () => clearInterval(updateDriverInterval);
   }, []);
-
   async function updateDriverLoc() {
     var refreshToken = await authentication.currentUser.getIdToken(true);
     const userUID = authentication.currentUser.uid;
@@ -86,6 +85,14 @@ export default function RideResults({ route }) {
     return new Promise(res => setTimeout(res, delay));
   }
 
+  function handleInterestsButton() {
+    setInterestsModal(true)
+  }
+
+  function closeInterestsModal() {
+    setInterestsModal(!interestsModal)
+  }
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -115,6 +122,7 @@ export default function RideResults({ route }) {
               driverData?.driverName.substring(0, 16) + '...'
             }
           </Text>
+          <CustomButton stretch={false} title={"Interests"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleInterestsButton} width={100}></CustomButton>
         </View>
       </View>
 
@@ -157,6 +165,41 @@ export default function RideResults({ route }) {
           </Text>
         </TouchableOpacity>
       </View>
+
+
+      {
+        interestsModal &&
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={interestsModal}
+          onRequestClose={() => {
+          }}>
+          <View style={styles.interestsCenteredView}>
+            <View style={styles.interestsModalView}>
+              <Text style={styles.interestsModalText}>Driver Interests</Text>
+              <ScrollView persistentScrollbar={true} style={styles.scrollView}>
+                <View style={styles.interestsModal}>
+                  {
+                    Array.from(Object.entries(driverData.driverInterests).sort()).map((entry) => {
+                      const [key] = entry;
+                      return (<CustomChip key={key} interest={key} interestsObj={driverData.driverInterests} flagForMap={true} />);
+                    })
+                  }
+                </View>
+              </ScrollView>
+              <View style={styles.interestsModalButtonContainer}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonAccept]}
+                  onPress={closeInterestsModal}>
+                  <Text style={styles.modalButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      }
 
       <Snackbar
         theme={{
@@ -205,12 +248,68 @@ const styles = StyleSheet.create({
     marginTop: height * 0.02,
   },
   leftContent: {
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
   name: {
     color: AppStyles.color.platinum,
     justifyContent: 'flex-start',
     fontSize: 20,
+  },
+  modalButtonText: {
+    color: AppStyles.color.platinum,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  interestsModal: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    height: '50%',
+    marginTop: '10%',
+  },
+  interestsCenteredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  interestsModalView: {
+    width: '85%',
+    height: '35%',
+    backgroundColor: AppStyles.color.gray,
+    borderRadius: 25,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 20,
+      height: 20,
+    },
+    shadowOpacity: 0.35,
+    shadowRadius: 3,
+    elevation: 5,
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+  interestsModalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 15,
+  },
+  interestsModalText: {
+    color: AppStyles.color.black,
+    fontWeight: '700',
+    fontSize: AppStyles.fontSize.normal,
+  },
+  modalButton: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonAccept: {
+    backgroundColor: AppStyles.color.blue,
   },
 });
