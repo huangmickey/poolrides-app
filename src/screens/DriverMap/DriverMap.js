@@ -14,7 +14,7 @@ import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
 import { config } from "../../../config";
 import mapStyle from ' ../../../components/mapStyle.json'
-import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
+import { doc, deleteDoc, updateDoc, setDoc, getDoc } from "firebase/firestore/lite";
 import { authentication, db } from "../../firebase/firebase-config";
 
 const { width, height } = Dimensions.get('screen');
@@ -69,7 +69,6 @@ export default function DriverMap({ route, navigation }) {
     }
   }, [notificationData])
 
-  // runs on route params
   useEffect(() => {
     if (route.params !== undefined) {
       if (route.params.notificationData.notificationType === 'rideReceived') {
@@ -83,7 +82,6 @@ export default function DriverMap({ route, navigation }) {
     }
   }, [route])
 
-  //UseEffect for Waiting for Map to Load
   useEffect(() => {
     setText('Loading Map...')
     const timer = setTimeout(() => {
@@ -92,26 +90,17 @@ export default function DriverMap({ route, navigation }) {
     return () => clearTimeout(timer)
   }, [setTimeout])
 
-  // UseEffect for every 5 seconds
-  // useEffect(() => {
-  //   // Background Location
-  //   // startBackgroundLocation()
-  //   const updateDBInterval = setInterval(() => {
-  //     // getGPSLocation()
-  //     updateLocationToDB()
-  //   }, 5000);
-  //   return () => clearInterval(updateDBInterval);
-  // }, []);
+  useEffect(() => {
+    const updateDBInterval = setInterval(() => {
+      updateLocationToDB()
+    }, 5000);
+    return () => clearInterval(updateDBInterval);
+  }, []);
 
-
-
-  //UseEffect for checking Haversine every 5 seconds
   useEffect(() => {
     if (AcceptedRideRequest) {
       const checkHaversine = setInterval(() => {
 
-        // 1 = Destination
-        // 2 = Driver Location
         var lat1 = notificationData.destination.lat;
         var lon1 = notificationData.destination.lng;
 
@@ -205,15 +194,18 @@ export default function DriverMap({ route, navigation }) {
   }
 
   async function acceptRide() {
-    // notificationData.rideDoc
     const docRef = doc(db, 'rides', notificationData.riderUID);
     const activeDriverDocRef = doc(db, 'activeDrivers', driverUID);
+
+    const driverRef = doc(db, "users", driverUID)
+    const driverSnap = await getDoc(driverRef);
 
     await updateDoc(docRef, {
       isAccepted: true,
       driverUID: driverUID,
       driverName: driverName.driverName,
       driverPushToken: driverPushToken.pushToken,
+      driverProfilePicture: driverSnap.data().ProfilePicture,
     });
     await updateDoc(activeDriverDocRef, {
       isBusy: true
@@ -248,29 +240,7 @@ export default function DriverMap({ route, navigation }) {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   async function rideComplete() {
-    // Makes the post request to rideComplete backend function
-    // needs to pass in riderUID and riderPushToken
-
-    // Reset everything for Driver
-
     var refreshToken = await authentication.currentUser.getIdToken(true);
     try {
       const axios = require('axios').default;
@@ -371,7 +341,6 @@ export default function DriverMap({ route, navigation }) {
 
         {AcceptedRideRequest && <Marker
           image={require('../../../assets/person-128px_inverted.png')}
-          //image={require('./person-128px_inverted.png')}
           coordinate={{
             latitude: notificationData.origin.lat, //38.558227 
             longitude: notificationData.origin.lng, //-121.4266 
@@ -552,7 +521,7 @@ export default function DriverMap({ route, navigation }) {
           </View>
         </Modal>
       }
-      
+
       <Snackbar
         theme={{
           colors: {

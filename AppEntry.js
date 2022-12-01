@@ -53,7 +53,9 @@ import * as Notifications from 'expo-notifications'
 import { useNotifications } from './src/hooks/useNotifications'
 import DriverRideComplete from './src/screens/DriverMap/DriverRideComplete'
 
-LogBox.ignoreLogs(['Setting a timer for a long period of time',])
+LogBox.ignoreLogs(['Setting a timer for a long period of time', "ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'."])
+
+
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
 

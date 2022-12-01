@@ -1,6 +1,5 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pressable } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pressable, Image } from "react-native";
 import { EvilIcons } from '@expo/vector-icons';
 import { Snackbar } from "react-native-paper";
 import { useNavigation } from '@react-navigation/native';
@@ -8,7 +7,6 @@ import { AppStyles } from '../../utils/styles';
 import CustomButton from '../../components/CustomButton';
 import CustomChip from '../../components/Chip';
 import { StatusBar } from 'expo-status-bar';
-
 import Map from '../../components/Map';
 import tw from "tailwind-react-native-classnames";
 
@@ -30,9 +28,11 @@ export default function RideResults({ route }) {
   const [interestsModal, setInterestsModal] = useState(false)
   const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelride";
   const updateURL = "https://us-central1-pool-rides-db.cloudfunctions.net/getdriverloc";
+
   useEffect(() => {
     if (route.params.data != null) {
       setDriverData(route.params.data);
+      console.log(route.params.data)
     }
 
     async function ready() {
@@ -40,9 +40,9 @@ export default function RideResults({ route }) {
     }
     ready();
 
-    // const updateDriverInterval = setInterval(async () => {
-    //   await updateDriverLoc();
-    // }, 15000);
+    const updateDriverInterval = setInterval(async () => {
+      await updateDriverLoc();
+    }, 15000);
     return () => clearInterval(updateDriverInterval);
   }, []);
   async function updateDriverLoc() {
@@ -91,7 +91,6 @@ export default function RideResults({ route }) {
   function closeInterestsModal() {
     setInterestsModal(!interestsModal)
   }
-
   return (
     <SafeAreaView style={styles.container}>
 
@@ -105,11 +104,11 @@ export default function RideResults({ route }) {
       </View>
 
       <View style={styles.infoGroup}>
-        {driverData?.profilePicture == null || driverData?.profilePicture == ""
+        {driverData?.driverProfilePicture == null || driverData?.driverProfilePicture == ""
           ?
           <EvilIcons name="user" size={90} color="white" />
           :
-          <Image source={driverData.profilePicture} style={styles.bottomIcons} />
+          <Image source={{ uri: driverData.driverProfilePicture }} style={styles.bottomIcons} />
         }
 
         <View style={styles.leftContent}>
@@ -164,7 +163,6 @@ export default function RideResults({ route }) {
           </Text>
         </TouchableOpacity>
       </View>
-
 
       {
         interestsModal &&
@@ -310,5 +308,11 @@ const styles = StyleSheet.create({
   },
   buttonAccept: {
     backgroundColor: AppStyles.color.blue,
+  },
+  bottomIcons: {
+    width: thumbMeasure / 1.5,
+    height: thumbMeasure / 1.5,
+    borderRadius: 30,
+    borderWidth: 0,
   },
 });
