@@ -40,9 +40,9 @@ export default function RideResults({ route }) {
     }
     ready();
 
-    const updateDriverInterval = setInterval(async () => {
-      await updateDriverLoc();
-    }, 15000);
+    // const updateDriverInterval = setInterval(async () => {
+    //   await updateDriverLoc();
+    // }, 15000);
     return () => clearInterval(updateDriverInterval);
   }, []);
   async function updateDriverLoc() {

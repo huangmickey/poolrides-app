@@ -27,7 +27,7 @@ export default function DriverMap({ route, navigation }) {
   const [receivedRideRequest, setReceivedRideRequest] = useState(false)
   const [notificationData, setNotificationData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
-  const { startBackgroundLocation, getGPSLocation } = getLocationPermission();
+  const { startBackgroundLocation, getGPSLocation } = getLocationPermission()
   const [AcceptedRideRequest, setAcceptedRideRequest] = useState(false)
   const [canceledRideModal, setCanceledRideModal] = useState(false)
   const [text, setText] = useState('')
@@ -35,12 +35,12 @@ export default function DriverMap({ route, navigation }) {
   const mapRef = useRef(null)
 
   const [snackBarText, setSnackBarText] = useState("");
-  const [snackBarVisisble, setSnackBarVisible] = useState(false);
-  const onDismissSnackBar = () => setSnackBarVisible(false);
+  const [snackBarVisisble, setSnackBarVisible] = useState(false)
+  const onDismissSnackBar = () => setSnackBarVisible(false)
   const dispatch = useDispatch()
-
-  const [isCloseToDestination, setIsCloseToDestination] = useState(false);
-  const [riderInterestsModal, setRiderInterestsModal] = useState(false);
+  const [rideInformationModal, setRideInformationModal] = useState(false)
+  const [isCloseToDestination, setIsCloseToDestination] = useState(false)
+  const [riderInterestsModal, setRiderInterestsModal] = useState(false)
 
   const driverUID = authentication.currentUser.uid
   const completeRideURL = "https://us-central1-pool-rides-db.cloudfunctions.net/completeride";
@@ -93,15 +93,15 @@ export default function DriverMap({ route, navigation }) {
   }, [setTimeout])
 
   // UseEffect for every 5 seconds
-  useEffect(() => {
-    // Background Location
-    // startBackgroundLocation()
-    const updateDBInterval = setInterval(() => {
-      // getGPSLocation()
-      updateLocationToDB()
-    }, 5000);
-    return () => clearInterval(updateDBInterval);
-  }, []);
+  // useEffect(() => {
+  //   // Background Location
+  //   // startBackgroundLocation()
+  //   const updateDBInterval = setInterval(() => {
+  //     // getGPSLocation()
+  //     updateLocationToDB()
+  //   }, 5000);
+  //   return () => clearInterval(updateDBInterval);
+  // }, []);
 
 
 
@@ -318,6 +318,14 @@ export default function DriverMap({ route, navigation }) {
     setRiderInterestsModal(true)
   }
 
+  function rideDetailsButtonHandler() {
+    setRideInformationModal(true)
+  }
+
+  function rideInformationModalHandler() {
+    setRideInformationModal(!rideInformationModal)
+  }
+
   return (
     <View style={styles.container}>
 
@@ -397,6 +405,9 @@ export default function DriverMap({ route, navigation }) {
         {AcceptedRideRequest &&
           <CustomButton stretch={false} title={"Rider Interests"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderInterests} width={200} />
         }
+        {AcceptedRideRequest &&
+          <CustomButton stretch={false} title={"Ride Details"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={rideDetailsButtonHandler} width={200} />
+        }
         {AcceptedRideRequest && isCloseToDestination
           ?
           <CustomButton stretch={false} title={"Ride Complete"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={rideComplete} width={200} />
@@ -424,7 +435,7 @@ export default function DriverMap({ route, navigation }) {
               <Text style={styles.modalText}>
                 Origin: {notificationData.originAddress}{"\n"}
                 Destination: {notificationData.destinationAddress}{"\n"}
-                Money Earned: {notificationData.travelTime_cost}{"\n"}
+                Money Earned: {"$"}{notificationData.travelTime_cost}{"\n"}
                 Distance: {notificationData.travelTime_distance}{"\n"}
                 Time: {notificationData.travelTime_time}
               </Text>
@@ -512,7 +523,35 @@ export default function DriverMap({ route, navigation }) {
           </View>
         </Modal>
       }
+      {
+        rideInformationModal &&
 
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={rideInformationModal}
+          onRequestClose={() => {
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Origin: {notificationData.originAddress}{"\n"}
+                Destination: {notificationData.destinationAddress}{"\n"}
+                Money Earned: {"$"}{notificationData.travelTime_cost}{"\n"}
+                Distance: {notificationData.travelTime_distance}{"\n"}
+                Time: {notificationData.travelTime_time}
+              </Text>
+              <View style={styles.modalButtonContainer}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonAccept]}
+                  onPress={rideInformationModalHandler}>
+                  <Text style={styles.modalButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      }
       <Snackbar
         theme={{
           colors: {
@@ -543,7 +582,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppStyles.color.black,
   },
   mapStyle: {
-    height: height * 0.6,
+    height: height * 0.55,
     width: width
   },
   loadingGroup: {
