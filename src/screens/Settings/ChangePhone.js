@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { AppStyles, AppIcon } from '../../utils/styles';
+import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
+import { AppStyles } from '../../utils/styles';
 import { FloatingLabelInput } from 'react-native-floating-label-input';
 import CustomButton from "../../components/CustomButton";
 import validator from 'validator';
@@ -62,12 +62,6 @@ export default function ChangePhone({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* {userInfo 
-      ?
-      <Text style={{color: 'white'}}>The current phone number is {userInfo?.phone}</Text>
-      :
-      <Text style={{color: 'white'}}>The current phone number is Missing</Text>
-      } */}
       <View style={{ marginTop: '35%' }}>
         <View style={styles.inputView}>
           <FloatingLabelInput

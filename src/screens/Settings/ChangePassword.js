@@ -41,7 +41,7 @@ export default function ChangePassword({ navigation }) {
           setNewPassword("");
           setConfirmPassword("");
           setCurrentPassword("");
-
+          navigation.navigate("Account Settings")
         }).catch((error) => {
           Alert.alert(error.message);
           setNewPassword("");
