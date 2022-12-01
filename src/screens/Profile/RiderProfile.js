@@ -32,7 +32,7 @@ export default function RiderProfile({ navigation }) {
             const userDocReference = doc(db, "users", userUID);
             const userDocSnapshot = await getDoc(userDocReference);
             setUserInfo(userDocSnapshot.data());
-            console.log(userInfo);
+
         }
         getUserData();
     }, []);
@@ -67,11 +67,11 @@ export default function RiderProfile({ navigation }) {
                     <View style={{ paddingTop: 50 }}>
                         <View style={styles.profileContent}>
                             <View style={[styles.align, { paddingTop: height * 0.1 }]}>
-                                {userInfo?.profilePicture == null || item.profilePicture == ""
+                                {userInfo?.ProfilePicture == null || userInfo?.ProfilePicture == ""
                                     ?
                                     <EvilIcons name="user" size={150} color="white" />
                                     :
-                                    <Image source={userInfo?.profilePicture} style={styles.bottomIcons} />
+                                    <Image source={{ uri: userInfo.ProfilePicture }} style={styles.bottomIcons} />
                                 }
                             </View>
 
@@ -101,7 +101,7 @@ export default function RiderProfile({ navigation }) {
                                     </Text>
                                 </View>
 
-                                <View style={styles.info}>
+                                {/* <View style={styles.info}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }} >
                                         <View style={styles.align}>
                                             {userInfo?.numFriednds != null ? <Text style={styles.statsText}>{userInfo?.numFriednds}</Text> : <Text style={styles.statsText}>{userFriends}</Text>}
@@ -124,7 +124,8 @@ export default function RiderProfile({ navigation }) {
                                             </Text>
                                         </View>
                                     </View>
-                                </View>
+                                </View> */}
+
                             </View>
                         </View>
                     </View>
@@ -135,7 +136,7 @@ export default function RiderProfile({ navigation }) {
                 <CustomButton title={"Edit Profile"} stretch={true} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={editProfileHandler} />
             </View>
 
-            <View style={{ flex: 0.4, justifyContent: 'center', zIndex: 9}}>
+            <View style={{ flex: 0.4, justifyContent: 'center', zIndex: 9 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }} >
 
                     <TouchableOpacity style={styles.align} onPress={paymentHandler}>

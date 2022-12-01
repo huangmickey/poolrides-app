@@ -8,6 +8,7 @@ const initialState = {
     pushToken: null,
     driverLocation: undefined,
     driverName: null,
+    riderName: null,
     locationPermissionStatus: null,
 };
 
@@ -39,10 +40,13 @@ export const navSlice = createSlice({
         setLocationPermissionStatus: (state, action) => {
             state.locationPermissionStatus = action.payload
         },
+        setRiderName: (state, action) => {
+            state.riderName = action.payload
+        }
     },
 });
 
-export const { setOrigin, setDestination, setTravelTimeInformation, setRideInformation, setPushToken, setDriverLocation, setDriverName, setLocationPermissionStatus } = navSlice.actions;
+export const { setOrigin, setDestination, setTravelTimeInformation, setRideInformation, setPushToken, setDriverLocation, setDriverName, setLocationPermissionStatus, setRiderName } = navSlice.actions;
 
 // Selectors
 export const selectOrigin = (state) => state.nav.origin;
@@ -53,5 +57,6 @@ export const selectPushToken = (state) => state.nav.pushToken;
 export const selectDriverLocation = (state) => state.nav.driverLocation;
 export const selectDriverName = (state) => state.nav.driverName;
 export const selectLocationPermissionStatus = (state) => state.nav.locationPermissionStatus;
+export const selectRiderName = (state) => state.nav.riderName;
 
 export default navSlice.reducer;

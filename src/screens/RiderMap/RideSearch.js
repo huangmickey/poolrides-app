@@ -1,36 +1,37 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
-import { Snackbar } from "react-native-paper";
-import { authentication } from "../../firebase/firebase-config";
-import tw from "tailwind-react-native-classnames";
-import { AppStyles } from '../../utils/styles';
-import { selectOrigin, selectDestination, selectTravelTimeInformation, selectRideInformation, selectPushToken } from '../../../slices/navSlice'
+import { useSelector } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
+import { Snackbar } from "react-native-paper"
+import { authentication } from "../../firebase/firebase-config"
+import tw from "tailwind-react-native-classnames"
+import { AppStyles } from '../../utils/styles'
+import { selectOrigin, selectDestination, selectTravelTimeInformation, selectRideInformation, selectPushToken, selectRiderName } from '../../../slices/navSlice'
 
-const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5);
+const { width, height } = Dimensions.get('screen')
+const thumbMeasure = ((width - 48 - 32) / 2.5)
 
 export default function RideSearch() {
 
-    const origin = useSelector(selectOrigin);
-    const destination = useSelector(selectDestination);
-    const travelTimeInformation = useSelector(selectTravelTimeInformation);
-    const rideInformation = useSelector(selectRideInformation);
-    const pushToken = useSelector(selectPushToken);
+    const origin = useSelector(selectOrigin)
+    const destination = useSelector(selectDestination)
+    const travelTimeInformation = useSelector(selectTravelTimeInformation)
+    const rideInformation = useSelector(selectRideInformation)
+    const pushToken = useSelector(selectPushToken)
+    const riderName = useSelector(selectRiderName)
 
-    const navigation = useNavigation();
-    const [snackBarText, setSnackBarText] = useState("");
-    const [snackBarVisisble, setSnackBarVisible] = useState(false);
-    const onDismissSnackBar = () => setSnackBarVisible(false);
+    const navigation = useNavigation()
+    const [snackBarText, setSnackBarText] = useState("")
+    const [snackBarVisisble, setSnackBarVisible] = useState(false)
+    const onDismissSnackBar = () => setSnackBarVisible(false)
 
-    const [isCanceled, setIsCanceled] = useState(false);
-    const [isSearching, setIsSearching] = useState(true);
-    const [serverResponse, setServerResponse] = useState({ status: null, data: null });
+    const [isCanceled, setIsCanceled] = useState(false)
+    const [isSearching, setIsSearching] = useState(true)
+    const [serverResponse, setServerResponse] = useState({ status: null, data: null })
 
-    const rideRequestURL = "https://us-central1-pool-rides-db.cloudfunctions.net/requestride";
-    const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelride";
+    const rideRequestURL = "https://us-central1-pool-rides-db.cloudfunctions.net/requestride"
+    const cancelURL = "https://us-central1-pool-rides-db.cloudfunctions.net/cancelride"
 
     useEffect(() => {
         async function sendRequest() {
@@ -41,6 +42,7 @@ export default function RideSearch() {
             try {
                 const axios = require('axios').default;
                 var data = {
+                    "riderName": riderName.riderName,
                     "riderPushToken": pushToken.pushToken,
                     "riderUID": userUID,
                     "originLat": origin.location.lat,

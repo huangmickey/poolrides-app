@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Dimensions, Image, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
-import {Keyboard} from 'react-native'
+import { Keyboard } from 'react-native'
 import { AppStyles } from "../../utils/styles";
 import { authentication, db } from "../../firebase/firebase-config";
 import { doc, getDoc } from "firebase/firestore/lite";
@@ -9,11 +9,14 @@ import { useNavigation } from "@react-navigation/native";
 import FromAddressSearchBar from "../../components/FromAddressSearch";
 
 const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const thumbMeasure = ((width - 48 - 32) / 2.5);
+import { useDispatch } from "react-redux";
+import { setRiderName } from "../../../slices/navSlice";
 
 export default function RiderDashboard() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     // Update the document title using Firebase SDK
@@ -22,7 +25,13 @@ export default function RiderDashboard() {
     const getUserData = async () => {
       const userDocReference = doc(db, "users", userUID);
       const userDocSnapshot = await getDoc(userDocReference);
-      setUserInfo(userDocSnapshot.data());
+      const data = userDocSnapshot.data()
+      setUserInfo(data);
+      dispatch(
+        setRiderName({
+          riderName: data.firstname + " " + data.lastname
+        })
+      )
     };
 
     getUserData();
@@ -58,24 +67,24 @@ export default function RiderDashboard() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
-          <View style={styles.header}>  
-            <Image
-              style={styles.logo}
-              source={require("../../../assets/logo.png")}
-            />
-          </View>        
+        <View style={styles.header}>
+          <Image
+            style={styles.logo}
+            source={require("../../../assets/logo.png")}
+          />
+        </View>
 
-          <View style={styles.welcomeContainer}>
-            <Text style={styles.signInText}>Hello {userInfo?.firstname.toUpperCase()}!</Text>
-            <Text style={styles.welcomeText}>What would you like to do?</Text>
-          </View>
+        <View style={styles.welcomeContainer}>
+          <Text style={styles.signInText}>Hello {userInfo?.firstname.toUpperCase()}!</Text>
+          <Text style={styles.welcomeText}>What would you like to do?</Text>
+        </View>
 
-          <View style={styles.searchAddressBar}>
-            <FromAddressSearchBar/>
-          </View>
+        <View style={styles.searchAddressBar}>
+          <FromAddressSearchBar />
+        </View>
 
         <View style={styles.navContainer}>
-          <NavOptions userType={userInfo?.usertype} userInfo={userInfo}/>
+          <NavOptions userType={userInfo?.usertype} userInfo={userInfo} />
         </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -100,7 +109,7 @@ const styles = StyleSheet.create({
     width: "35%",
     resizeMode: "contain",
   },
-  logOutBTN:{
+  logOutBTN: {
     color: AppStyles.color.salmonred,
     fontSize: 20,
   },
@@ -124,7 +133,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 9,
   },
-  navContainer: {  
+  navContainer: {
     position: "absolute",
     alignSelf: "center",
     marginTop: height * 0.39,

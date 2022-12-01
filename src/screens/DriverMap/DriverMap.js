@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, Text, View, ScrollView } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
 import { useDispatch, useSelector } from 'react-redux';
 import { Snackbar } from "react-native-paper";
 import * as Location from 'expo-location'
+import CustomChip from '../../components/Chip';
 
 import { selectDriverLocation, setDriverLocation, selectPushToken, selectDriverName } from '../../../slices/navSlice';
 import { AppStyles } from '../../utils/styles';
@@ -13,7 +14,7 @@ import CustomButton from '../../components/CustomButton';
 import { getLocationPermission } from '../../utils/gpsUtils';
 import { config } from "../../../config";
 import mapStyle from ' ../../../components/mapStyle.json'
-import { doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore/lite";
+import { doc, deleteDoc, updateDoc, setDoc, getDoc } from "firebase/firestore/lite";
 import { authentication, db } from "../../firebase/firebase-config";
 
 const { width, height } = Dimensions.get('screen');
@@ -26,7 +27,7 @@ export default function DriverMap({ route, navigation }) {
   const [receivedRideRequest, setReceivedRideRequest] = useState(false)
   const [notificationData, setNotificationData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
-  const { startBackgroundLocation, getGPSLocation } = getLocationPermission();
+  const { startBackgroundLocation, getGPSLocation } = getLocationPermission()
   const [AcceptedRideRequest, setAcceptedRideRequest] = useState(false)
   const [canceledRideModal, setCanceledRideModal] = useState(false)
   const [text, setText] = useState('')
@@ -34,11 +35,12 @@ export default function DriverMap({ route, navigation }) {
   const mapRef = useRef(null)
 
   const [snackBarText, setSnackBarText] = useState("");
-  const [snackBarVisisble, setSnackBarVisible] = useState(false);
-  const onDismissSnackBar = () => setSnackBarVisible(false);
+  const [snackBarVisisble, setSnackBarVisible] = useState(false)
+  const onDismissSnackBar = () => setSnackBarVisible(false)
   const dispatch = useDispatch()
-
-  const [isCloseToDestination, setIsCloseToDestination] = useState(false);
+  const [rideInformationModal, setRideInformationModal] = useState(false)
+  const [isCloseToDestination, setIsCloseToDestination] = useState(false)
+  const [riderInterestsModal, setRiderInterestsModal] = useState(false)
 
   const driverUID = authentication.currentUser.uid
   const completeRideURL = "https://us-central1-pool-rides-db.cloudfunctions.net/completeride";
@@ -47,7 +49,6 @@ export default function DriverMap({ route, navigation }) {
     getGPSLocation()
     goOnline()
   }, [])
-
 
   useEffect(() => {
     if (notificationData !== undefined && driverLocation !== undefined) {
@@ -68,20 +69,19 @@ export default function DriverMap({ route, navigation }) {
     }
   }, [notificationData])
 
-  // runs on route params
   useEffect(() => {
     if (route.params !== undefined) {
       if (route.params.notificationData.notificationType === 'rideReceived') {
         setReceivedRideRequest(true)
         setModalVisible(true)
         setNotificationData(route.params.notificationData)
+        console.log(route.params.notificationData)
       } else if (route.params.notificationData.notificationType === 'rideCanceled') {
         setCanceledRideModal(true)
       }
     }
   }, [route])
 
-  //UseEffect for Waiting for Map to Load
   useEffect(() => {
     setText('Loading Map...')
     const timer = setTimeout(() => {
@@ -90,26 +90,17 @@ export default function DriverMap({ route, navigation }) {
     return () => clearTimeout(timer)
   }, [setTimeout])
 
-  //UseEffect for every 15 seconds
   useEffect(() => {
-    // Background Location
-    // startBackgroundLocation()
     const updateDBInterval = setInterval(() => {
-      // getGPSLocation()
       updateLocationToDB()
     }, 5000);
     return () => clearInterval(updateDBInterval);
   }, []);
 
-
-
-  //UseEffect for checking Haversine every 5 seconds
   useEffect(() => {
     if (AcceptedRideRequest) {
       const checkHaversine = setInterval(() => {
 
-        // 1 = Destination
-        // 2 = Driver Location
         var lat1 = notificationData.destination.lat;
         var lon1 = notificationData.destination.lng;
 
@@ -203,15 +194,18 @@ export default function DriverMap({ route, navigation }) {
   }
 
   async function acceptRide() {
-    // notificationData.rideDoc
     const docRef = doc(db, 'rides', notificationData.riderUID);
     const activeDriverDocRef = doc(db, 'activeDrivers', driverUID);
+
+    const driverRef = doc(db, "users", driverUID)
+    const driverSnap = await getDoc(driverRef);
 
     await updateDoc(docRef, {
       isAccepted: true,
       driverUID: driverUID,
       driverName: driverName.driverName,
       driverPushToken: driverPushToken.pushToken,
+      driverProfilePicture: driverSnap.data().ProfilePicture,
     });
     await updateDoc(activeDriverDocRef, {
       isBusy: true
@@ -228,6 +222,10 @@ export default function DriverMap({ route, navigation }) {
     setReceivedRideRequest(false)
   }
 
+  async function closeInterestsModal() {
+    setRiderInterestsModal(!riderInterests)
+  }
+
   function handleGetDirections() {
     if (notificationData !== undefined) {
       const destinationLat = notificationData.destination.lat
@@ -242,29 +240,7 @@ export default function DriverMap({ route, navigation }) {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   async function rideComplete() {
-    // Makes the post request to rideComplete backend function
-    // needs to pass in riderUID and riderPushToken
-
-    // Reset everything for Driver
-
     var refreshToken = await authentication.currentUser.getIdToken(true);
     try {
       const axios = require('axios').default;
@@ -286,8 +262,8 @@ export default function DriverMap({ route, navigation }) {
           setSnackBarText("Your Ride Is Complete.")
           setSnackBarVisible(true);
           await timeout(3500);
-          goOffline()
-          navigation.goBack();
+          await deleteDoc(doc(db, "activeDrivers", driverUID));
+          navigation.navigate('RideComplete')
         })
         .catch(async function (error) {
 
@@ -295,8 +271,8 @@ export default function DriverMap({ route, navigation }) {
           setSnackBarText("An Error has occured.")
           setSnackBarVisible(true);
           await timeout(3500);
-          goOffline()
-          navigation.goBack();
+          await deleteDoc(doc(db, "activeDrivers", driverUID));
+          navigation.navigate('RideComplete')
         });
 
     } catch (e) {
@@ -306,6 +282,18 @@ export default function DriverMap({ route, navigation }) {
 
   function timeout(delay) {
     return new Promise(res => setTimeout(res, delay));
+  }
+
+  function riderInterests() {
+    setRiderInterestsModal(true)
+  }
+
+  function rideDetailsButtonHandler() {
+    setRideInformationModal(true)
+  }
+
+  function rideInformationModalHandler() {
+    setRideInformationModal(!rideInformationModal)
   }
 
   return (
@@ -353,7 +341,6 @@ export default function DriverMap({ route, navigation }) {
 
         {AcceptedRideRequest && <Marker
           image={require('../../../assets/person-128px_inverted.png')}
-          //image={require('./person-128px_inverted.png')}
           coordinate={{
             latitude: notificationData.origin.lat, //38.558227 
             longitude: notificationData.origin.lng, //-121.4266 
@@ -380,26 +367,28 @@ export default function DriverMap({ route, navigation }) {
         <ActivityIndicator animating={animate} size="large" color={AppStyles.color.platinum} />
         <Text style={styles.loadingText}>{text}</Text>
       </View>}
-
-      {AcceptedRideRequest && <View style={styles.mapButton}>
-        <CustomButton stretch={true} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} />
-      </View>}
-
-      {AcceptedRideRequest && isCloseToDestination
-        ?
-        <View style={styles.offlineButton}>
-          <CustomButton stretch={true} title={"Ride Complete"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={rideComplete} />
-        </View>
-        :
-        AcceptedRideRequest && !isCloseToDestination
+      <View style={styles.buttons}>
+        {AcceptedRideRequest &&
+          <CustomButton stretch={false} title={"Open in Google Maps"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={handleGetDirections} width={200} />
+        }
+        {AcceptedRideRequest &&
+          <CustomButton stretch={false} title={"Rider Interests"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderInterests} width={200} />
+        }
+        {AcceptedRideRequest &&
+          <CustomButton stretch={false} title={"Ride Details"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={rideDetailsButtonHandler} width={200} />
+        }
+        {AcceptedRideRequest && isCloseToDestination
           ?
-          <View style={styles.offlineButton}>
-            <CustomButton stretch={true} title={"Ride Complete"} color={AppStyles.color.gray} textColor={AppStyles.color.black} />
-          </View>
+          <CustomButton stretch={false} title={"Ride Complete"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={rideComplete} width={200} />
           :
-          <View style={styles.offlineButton}>
-            <CustomButton stretch={true} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} />
-          </View>}
+          AcceptedRideRequest && !isCloseToDestination
+            ?
+            <CustomButton stretch={false} title={"Ride Complete"} color={AppStyles.color.gray} textColor={AppStyles.color.black} width={200} />
+            :
+            <CustomButton stretch={false} title={"Go Offline"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={goOffline} width={200} />
+        }
+      </View>
+
 
       {receivedRideRequest &&
         <Modal
@@ -415,7 +404,7 @@ export default function DriverMap({ route, navigation }) {
               <Text style={styles.modalText}>
                 Origin: {notificationData.originAddress}{"\n"}
                 Destination: {notificationData.destinationAddress}{"\n"}
-                Money Earned: {notificationData.travelTime_cost}{"\n"}
+                Money Earned: {"$"}{notificationData.travelTime_cost}{"\n"}
                 Distance: {notificationData.travelTime_distance}{"\n"}
                 Time: {notificationData.travelTime_time}
               </Text>
@@ -470,6 +459,68 @@ export default function DriverMap({ route, navigation }) {
           </View>
         </Modal>
       }
+      {
+        riderInterestsModal &&
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={riderInterestsModal}
+          onRequestClose={() => {
+          }}>
+          <View style={styles.interestsCenteredView}>
+            <View style={styles.interestsModalView}>
+              <Text style={styles.interestsModalText}>Rider Interests</Text>
+              <ScrollView persistentScrollbar={true} style={styles.scrollView}>
+                <View style={styles.interestsModal}>
+                  {
+                    Array.from(Object.entries(notificationData.riderInterests).sort()).map((entry) => {
+                      const [key] = entry;
+                      return (<CustomChip key={key} interest={key} interestsObj={notificationData.riderInterests} flagForMap={true} />);
+                    })
+                  }
+                </View>
+              </ScrollView>
+              <View style={styles.interestsModalButtonContainer}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonAccept]}
+                  onPress={closeInterestsModal}>
+                  <Text style={styles.modalButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      }
+      {
+        rideInformationModal &&
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={rideInformationModal}
+          onRequestClose={() => {
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Origin: {notificationData.originAddress}{"\n"}
+                Destination: {notificationData.destinationAddress}{"\n"}
+                Money Earned: {"$"}{notificationData.travelTime_cost}{"\n"}
+                Distance: {notificationData.travelTime_distance}{"\n"}
+                Time: {notificationData.travelTime_time}
+              </Text>
+              <View style={styles.modalButtonContainer}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonAccept]}
+                  onPress={rideInformationModalHandler}>
+                  <Text style={styles.modalButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      }
 
       <Snackbar
         theme={{
@@ -501,7 +552,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppStyles.color.black,
   },
   mapStyle: {
-    height: height * 0.7,
+    height: height * 0.55,
     width: width
   },
   loadingGroup: {
@@ -514,16 +565,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: "5%"
   },
-  mapButton: {
-    width: width,
-    marginTop: 10,
-  },
-  offlineButton: {
-    position: 'absolute',
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: width,
+  buttons: {
+    flex: 1,
+    alignSelf: 'center',
+    justifyContent: 'space-evenly',
   },
   centeredView: {
     flex: 1,
@@ -571,5 +616,46 @@ const styles = StyleSheet.create({
     color: AppStyles.color.platinum,
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  interestsModal: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    height: '50%',
+    marginTop: '10%',
+  },
+  interestsCenteredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  interestsModalView: {
+    width: '85%',
+    height: '35%',
+    backgroundColor: AppStyles.color.gray,
+    borderRadius: 25,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 20,
+      height: 20,
+    },
+    shadowOpacity: 0.35,
+    shadowRadius: 3,
+    elevation: 5,
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+  interestsModalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 15,
+  },
+  interestsModalText: {
+    color: AppStyles.color.black,
+    fontWeight: '700',
+    fontSize: AppStyles.fontSize.normal,
   },
 });

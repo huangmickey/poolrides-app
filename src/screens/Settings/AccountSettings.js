@@ -1,18 +1,23 @@
-import React, { useState} from 'react';
-import { Dimensions, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";       
-import { EvilIcons , AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';                                                         
+import React, { useState } from 'react';
+import { Dimensions, FlatList, Modal, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import { EvilIcons, AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
 import { AppStyles, AppIcon } from '../../utils/styles';
-
-import { doc, updateDoc } from 'firebase/firestore/lite';
+import {
+  getAuth,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  deleteUser
+} from "firebase/auth"
+import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 import { browserLocalPersistence } from 'firebase/auth';
 
+
 const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const thumbMeasure = ((width - 48 - 32) / 2.5);
 const defaultPicture = AppIcon.images.placeHolder;
 
 export default function AccountSettings({ navigation }) {
-
 
   const [DATA] = useState([
     // {
@@ -40,9 +45,12 @@ export default function AccountSettings({ navigation }) {
       pageName: "Change Profile Picture",
       pageNavigation: "Change Profile Picture",
     },
-
+    {
+      id: 6,
+      pageName: "Delete Account",
+      pageNavigation: "Delete Account",
+    },
   ]);
-
 
   const renderItem = ({ item }) => {
     return (
@@ -61,13 +69,40 @@ export default function AccountSettings({ navigation }) {
   const Item = ({ item }) => (
     <TouchableOpacity onPress={() => settingsHandler(item)} style={styles.item}>
       <View style={styles.infoGroup}>
-        <Text style={styles.pageName}>{item.pageName}</Text>
+        {item.pageName == "Delete Account"
+          ?
+          <Text style={styles.deleteAccount}>{item.pageName}</Text>
+          :
+          <Text style={styles.pageName}>{item.pageName}</Text>
+        }
       </View>
       <View style={styles.infoGroup}>
-        <MaterialIcons name="keyboard-arrow-right" size={30} color='white' style={styles.infoIcons}/>
+        <MaterialIcons name="keyboard-arrow-right" size={30} color='white' style={styles.infoIcons} />
       </View>
     </TouchableOpacity>
   );
+
+  const reauthenticate = () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const cred = EmailAuthProvider.credential(user.email, currentPassword);
+    return reauthenticateWithCredential(user, cred);
+  }
+
+  async function DeleteAccount() {
+    console.log('Account is being Deleted')
+    setModalVisible(!modalVisible)
+    setIsDeletingAccount(false)
+
+    //Add code to delete account here
+
+  }
+
+  async function CancelDeletion() {
+    console.log('Account Deletion was canceled')
+    setModalVisible(!modalVisible)
+    setIsDeletingAccount(false)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,7 +113,6 @@ export default function AccountSettings({ navigation }) {
       />
     </SafeAreaView>
   );
-
 };
 
 const styles = StyleSheet.create({
@@ -106,14 +140,66 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     fontSize: 16,
   },
-
+  deleteAccount: {
+    color: AppStyles.color.salmonred,
+    justifyContent: 'flex-start',
+    fontSize: 16,
+  },
   infoGroup: {
     flexDirection: 'row',
   },
   infoIcons: {
     justifyContent: 'flex-end',
-
     marginRight: 15,
-
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    width: '85%',
+    height: '25%',
+    backgroundColor: AppStyles.color.gray,
+    borderRadius: 25,
+    padding: 35,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 20,
+      height: 20,
+    },
+    shadowOpacity: 0.35,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  modalText: {
+    textAlign: 'justify',
+    color: AppStyles.color.black,
+    fontWeight: 'bold',
+    marginTop: 4
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: '12%'
+  },
+  modalButton: {
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    elevation: 2,
+    marginLeft: 30,
+    marginRight: 30
+  },
+  buttonAccept: {
+    backgroundColor: AppStyles.color.salmonred,
+  },
+  buttonReject: {
+    backgroundColor: AppStyles.color.blue,
+  },
+  modalButtonText: {
+    color: AppStyles.color.platinum,
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

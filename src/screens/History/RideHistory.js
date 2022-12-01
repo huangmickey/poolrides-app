@@ -1,129 +1,95 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";   
-import { EvilIcons } from '@expo/vector-icons';                                                              
+import { Dimensions, FlatList, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { EvilIcons } from '@expo/vector-icons';
 import { AppStyles, AppIcon } from '../../utils/styles';
-
-import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
+import { collection, query, where } from 'firebase/firestore/lite';
+import { doc, getDoc, getDocs } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
-import { browserLocalPersistence } from 'firebase/auth';
 
-const DATA = [
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    name: "Steve1",
-    username: "stevey1",
-    date: "Mar 16",
-    time: "6:59 PM",
-    distTraveled: "15.3 mi",
-    timeTeaveled: "18m 40s",
-    rideStyle: "XL",
-    cost: "19.54",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    name: "Steve2",
-    username: "stevey2",
-    date: "Mar 16",
-    time: "6:59 PM",
-    distTraveled: "15.3 mi",
-    timeTeaveled: "18m 40s",
-    rideStyle: "XL",
-    cost: "19.54",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    name: "Steve3",
-    username: "stevey3",
-    date: "Mar 16",
-    time: "6:59 PM",
-    distTraveled: "15.3 mi",
-    timeTeaveled: "18m 40s",
-    rideStyle: "XL",
-    cost: "19.54",
-  },
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bb",
-    name: "Steve4",
-    username: "stevey4",
-    date: "Mar 16",
-    time: "6:59 PM",
-    distTraveled: "15.3 mi",
-    timeTeaveled: "18m 40s",
-    rideStyle: "XL",
-    cost: "19.54",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f64",
-    name: "Steve5",
-    username: "stevey5",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d73",
-    name: "Steve6",
-    username: "stevey6",
-  },
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bs",
-    name: "Steve1",
-    username: "stevey1",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97fqw",
-    name: "Steve2",
-    username: "stevey2",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29dfd",
-    name: "Steve3",
-    username: "stevey3",
-  },
-  {
-  id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28bbdf",
-  name: "Steve4",
-  username: "stevey4",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97ffg",
-    name: "Steve5",
-    username: "stevey5",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29dtr",
-    name: "Steve6",
-    username: "stevey6",
-},
-];
-
-const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
+const { width } = Dimensions.get('screen');
+const thumbMeasure = ((width - 48 - 32) / 2.5);
 const defaultPicture = AppIcon.images.placeHolder;
 
 
 export default function RideHistory({ navigation }) {
-
+  const [DATA, setDATA] = useState(null)
   const [selectedId, setSelectedId] = useState(null);
   const [userInfo, setUserInfo] = useState();
-
+  const userUID = authentication.currentUser.uid;
   useEffect(() => {
-    const userUID = authentication.currentUser.uid; 
-
+    console.log(userUID)
     const getUserData = async () => {
       const userDocReference = doc(db, "users", userUID);
       const userDocSnapshot = await getDoc(userDocReference);
       setUserInfo(userDocSnapshot.data());
-      console.log(userInfo);
     };
-
     getUserData();
+
   }, []);
 
-  function profilePic(user){
-    if(user.profilePicture == null || user.profilePicture == "") {
+  useEffect(() => {
+    const rideHistoryRef = collection(db, "rideHistory")
+    if (userInfo !== undefined && userInfo.usertype === "Driver") {
+      const q = query(rideHistoryRef, where("driverUID", "==", userUID))
+      const getQueryDocs = async () => {
+        const querySnapshot = await getDocs(q)
+        let data = []
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          const rideData = doc.data()
+          let dateArr = rideData.Date.split(",")
+          data.push(
+            {
+              id: doc.id,
+              name: rideData.body.riderName,
+              date: dateArr[0],
+              time: dateArr[1],
+              distTraveled: rideData.body.travelTime_distance,
+              timeTraveled: rideData.body.travelTime_time,
+              rideStyle: "XL",
+              cost: rideData.body.travelTime_cost.toFixed(2),
+            }
+          )
+          setDATA(data)
+        });
+      }
+      getQueryDocs()
+
+    } else if (userInfo !== undefined && userInfo.usertype === "Rider") {
+      const q = query(rideHistoryRef, where("body.riderUID", "==", userUID))
+      const getQueryDocs = async () => {
+        const querySnapshot = await getDocs(q)
+        let data = []
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          const rideData = doc.data()
+          let dateArr = rideData.Date.split(",")
+          data.push(
+            {
+              id: doc.id,
+              name: rideData.driverName,
+              date: dateArr[0],
+              time: dateArr[1],
+              distTraveled: rideData.body.travelTime_distance,
+              timeTraveled: rideData.body.travelTime_time,
+              rideStyle: "XL",
+              cost: rideData.body.travelTime_cost.toFixed(2),
+            }
+          )
+          setDATA(data)
+        });
+      }
+      getQueryDocs()
+    }
+  }, [userInfo])
+
+  function profilePic(user) {
+    if (user.profilePicture == null || user.profilePicture == "") {
       return defaultPicture;
     } else {
       return user.profilePicture;
     }
-}
+  }
 
   const renderItem = ({ item }) => {
     const backgroundColor = AppStyles.color.black
@@ -142,23 +108,23 @@ export default function RideHistory({ navigation }) {
     <TouchableOpacity style={[styles.item, backgroundColor]}>
 
       <View style={styles.leftContent}>
-        {item.profilePicture == null || item.profilePicture == "" 
-        ?
-        <EvilIcons name="user" size={70} color="white" />
-        :
-        <Image source={item.profilePicture} style={styles.bottomIcons} /> 
+        {item.profilePicture == null || item.profilePicture == ""
+          ?
+          <EvilIcons name="user" size={70} color="white" />
+          :
+          <Image source={item.profilePicture} style={styles.bottomIcons} />
         }
-        
+
         <View style={styles.rightContent}>
-        <Text style={[styles.nameText, textColor]}>{item.name}</Text>
-        <Text style={[styles.dateText, textColor]}>{item.date} - {item.time}</Text>
-        <Text style={[styles.traveledText, textColor]}>{item.distTraveled} | {item.timeTeaveled}</Text>
+          <Text style={[styles.nameText, textColor]}>{item.name}</Text>
+          <Text style={[styles.dateText, textColor]}>{item.date} - {item.time}</Text>
+          <Text style={[styles.traveledText, textColor]}>{item.distTraveled} | {item.timeTraveled}</Text>
         </View>
       </View>
 
       <View style={styles.rightContent}>
         <Text style={[styles.costText, textColor]}>${item.cost}</Text>
-        <Text style={[styles.rideStyle, textColor]}>{item.rideStyle}</Text>
+        <Text style={[styles.ridestyle, textColor]}>{item.rideStyle}</Text>
       </View>
 
     </TouchableOpacity>
@@ -179,7 +145,7 @@ export default function RideHistory({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'column',
+    flex: 1,
     backgroundColor: AppStyles.color.black,
   },
   item: {
@@ -191,7 +157,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     marginHorizontal: 5,
 
-    borderColor: AppStyles.color.darkgray,
+    borderColor: AppStyles.color.gray,
     borderRadius: 20,
     borderWidth: 1,
   },
@@ -201,8 +167,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileIcon: {
-    width: thumbMeasure/2,
-    height: thumbMeasure/2,
+    width: thumbMeasure / 2,
+    height: thumbMeasure / 2,
     marginRight: 10,
     borderRadius: 1000,
   },
@@ -219,7 +185,7 @@ const styles = StyleSheet.create({
 
 
 
-  
+
   rightContent: {
     flexDirection: 'column',
     alignItems: 'flex-start'
@@ -232,4 +198,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     fontSize: 16,
   },
+  flatList: {
+    backgroundColor: AppStyles.color.black
+  }
 });

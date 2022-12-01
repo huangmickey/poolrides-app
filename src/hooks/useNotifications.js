@@ -65,7 +65,7 @@ export const useNotifications = () => {
 
     if (notificationData.notificationType == "rideComplete") {
       await timeout(5000)
-      RootNavigation.navigate('Rider Dashboard')
+      RootNavigation.navigate('RideComplete')
     }
 
     await timeout(20000)
@@ -89,7 +89,7 @@ export const useNotifications = () => {
     if (notificationData.notificationType == "rideCanceled" || notificationData.notificationType == "rideReceived") {
       RootNavigation.navigate('Driver Map', { notificationData: notificationData })
     } else {
-      RootNavigation.navigate('Rider Dashboard')
+      RootNavigation.navigate('RideComplete')
     }
   };
 

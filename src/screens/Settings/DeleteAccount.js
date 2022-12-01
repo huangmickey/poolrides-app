@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { AppStyles } from '../../utils/styles';
 import { FloatingLabelInput } from 'react-native-floating-label-input';
 import CustomButton from "../../components/CustomButton";
-import validator from 'validator';
 import {
   getAuth,
   reauthenticateWithCredential,
   EmailAuthProvider,
+  deleteUser
 } from "firebase/auth"
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, deleteDoc } from 'firebase/firestore/lite';
 import { db, authentication } from '../../firebase/firebase-config';
 import { Alert } from 'react-native';
 
-const { width, height } = Dimensions.get('screen');
 
-export default function ChangePhone({ navigation }) {
+export default function DeleteAccount({ navigation }) {
 
   const [userInfo, setUserInfo] = useState();
-  const [newPhone, setNewPhone] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
 
   useEffect(() => {
@@ -38,44 +36,29 @@ export default function ChangePhone({ navigation }) {
     const cred = EmailAuthProvider.credential(user.email, currentPassword);
     return reauthenticateWithCredential(user, cred);
   }
-
-  const changePhone = () => {
-    const uid = authentication.currentUser.uid;
-    const userDocRef = doc(db, "users", uid);
-    if (newPhone == "" || newPhone == !validator.isMobilePhone) {
-      Alert.alert("Please, enter valid phone number");
-    }
-    else {
-      reauthenticate().then(() => {
-        updateDoc(userDocRef, {
-          phone: newPhone,
-        });
-        Alert.alert("Phone number has been successfully changed");
-        setNewPhone('');
-        setCurrentPassword('');
-        navigation.navigate("Account Settings");
+  const deleteAccount = () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const userUID = authentication.currentUser.uid;
+    reauthenticate().then(() => {
+      deleteUser(user).then(() => {
+        Alert.alert("Your account has been deleted")
+        deleteDoc(doc(db, "users", userUID));
       }).catch((error) => {
         Alert.alert(error.message);
-      })
-    }
+      });
+    }).catch((error) => {
+      Alert.alert(error.message);
+    })
+    setCurrentPassword("");
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginTop: '35%' }}>
-        <View style={styles.inputView}>
-          <FloatingLabelInput
-            value={newPhone}
-            label={'New phone Number:'}
-            maskType={'phone'}
-            mask={'(999) 999-9999'}
-            hint={'(555) 555-5555'}
-            keyboardType='numeric'
-            maxLength={14}
-            blurOnSubmit={false}
-            onChangeText={setNewPhone}
-          />
-        </View>
+
+        <Text style={{ color: AppStyles.color.white, marginBottom: 30, alignSelf: 'center', fontSize: 20, width: '70%' }}>Are you sure you want to delete your account?</Text>
+
         <View style={styles.inputView}>
           <FloatingLabelInput
             value={currentPassword}
@@ -88,16 +71,15 @@ export default function ChangePhone({ navigation }) {
       <View style={{ alignSelf: 'center', marginBottom: '75%', width: '75%', paddingTop: '2%' }}>
         <CustomButton
           stretch={true}
-          title={"Submit"}
+          title={"Delete Account"}
           color={AppStyles.color.mint}
           textColor={AppStyles.color.black}
-          onPress={changePhone}
+          onPress={deleteAccount}
         />
       </View>
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
