@@ -43,13 +43,8 @@ export default function AccountSettings({ navigation }) {
     {
       id: 5,
       pageName: "Change Profile Picture",
-      pageNavigation: "Upload Picture",
+      pageNavigation: "Change Profile Picture",
     },
-    // {
-    //   id: 5,
-    //   pageName: "Change Profile Picture",
-    //   pageNavigation: "Change Profile Picture",
-    // },
     {
       id: 6,
       pageName: "Delete Account",

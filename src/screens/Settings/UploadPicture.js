@@ -7,6 +7,9 @@ import { doc, updateDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton'
+import { useSelector } from 'react-redux';
+import { selectDriverName } from '../../../slices/navSlice';
+
 
 export default function IDVerification({ driverVerification }) {
   const [image, setImage] = useState(null);
@@ -14,10 +17,7 @@ export default function IDVerification({ driverVerification }) {
   const navigation = useNavigation();
   const userUID = authentication.currentUser.uid;
   const userDocRef = doc(db, "users", userUID);
-
-  function continueHandler() {
-    driverVerification(true);
-  }
+  const driverName = useSelector(selectDriverName)
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,13 +55,13 @@ export default function IDVerification({ driverVerification }) {
     }
   };
 
-  //   function buttonHandler() {
-  //     if (driverName === null) {
-  //       navigation.navigate("Rider Dashboard")
-  //     } else {
-  //       navigation.navigate("Driver Dashboard")
-  //     }
-  //   }
+  function continueHandler() {
+    if (driverName === null) {
+      navigation.navigate("Rider Dashboard")
+    } else {
+      navigation.navigate("Driver Dashboard")
+    }
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000000', justifyContent: 'center', alignItems: 'center' }}>

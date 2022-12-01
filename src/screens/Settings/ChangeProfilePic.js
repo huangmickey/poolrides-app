@@ -1,110 +1,85 @@
-import React, { useEffect, useState} from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";   
-import { EvilIcons ,Feather , MaterialIcons, Octicons } from '@expo/vector-icons';    
-
-import { AppStyles } from '../../utils/styles';
-
-import CustomButton from "../../components/CustomButton";
-import { FloatingLabelInput } from 'react-native-floating-label-input';
-import validator from 'validator';
-
-import { doc, getDoc } from 'firebase/firestore/lite';
+import React, { useState } from 'react';
+import { Button, View, Text, Alert, Image } from 'react-native';
+import { AppStyles, IDStyle } from '../../utils/styles';
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore/lite';
 import { authentication, db } from '../../firebase/firebase-config';
-import { getAuth, updateEmail } from "firebase/auth"
+import { useNavigation } from '@react-navigation/native';
+import CustomButton from '../../components/CustomButton'
+import { useSelector } from 'react-redux';
+import { selectDriverName } from '../../../slices/navSlice';
 
-const { width, height } = Dimensions.get('screen');
-const thumbMeasure = ((width - 48 - 32) / 2.5); 
 
-export default function ChangeProfilePic({ navigation }) {
+export default function ChangeProfilePic({ driverVerification }) {
+  const [image, setImage] = useState(null);
+  const [isUploaded, setIsUploaded] = useState(null);
+  const navigation = useNavigation();
+  const userUID = authentication.currentUser.uid;
+  const userDocRef = doc(db, "users", userUID);
+  const driverName = useSelector(selectDriverName)
 
-  const [userInfo, setUserInfo] = useState();
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [9, 9],
+      quality: 1,
+    });
 
-  useEffect(() => {
-    const userUID = authentication.currentUser.uid;
+    console.log(result);
 
-    const getUserData = async () => {
-        const userDocReference = doc(db, "users", userUID);
-        const userDocSnapshot = await getDoc(userDocReference);
-        setUserInfo(userDocSnapshot.data());
-        console.log(userInfo);
+    //TODO: create folder for each driver, link URL to driverID.
+    if (!result.cancelled) {
+      setImage(result);
+      const storage = getStorage();
+      const imgName = new Date().toISOString();
+      const ref_con = ref(storage, imgName);
+      const img = await fetch(result.uri);
+      const bytes = await img.blob();
+
+      try {
+        uploadBytes(ref_con, bytes)
+          .then(snapshot => {
+            return getDownloadURL(snapshot.ref)
+          })
+          .then(downloadURL => {
+            console.log('Download URL: ', downloadURL);
+            updateDoc(userDocRef, { ProfilePicture: downloadURL });
+            setIsUploaded(true);
+          })
+
+      } catch (e) {
+        Alert.alert('Unhandled Exception', 'Please try again');
+      }
     }
-    getUserData();
-}, []);
+  };
 
-const uploadPicture = () => {
-  // const auth = getAuth();
-  // const user = auth.currentUser;
-  // if (validator.isEmail(newEmail)) {
-  //     reauthenticate().then(() => {
-  //         updateEmail(auth.currentUser, newEmail).then(() => {
-  //             Alert.alert("Email has been successfully changed");
-  //         }).catch((error) => {
-  //             Alert.alert(error.message);
-  //         });
-  //     }).catch((error) => {
-  //         Alert.alert(error.message);
-  //     })
-  // } else {
-  //     Alert.alert('Please enter valid email.')
-  // }
-  // setNewEmail("");
-}
+  function continueHandler() {
+    if (driverName === null) {
+      navigation.navigate("Rider Dashboard")
+    } else {
+      navigation.navigate("Driver Dashboard")
+    }
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.centeredView}>
-
-        <View styles={styles.image}>
-          {userInfo?.profilePicture == null || item.profilePicture == "" 
-          ?
-          <EvilIcons name="user" size={150} color="white" />
-          :
-          <Image source={userInfo?.profilePicture} style={styles.bottomIcons} /> 
-          }
-        </View>
-
-        <View style={styles.button}>
+    <View style={{ flex: 1, backgroundColor: '#000000', justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={IDStyle.title}>Profile Picture</Text>
+      <Text style={IDStyle.subTitle}>Please upload a Profile Picture</Text>
+      <Button title='Choose Photo' onPress={pickImage} />
+      {isUploaded && <Image source={{ uri: image.uri }} style={{ width: 400, height: 400, resizeMode: 'contain' }} />}
+      {isUploaded &&
+        <View style={{ width: AppStyles.textInputWidth.main }}>
           <CustomButton
             stretch={true}
-            title={"Upload picture"}
+            title='Continue'
             color={AppStyles.color.mint}
-            textColor={AppStyles.color.black}
-            onPress={uploadPicture}
+            textColor='black'
+            onPress={continueHandler}
           />
         </View>
-      </View>
-    </SafeAreaView>
+      }
+    </View>
   );
-};
-
-
-
-const styles = StyleSheet.create({ 
-    container: {
-        flex: 1,
-        backgroundColor: AppStyles.color.black,
-    },
-    centeredView: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-  },
-  image: {
-
-    // marginBottom: '5%'
-  },
-    inputView: {
-
-      width: AppStyles.textInputWidth.main,
-      marginTop: '4%',
-      marginBottom: '5%',
-      borderBottomWidth: 2,
-      borderStyle: 'solid',
-      borderColor: AppStyles.color.white,
-  },
-  button: {
-      width: AppStyles.textInputWidth.main,
-      marginTop: '4%',
-      marginBottom: '5%',
-  },
-});                
+}

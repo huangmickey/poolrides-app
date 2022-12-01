@@ -53,7 +53,6 @@ import * as Notifications from 'expo-notifications'
 import { useNotifications } from './src/hooks/useNotifications'
 import DriverRideComplete from './src/screens/DriverMap/DriverRideComplete'
 
-import UploadPicture from './src/screens/Settings/UploadPicture'
 LogBox.ignoreLogs(['Setting a timer for a long period of time',])
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
@@ -249,9 +248,6 @@ function AppEntry() {
         <Stack.Screen name="Change Phone" component={ChangePhone} />
         <Stack.Screen name="Change Username" component={ChangeUsername} />
         <Stack.Screen name="Change Profile Picture" component={ChangeProfilePic} />
-        <Stack.Screen name="Upload Picture" component={UploadPicture} />
-
-
         <Stack.Screen name="Notifications" component={SettingsNotifications} />
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Security" component={Security} />
@@ -304,9 +300,6 @@ function AppEntry() {
         <Stack.Screen name="Change Phone" component={ChangePhone} />
         <Stack.Screen name="Change Username" component={ChangeUsername} />
         <Stack.Screen name="Change Profile Picture" component={ChangeProfilePic} />
-        <Stack.Screen name="Upload Picture" component={UploadPicture} />
-
-
         <Stack.Screen name="Notifications" component={SettingsNotifications} />
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Security" component={Security} />

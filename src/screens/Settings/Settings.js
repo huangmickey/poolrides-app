@@ -16,6 +16,7 @@ const defaultPicture = AppIcon.images.placeHolder;
 export default function Settings({ navigation }) {
 
   const [userInfo, setUserInfo] = useState();
+  const dispatch = useDispatch();
 
   const [DATA] = useState([
     {
