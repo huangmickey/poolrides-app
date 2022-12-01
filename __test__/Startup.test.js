@@ -17,9 +17,9 @@ describe('Startup screen', () => {
     it('"Login" button navigates to Login page', () => {
         const navigation = { navigate: () => { } };
         spyOn(navigation, 'navigate');
-        const { getByTestId } = render(<Startup navigation={navigation} />);
+        const { getByText } = render(<Startup navigation={navigation} />);
 
-        fireEvent.press(getByTestId("Login Button"));
+        fireEvent.press(getByText("Login"));
         expect(navigation.navigate).toHaveBeenCalledWith("Login");
 
     });
@@ -27,9 +27,9 @@ describe('Startup screen', () => {
     it('"Sign Up" button navigates to Sign Up page', () => {
         const navigation = { navigate: () => { } };
         spyOn(navigation, 'navigate');
-        const { getByTestId } = render(<Startup navigation={navigation} />);
+        const { getByText } = render(<Startup navigation={navigation} />);
 
-        fireEvent.press(getByTestId("Sign Up Button"))
+        fireEvent.press(getByText("Sign Up"))
         expect(navigation.navigate).toHaveBeenCalledWith("Sign up");
     });
 

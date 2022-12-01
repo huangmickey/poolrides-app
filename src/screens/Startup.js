@@ -25,11 +25,11 @@ export default function Startup({ navigation }) {
             </View>
 
             <View style={styles.buttonBox}>
-                <CustomButton testID="Login Button" stretch={true} title={"Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={loginPressHandler} />
+                <CustomButton stretch={true} title={"Login"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={loginPressHandler} />
             </View>
 
             <View style={styles.buttonBox}>
-                <CustomButton testID="Sign Up Button" stretch={true} title={"Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={signUpPressHandler} />
+                <CustomButton stretch={true} title={"Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={signUpPressHandler} />
             </View>
 
             <View style={styles.signUpContainer}>

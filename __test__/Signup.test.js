@@ -18,18 +18,18 @@ describe('Signup screen', () => {
     it('"Driver Sign Up" button navigates to Sign Up page', () => {
         const navigation = { navigate: () => { } };
         spyOn(navigation, 'navigate');
-        const { getByTestId } = render(<Signup navigation={navigation} />);
+        const { getByText } = render(<Signup navigation={navigation} />);
 
-        fireEvent.press(getByTestId("DriverSignUpButton"));
+        fireEvent.press(getByText("Driver Sign Up"));
         expect(navigation.navigate).toHaveBeenCalledWith("Driver Sign up");
     });
 
     it('"Rider Sign up" button navigates to Sign Up page', () => {
         const navigation = { navigate: () => { } };
         spyOn(navigation, 'navigate');
-        const { getByTestId } = render(<Signup navigation={navigation} />);
+        const { getByText } = render(<Signup navigation={navigation} />);
 
-        fireEvent.press(getByTestId("RiderSignUpButton"))
+        fireEvent.press(getByText("Rider Sign Up"))
         expect(navigation.navigate).toHaveBeenCalledWith("Rider Sign up");
     });
 

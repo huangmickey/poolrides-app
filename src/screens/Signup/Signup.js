@@ -26,11 +26,11 @@ export default function Signup({ navigation }) {
             </View>
 
             <View style={styles.buttonBox}>
-                <CustomButton testID="DriverSignUpButton" stretch={true} title={"Driver Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverSignUpHandler} />
+                <CustomButton stretch={true} title={"Driver Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={driverSignUpHandler} />
             </View>
 
             <View style={styles.buttonBox}>
-                <CustomButton testID="RiderSignUpButton" stretch={true} title={"Rider Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderSignUpHandler} />
+                <CustomButton stretch={true} title={"Rider Sign Up"} color={AppStyles.color.mint} textColor={AppStyles.color.black} onPress={riderSignUpHandler} />
             </View>
 
             <View style={styles.signInContainer}>
