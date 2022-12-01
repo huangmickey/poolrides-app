@@ -552,6 +552,7 @@ export default function DriverMap({ route, navigation }) {
           </View>
         </Modal>
       }
+      
       <Snackbar
         theme={{
           colors: {

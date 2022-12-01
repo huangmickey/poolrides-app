@@ -101,7 +101,7 @@ export default function RiderProfile({ navigation }) {
                                     </Text>
                                 </View>
 
-                                <View style={styles.info}>
+                                {/* <View style={styles.info}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }} >
                                         <View style={styles.align}>
                                             {userInfo?.numFriednds != null ? <Text style={styles.statsText}>{userInfo?.numFriednds}</Text> : <Text style={styles.statsText}>{userFriends}</Text>}
@@ -124,7 +124,8 @@ export default function RiderProfile({ navigation }) {
                                             </Text>
                                         </View>
                                     </View>
-                                </View>
+                                </View> */}
+
                             </View>
                         </View>
                     </View>

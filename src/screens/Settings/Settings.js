@@ -23,20 +23,20 @@ export default function Settings({ navigation }) {
       pageIcon: "user",
       //User settings
     },
-    {
-      id: 2,
-      pageName: "Friends List",
-      pageNavigation: "Friends List",
-      pageIcon: "users",
-      //Routes to friends List
-    },
-    {
-      id: 3,
-      pageName: "Notifications",
-      pageNavigation: "Notifications",
-      pageIcon: "mail",
-      //Notifications
-    },
+    // {
+    //   id: 2,
+    //   pageName: "Friends List",
+    //   pageNavigation: "Friends List",
+    //   pageIcon: "users",
+    //   //Routes to friends List
+    // },
+    // {
+    //   id: 3,
+    //   pageName: "Notifications",
+    //   pageNavigation: "Notifications",
+    //   pageIcon: "mail",
+    //   //Notifications
+    // },
     {
       id: 4,
       pageName: "Privacy",
@@ -119,25 +119,18 @@ export default function Settings({ navigation }) {
             <View >
               <View style={styles.bar}></View>
 
-              <Text style={{color: 'white'}}>Pool Rides</Text>
-              <Text></Text>
-              <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in 
-                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
-                sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
-              <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in 
-                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
-                sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
-
-                <View style={styles.bar}></View>
+              <Text style={{color: 'white', alignSelf: 'center', marginTop: 10}}>Pool Rides</Text>
+              <Text style={{color: 'white', margin: 25, textAlign: 'justify'}}>Pool Rides is developing a new branch within the ride sharing space known as insta transit. The business model for PoolRides differs from the similar applications as 
+              PoolRides goal is to deliver a personalized ride experience for every user. The app would allow riders to plot a trip and match with transporters, while the transporters will be able to see 
+              unaccepted trips in the area and choose whether or not to take the fare. The riders will also be able to personalize a profile of their preferences, including music tastes, conversation topics, 
+              and other preferences in order to have the best ride sharing experience possible, setting Poolrides apart from their competitors. The users will be divided into two groups, riders and transporters. 
+              To handle this there will be two different dashboards based on the user type in order to handle different functions of each role.</Text>
+              
+              <View style={styles.bar}></View>
 
               <TouchableOpacity style={styles.textContainer} onPress={logoutHandler}>
                 <Text style={styles.logoutText}>Log Out</Text>
               </TouchableOpacity>
-              {/* <TouchableOpacity style={styles.textContainer} onPress={logoutHandler}>
-                <Text style={styles.logoutText}>Delete Account</Text>
-              </TouchableOpacity> */}
             </View>
           }
         />

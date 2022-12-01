@@ -240,6 +240,17 @@ function AppEntry() {
         <Stack.Screen name="Music Interests" component={MusicInterests} />
         <Stack.Screen name="Ride History" component={RideHistory} />
         <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Account Settings" component={AccountSettings} />
+        <Stack.Screen name="Change Email" component={ChangeEmail} />
+        <Stack.Screen name="Change Password" component={ChangePassword} />
+        <Stack.Screen name="Change Phone" component={ChangePhone} />
+        <Stack.Screen name="Change Username" component={ChangeUsername} />
+        <Stack.Screen name="Change Profile Picture" component={ChangeProfilePic} />
+        <Stack.Screen name="Notifications" component={SettingsNotifications} />
+        <Stack.Screen name="Privacy" component={Privacy} />
+        <Stack.Screen name="Security" component={Security} />
+        <Stack.Screen name="Help" component={Help} />
+        <Stack.Screen name="About" component={About} />
         <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Driver Map" component={DriverMap} />
         <Stack.Screen options={{ headerBackButtonMenuEnabled: false, gestureEnabled: false }} name="Ride Request" component={RideRequest} />
         <Stack.Screen options={
