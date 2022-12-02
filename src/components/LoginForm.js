@@ -119,7 +119,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
           </View>
         </View>
       </View>
-  
+
       <View style={styles.signInContainer}>
         <TouchableOpacity
           activeOpacity={0.7}

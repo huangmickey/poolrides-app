@@ -6,6 +6,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import { config } from "../../config";
 import mapStyle from '../components/mapStyle.json'
 import { AppStyles } from '../utils/styles';
+import { Image } from 'react-native';
 
 function Map({ hasDriver }) {
 
@@ -26,7 +27,7 @@ function Map({ hasDriver }) {
         if (!origin || !destination) {
             console.log('return');
             return;
-        } else if (driverMaker.lat != null || driverMaker.lng != null){
+        } else if (driverMaker.lat != null || driverMaker.lng != null) {
             const markers = [
                 {
                     latitude: origin.location.lat,
@@ -45,7 +46,7 @@ function Map({ hasDriver }) {
                 edgePadding: { top: 75, right: 75, bottom: 75, left: 75 },
                 animated: true
             });
-        } 
+        }
         else {
             const markers = [
                 {
@@ -56,12 +57,12 @@ function Map({ hasDriver }) {
                     latitude: destination.location.lat,
                     longitude: destination.location.lng,
                 }
-                
+
             ]
             mapRef.current.fitToCoordinates(markers, {
                 edgePadding: { top: 75, right: 75, bottom: 75, left: 75 },
                 animated: true
-            });            
+            });
         }
     }, [origin, destination, driverMaker]);
 
@@ -102,7 +103,7 @@ function Map({ hasDriver }) {
             customMapStyle={mapStyle}
         >
 
-            {origin && destination && 
+            {origin && destination &&
                 <MapViewDirections
                     origin={origin.description}
                     destination={destination.description}
@@ -112,9 +113,8 @@ function Map({ hasDriver }) {
                 />
             }
 
-            {origin?.location && 
-                <Marker
-                image={require('../../assets/man-100px.png')}
+            {origin?.location &&
+                <MapView.Marker
                     coordinate={{
                         latitude: origin.location.lat,
                         longitude: origin.location.lng,
@@ -122,12 +122,16 @@ function Map({ hasDriver }) {
                     title="Origin"
                     description={origin.description}
                     identifer="origin"
+                >
+                    <Image
+                        source={require('../../assets/man-100px.png')}
+                        style={{ width: 40, height: 40 }}
                     />
+                </MapView.Marker>
             }
 
-            {destination?.location && 
-                <Marker
-                    image={require('../../assets/flag-128px.png')}
+            {destination?.location &&
+                <MapView.Marker
                     coordinate={{
                         latitude: destination.location.lat,
                         longitude: destination.location.lng,
@@ -135,16 +139,26 @@ function Map({ hasDriver }) {
                     title="Destination"
                     description={destination.description}
                     identifer="destination"
+                >
+                    <Image
+                        source={require('../../assets/flag-128px.png')}
+                        style={{ width: 40, height: 40 }}
                     />
+                </MapView.Marker>
             }
 
-            {driverMaker?.lat && 
-                <Marker
-                image={require('../../assets/hovercar-128px.png')}
+            {driverMaker?.lat &&
+                <MapView.Marker
                     coordinate={{
                         latitude: driverMaker.lat,
                         longitude: driverMaker.lng,
-                    }}/>
+                    }}
+                >
+                    <Image
+                        source={require('../../assets/hovercar-128px.png')}
+                        style={{ width: 40, height: 40 }}
+                    />
+                </MapView.Marker>
             }
         </MapView>
     )
