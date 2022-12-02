@@ -35,9 +35,10 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
     } else if (inputs.password.length == 0) {
       handleError("*Please input valid password", "password");
       valid = false;
+    } else {
+      valid = true;
     }
-    
-    valid = true;
+
     if (valid) {
       setIsAuthenticating(true);
       signInWithEmailAndPassword(authentication, inputs.email, inputs.password)
@@ -118,7 +119,7 @@ function LoginForm({ text, setSnackBarText, snackBarToggle, setIsAuthenticating 
           </View>
         </View>
       </View>
-  
+
       <View style={styles.signInContainer}>
         <TouchableOpacity
           activeOpacity={0.7}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, Text, View, ScrollView } from 'react-native';
+import { ActivityIndicator, Dimensions, Linking, Modal, Pressable, StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
@@ -199,13 +199,17 @@ export default function DriverMap({ route, navigation }) {
 
     const driverRef = doc(db, "users", driverUID)
     const driverSnap = await getDoc(driverRef);
+    let driverProfilePicture = ""
+    if (driverSnap.data().ProfilePicture != undefined) {
+      driverProfilePicture = driverSnap.data().ProfilePicture
+    }
 
     await updateDoc(docRef, {
       isAccepted: true,
       driverUID: driverUID,
       driverName: driverName.driverName,
       driverPushToken: driverPushToken.pushToken,
-      driverProfilePicture: driverSnap.data().ProfilePicture,
+      driverProfilePicture: driverProfilePicture,
     });
     await updateDoc(activeDriverDocRef, {
       isBusy: true
@@ -326,9 +330,7 @@ export default function DriverMap({ route, navigation }) {
           lineDashPattern={[0]}
         /> : <></>}
 
-        <Marker
-          image={require('../../../assets/car-128px.png')}
-          // image={require('./car-128px.png')}
+        <MapView.Marker
           coordinate={{
             latitude: driverLocation.driverLocation.coords.latitude,
             longitude: driverLocation.driverLocation.coords.longitude,
@@ -336,20 +338,31 @@ export default function DriverMap({ route, navigation }) {
           onDragEnd={
             (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
           }
-          title={'Driver'}
-        />
+          title={'Driver'}>
+          <Image
+            source={require('../../../assets/car-128px.png')}
+            style={{ width: 40, height: 40 }}
+          />
 
-        {AcceptedRideRequest && <Marker
-          image={require('../../../assets/person-128px_inverted.png')}
-          coordinate={{
-            latitude: notificationData.origin.lat, //38.558227 
-            longitude: notificationData.origin.lng, //-121.4266 
-          }}
-          onDragEnd={
-            (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
-          }
-          title={'Pick Up Location'}
-        />}
+        </MapView.Marker>
+
+        {AcceptedRideRequest &&
+          <MapView.Marker
+            coordinate={{
+              latitude: notificationData.origin.lat, //38.558227 
+              longitude: notificationData.origin.lng, //-121.4266 
+            }}
+            onDragEnd={
+              (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+            }
+            title={'Pick Up Location'}
+          >
+
+            <Image
+              source={require('../../../assets/person-128px_inverted.png')}
+              style={{ width: 40, height: 40 }}
+            />
+          </MapView.Marker>}
 
         {AcceptedRideRequest && <Marker
           coordinate={{
